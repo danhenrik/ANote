@@ -7,9 +7,8 @@ Um webapp de anotações com a possibilidade de menção de usuários e outras a
 - Samuel Henrique Miranda Alves: Full-Stack
 
 ## Tecnologias
-- Go
-- Elasticsearch
 - React/Angular (em decisão)
-- PostgreSQL (em decisão)
+- Go
+- PostgreSQL
+- Elasticsearch
 - Docker
-
