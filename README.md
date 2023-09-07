@@ -23,14 +23,17 @@ Um webapp de anotações com a possibilidade de menção de usuários e de outra
 6. Como usuário, quero me logar usando minha conta Google ou GitHub
 7. Como usuário logado, quero criar comunidades
 8. Como usuário logado, quero editar comunidades (Nome, Privado/Público)
-9. Como usuário logado, quero excluir comunidades vazias
+9. Como usuário logado, quero excluir comunidades sem membros ou posts
 10. Como usuário logado, quero criar novas anotações
 11. Como usuário, quero ter acesso a anotações em comunidades públicas
-12. Como usuário logado, quero editar anotações das quais sou dono
-13. Como usuário logado, quero excluir anotações das quais sou dono
-14. Como usuário logado, quero seguir outros usuários
-15. Como usuário logado, quero compartilhar uma anotação
-16. Como usuário logado, quero comentar anotações 
+12. Como usuário, quero filtrar as anotações baseado em data de publicação, autor, conteúdo, título, menção e comunidade
+13. Como usuário logado, quero acessar minhas anotações privadas
+14. Como usuário logado, quero editar anotações das quais sou dono
+15. Como usuário logado, quero excluir anotações das quais sou dono
+16. Como usuário logado, quero seguir outros usuários
+17. Como usuário logado, quero compartilhar uma anotação pública
+18. Como usuário logado, quero comentar anotações
+19. Como usuário logado, quero curtir anotações
 
 ## 1st Sprint Backlog
 
