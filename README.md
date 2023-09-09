@@ -35,6 +35,10 @@ Um webapp de anotações com a possibilidade de menção de usuários e de outra
 19. Como usuário logado, quero comentar anotações
 20. Como usuário logado, quero curtir anotações
 
+## Protótipo
+
+<a href="https://www.figma.com/file/Xcmx6LAl2FMChm8Mb5psoX/ANote?type=design&node-id=0%3A1&mode=design&t=iqdVrLYjdwgdlkHh-1">Protótipo</a>
+
 ## 1st Sprint Backlog
 1. Como usuário, quero me cadastrar no sistema
 Tarefas e Responsáveis:
