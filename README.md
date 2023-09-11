@@ -41,6 +41,7 @@ Um webapp de anotações com a possibilidade de menção de usuários e de outra
 
 ## 1st Sprint Backlog
 1. Como usuário, quero me cadastrar no sistema
+
 Tarefas e Responsáveis:
   - Instalar tecnologias (React, PostgreSQL, Docker) [Daniel];
   - Criar tabelas relacionadas ao usuário no banco e configurá-las no sistema [Samuel];
@@ -49,6 +50,7 @@ Tarefas e Responsáveis:
   - Criar tela de cadastrar usuário [Julio];
 
 2. Como usuário, quero me logar usando minha conta Google ou Facebook
+
 Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
   - Criar e testar rota que implementa a tela de logar usuário cadastrado [Samuel];
@@ -59,12 +61,14 @@ Tarefas e Responsáveis:
   - Criar tela de logar usuário pelo Google ou Facebook [Julio];
 
 3. Como usuário cadastrado, quero recuperar minha senha
+
 Tarefas e Responsáveis:
   - Criar e testar rota que recupera a senha do usuário [Samuel];
   - Implementar no backend a lógica de recuperar senha do usuário [Daniel];
   - Criar tela de recuperar senha do usuário [Julio];
 
 4. Como usuário logado, quero criar, editar ou excluir anotações
+
 Tarefas e Responsáveis:
   - Criar tabelas relacionadas às anotações no banco e configurá-las no sistema [Samuel];
   - Criar e testar rotas que cria, edita e exclui anotações [Samuel];
@@ -72,12 +76,14 @@ Tarefas e Responsáveis:
   - Criar tela inicial de criar, editar ou excluir anotações [Julio];
 
 5. Como usuário, quero filtrar as anotações baseado em data de publicação, autor, conteúdo, título, menção e comunidade
+
 Tarefas e Responsáveis:
   - Criar e testar rota que filtra anotações [Samuel];
   - Implementar no backend a lógica de filtrar anotações [Daniel];
   - Criar tela de filtrar anotações [Julio];
 
 6. Como usuário logado, quero criar, edtiar ou excluir comunidades
+
 Tarefas e Responsáveis:
   - Criar tabelas relacionadas às comunidades no banco e configurá-las no sistema [Samuel];
   - Criar e testar rotas que implementam a criação, edição e exclusão de comunidades [Samuel];
@@ -85,6 +91,7 @@ Tarefas e Responsáveis:
   - Criar tela de cadastrar, editar e excluir comunidades [Julio];
 
 7. Como usuário logado, quero compartilhar uma anotação pública
+
 Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
   - Criar e testar rota que implementa o compartilhamento de anotações [Samuel];
@@ -92,6 +99,7 @@ Tarefas e Responsáveis:
   - Criar tela de compartilhar anotações [Julio];
 
 8. Como usuário logado, quero curtir/comentar anotações
+
 Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
   - Criar e testar rotas responsáveis por curtir e comentar anotações [Samuel];
