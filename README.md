@@ -20,7 +20,7 @@ Um webapp de anotações com a possibilidade de menção de usuários e de outra
 4. Como usuário cadastrado, quero recuperar minha senha
 5. Como usuário cadastrado logado, quero atualizar minha senha
 6. Como usuário cadastrado logado, quero atualizar meu email
-7. Como usuário, quero me logar usando minha conta Google ou GitHub
+7. Como usuário, quero me logar usando minha conta Google ou Facebook
 8. Como usuário logado, quero criar comunidades
 9. Como usuário logado, quero editar comunidades (Nome, Privado/Público)
 10. Como usuário logado, quero excluir comunidades sem membros ou posts
@@ -48,15 +48,15 @@ Tarefas e Responsáveis:
   - Implementar no backend a lógica de cadastrar usuário [Daniel];
   - Criar tela de cadastrar usuário [Julio];
 
-2. Como usuário, quero me logar usando minha conta Google ou GitHub
+2. Como usuário, quero me logar usando minha conta Google ou Facebook
 Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
   - Criar e testar rota que implementa a tela de logar usuário cadastrado [Samuel];
-  - Criar e testar rota que implementa a tela de logar usuário pelo Google ou Github [Samuel];
+  - Criar e testar rota que implementa a tela de logar usuário pelo Google ou Facebook [Samuel];
   - Implementar no backend a lógica de logar usuário cadastrado [Daniel];
-  - Implementar no backend a lógica de logar usuário pelo Google ou Github [Daniel];
+  - Implementar no backend a lógica de logar usuário pelo Google ou Facebook [Daniel];
   - Criar tela de logar usuário cadastrado [Julio];
-  - Criar tela de logar usuário pelo Google ou Github [Julio];
+  - Criar tela de logar usuário pelo Google ou Facebook [Julio];
 
 3. Como usuário cadastrado, quero recuperar minha senha
 Tarefas e Responsáveis:
