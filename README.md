@@ -13,6 +13,15 @@ Um webapp de anotações com a possibilidade de menção de usuários e de outra
 - Elasticsearch
 - Docker
 
+## How to run
+
+Para rodar o sistema será necessário que você tenha instalado docker em sua máquina. 
+
+Com o docker instalado basta na pasta root (```../ANote/```) do projeto rodar o comando ```docker compose up -d``` para inicializar o projeto (Backend + Elasticsearch + PostgreSQL + Ferramentas de interação com as bases de dados). 
+
+OBS: Isso pode demorar um bom tempo na primeira vez.
+
+
 ## Product Backlog
 
 1. Como usuário, quero me cadastrar no sistema
