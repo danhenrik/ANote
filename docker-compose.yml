@@ -1,9 +1,11 @@
-version: '3.7'
+version: '3.7'  
 
 services:
   database:
     container_name: database
-    image: postgres:15
+    build:
+      dockerfile: dockerfile
+      context: ./infra/postgres
     restart: always
     environment:
       POSTGRES_USER: anote
@@ -12,6 +14,8 @@ services:
       - '5432:5432'
     volumes:
       - pg-data:/var/lib/postgresql/data
+      - ./infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    entrypoint: docker-entrypoint.sh -c 'config_file=/etc/postgresql/postgresql.conf'
 
   adminer:
     container_name: adminer
@@ -24,7 +28,7 @@ services:
 
   elasticsearch:
     container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.1
     restart: always
     environment:
       - xpack.security.enabled=false
@@ -46,7 +50,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: docker.elastic.co/kibana/kibana:8.10.0
+    image: docker.elastic.co/kibana/kibana:8.10.1
     depends_on:
       - elasticsearch
     ports:
@@ -57,15 +61,34 @@ services:
     volumes:
       - kbn-data:/usr/share/kibana/data
 
+  es_replicate:
+    container_name: es_replicate
+    build:
+      dockerfile: dockerfile
+      context: ./infra/es_replicate
+    depends_on:
+      - database
+      - elasticsearch
+    ports:
+      - 1:1
+
   server:
     container_name: server
     build:
       dockerfile: dockerfile
-      context: .
-    image: anote/server:v1
+      context: ./server
     ports:
       - '8080:8080'
     depends_on:
+      - database
+
+  setup:
+    container_name: setup
+    build:
+      dockerfile: dockerfile
+      context: ./infra/setup
+    depends_on:
+      - elasticsearch
       - database
 
 volumes:

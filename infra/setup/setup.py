@@ -1,0 +1,145 @@
+import requests
+import psycopg2
+import json
+import time
+
+class pg_conn:
+  def __init__(self):
+    try:
+      conn = psycopg2.connect("host=database user=anote password=anote dbname=anote port=5432")
+      self.conn = conn
+      self.c = conn.cursor()
+    except Exception as e: 
+      print(e.__str__())
+
+  def SQLCmd(self, cmd):
+    try:
+      print("Executing : \"" + cmd + '"')
+      self.c.execute(cmd)
+      self.conn.commit()
+    except Exception as e:
+      print("Execution failed!\nError: "+ e.__str__())
+      self.conn.commit()
+
+print("Waiting 10 for services to start")
+time.sleep(10)
+
+# Create ES Index
+try:
+  res = requests.put('http://elasticsearch:9200/notes')
+  print(res)
+  if str(res.status_code).startswith('2'):
+    print("ES Index created")
+  else:
+    print("ES Index creation failed")
+    obj = json.loads(res.content.decode('utf-8'),)
+    print(obj.get('error').get('root_cause')[0].get('type'))	
+except Exception as e: 
+  print(e.__str__())
+
+# Configure ES Index
+
+
+
+# Create Postgres Tables
+pg_conn = pg_conn()
+
+pg_conn.SQLCmd("""CREATE TABLE users (
+                id varchar(30) PRIMARY KEY, 
+                email varchar(255) NOT NULL, 
+                password varchar(50)
+               );""")
+
+pg_conn.SQLCmd("""CREATE TABLE notes (
+                id uuid PRIMARY KEY, 
+                title varchar NOT NULL, 
+                author_id varchar(30) NOT NULL,
+                content varchar NOT NULL,
+                created_at timestamp NOT NULL DEFAULT NOW(),
+                updated_at timestamp NOT NULL DEFAULT NOW(),
+                CONSTRAINT user_FK
+                 FOREIGN KEY(author_id)
+                  REFERENCES users(id) ON DELETE SET NULL
+               );""")
+
+pg_conn.SQLCmd("""CREATE TABLE likes (
+                id uuid PRIMARY KEY, 
+                user_id varchar(30), 
+                note_id uuid, 
+                created_at timestamp NOT NULL DEFAULT NOW(),
+                CONSTRAINT user_FK 
+                 FOREIGN KEY(user_id) 
+                  REFERENCES users(id) ON DELETE CASCADE, 
+                CONSTRAINT notes_FK 
+                 FOREIGN KEY(note_id) 
+                  REFERENCES notes(id) ON DELETE CASCADE
+              );""")
+
+pg_conn.SQLCmd("""CREATE TABLE comments (
+                id uuid PRIMARY KEY,
+                user_id varchar(30),
+                note_id uuid,
+                content varchar(500) NOT NULL, 
+                created_at timestamp NOT NULL DEFAULT NOW(),
+                CONSTRAINT user_FK
+                 FOREIGN KEY(user_id)
+                  REFERENCES users(id) ON DELETE CASCADE,
+                CONSTRAINT notes_FK
+                 FOREIGN KEY(note_id)
+                  REFERENCES notes(id) ON DELETE SET NULL
+               );""")
+
+pg_conn.SQLCmd("""CREATE TABLE tags (
+                id varchar PRIMARY KEY,
+                name varchar(50) NOT NULL
+               );""")
+
+pg_conn.SQLCmd("""CREATE TABLE note_tags (
+                id uuid PRIMARY KEY,
+                note_id uuid,
+                tag_id varchar,
+                CONSTRAINT notes_FK
+                 FOREIGN KEY(note_id)
+                  REFERENCES notes(id) ON DELETE CASCADE,
+                CONSTRAINT tags_FK
+                 FOREIGN KEY(tag_id)
+                  REFERENCES tags(id) ON DELETE CASCADE
+                );""")
+
+# Create Postgres replication slot
+pg_conn.SQLCmd("""SELECT * 
+                FROM pg_create_logical_replication_slot(
+                 'es_replication_slot', 
+                 'wal2json'
+               );""")
+    
+# Create Postgres triggers
+pg_conn.SQLCmd("""CREATE FUNCTION notify() 
+               RETURNS TRIGGER LANGUAGE PLPGSQL AS 
+                $$ 
+                BEGIN 
+                 NOTIFY es_replicate; 
+                 RETURN NEW; 
+                END; 
+                $$""")
+
+pg_conn.SQLCmd("""CREATE TRIGGER notify_notes 
+                AFTER INSERT OR UPDATE OR DELETE 
+                ON notes FOR EACH ROW 
+                EXECUTE PROCEDURE notify();""")
+
+pg_conn.SQLCmd("""CREATE TRIGGER notify_likes 
+                AFTER INSERT OR UPDATE OR DELETE 
+                ON likes FOR EACH ROW 
+                EXECUTE PROCEDURE notify();""")
+               
+pg_conn.SQLCmd("""CREATE TRIGGER notify_comments 
+                AFTER INSERT OR UPDATE OR DELETE 
+                ON comments FOR EACH ROW 
+                EXECUTE PROCEDURE notify();""")
+               
+pg_conn.SQLCmd("""CREATE TRIGGER notify_note_tags 
+                AFTER INSERT OR UPDATE OR DELETE 
+                ON note_tags FOR EACH ROW 
+                EXECUTE PROCEDURE notify();""")
+
