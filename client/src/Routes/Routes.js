@@ -3,15 +3,15 @@ import { useRoutes } from "react-router-dom";
 import CompleteSignupForm from "../components/AccessControl/Signup/CompleteSignupForm";
 import PasswordRecovery from "../components/AccessControl/PasswordRecovery/PasswordRecovery";
 import NotFound from "../pages/NotFound";
-import NoteList from "../components/NotesTimeline/Timeline";
 import VerificationCode from "../components/AccessControl/PasswordRecovery/VerficationCode";
 import CompleteRecovery from "../components/AccessControl/PasswordRecovery/CompleteRecovery";
+import Timeline from "../components/NotesTimeline/Timeline";
 
 function Routes() {
   return useRoutes([
     {
       path: "/",
-      element: <NoteList />,
+      element: <Timeline />,
     },
     {
       path: "/signup",
