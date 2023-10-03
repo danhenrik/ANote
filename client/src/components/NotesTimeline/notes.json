@@ -1,0 +1,41 @@
+[
+  {
+    "Id": "1",
+    "Title": "Note 1",
+    "Content": "Content for Note 1",
+    "LikesCount": 10,
+    "Likes": ["user1", "user2", "user3"],
+    "PublishedDate": "2023-10-01T10:00:00Z",
+    "UpdatedDate": "2023-10-01T15:30:00Z",
+    "Author": "john_doe",
+    "Tags": ["tag1", "tag2", "tag3"],
+    "CommentCount": 5,
+    "Commenters": ["user4", "user5", "user6", "user7", "user8"]
+  },
+  {
+    "Id": "2",
+    "Title": "Note 2",
+    "Content": "Content for Note 2",
+    "LikesCount": 15,
+    "Likes": ["user2", "user3", "user4"],
+    "PublishedDate": "2023-10-02T09:45:00Z",
+    "UpdatedDate": "2023-10-02T14:15:00Z",
+    "Author": "jane_smith",
+    "Tags": ["tag2", "tag3", "tag4"],
+    "CommentCount": 7,
+    "Commenters": ["user1", "user3", "user5", "user6", "user8"]
+  },
+  {
+    "Id": "3",
+    "Title": "Note 3",
+    "Content": "Content for Note 3",
+    "LikesCount": 8,
+    "Likes": ["user3", "user4", "user5"],
+    "PublishedDate": "2023-10-03T11:20:00Z",
+    "UpdatedDate": "2023-10-03T16:45:00Z",
+    "Author": "bob_jones",
+    "Tags": ["tag1", "tag5"],
+    "CommentCount": 3,
+    "Commenters": ["user2", "user4", "user7"]
+  }
+]

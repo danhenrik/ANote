@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import Modal from "@mui/material/Modal";
-import LoginForm from "./LoginForm";
-import SignupForm from "../Signup/SignupForm";
+import LoginForm from "./login/LoginForm";
+import SignupForm from "./Signup/SignupForm";
 
 const style = {
   display: "flex",

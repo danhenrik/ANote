@@ -13,8 +13,8 @@ import {
   Button,
   TextField,
 } from "../../../common/FormStyling.style";
-import SocialMediaAuth from "./SocialMediaAuth";
-import { useNavigate } from "react-router-dom";
+import SocialMediaAuth from "../SocialMediaAuth";
+import { Link, useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -90,6 +90,15 @@ const LoginForm = ({ closeModal }) => {
           <Button variant='contained' fullWidth type='submit'>
             Fazer Login
           </Button>
+          <div style={{ marginTop: "10px" }}>
+            <Link
+              style={{ color: "blue" }}
+              to='/passwordrecovery'
+              onClick={closeModal}
+            >
+              Esqueceu sua senha?
+            </Link>
+          </div>
           <Divider sx={{ mt: "30px", mb: "15px" }}>Ou</Divider>
           <SocialMediaAuth authType='Login'></SocialMediaAuth>
         </form>

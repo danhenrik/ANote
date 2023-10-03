@@ -6,7 +6,7 @@ import {
   GoogleLoginButton,
 } from "react-social-login-buttons";
 
-import { useAuth } from "../../../store/auth-context";
+import { useAuth } from "../../store/auth-context";
 
 const SocialMediaAuth = ({ authType }) => {
   const auth = useAuth();

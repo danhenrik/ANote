@@ -15,13 +15,13 @@ import {
   ButtonStack,
 } from "./NavBar.style";
 import NavList from "./NavList";
-import AuthModalComponent from "../AccessControl/login/AuthModalComponent";
+import AuthModalComponent from "../AccessControl/AuthModalComponent";
 import { PropTypes } from "prop-types";
 import { useState } from "react";
 import SearchModalComponent from "./Search/SearchModalComponent";
 import { Link } from "react-router-dom";
 import NavButtons from "./NavButtons";
-import AnoteLogo from "./Logo/Logo";
+import AnoteLogo from "./Logo/AnoteLogo";
 
 function NavBar({ open, setOpen }) {
   const drawerWidth = 240;

@@ -5,12 +5,10 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import theme from "./theme";
 import { useState } from "react";
 import NavBar from "./components/header/NavBar";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import NotFound from "./pages/NotFound";
-import CompleteSignupForm from "./components/AccessControl/Signup/CompleteSignupForm";
+import { BrowserRouter as Router } from "react-router-dom";
 import config from "./configs.json";
 import { AuthProvider } from "./store/auth-context";
-
+import Routes from "./Routes/Routes";
 function App() {
   const [open, setOpen] = useState(false);
 
@@ -20,13 +18,8 @@ function App() {
         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
           <ThemeProvider theme={theme}>
             <NavBar open={open} setOpen={setOpen} />
-            <MainContent open={open}>
-              <Routes>
-                <Route path='/' />
-                <Route path='/signup' element={<CompleteSignupForm />} />
-                <Route path='*' element={<NotFound />} />
-              </Routes>
-            </MainContent>
+            <MainContent open={open}></MainContent>
+            <Routes />
           </ThemeProvider>
         </GoogleOAuthProvider>
       </AuthProvider>

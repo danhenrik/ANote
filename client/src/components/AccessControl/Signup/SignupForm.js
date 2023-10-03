@@ -13,7 +13,7 @@ import {
   Button,
   TextField,
 } from "../../../common/FormStyling.style";
-import SocialMediaAuth from "../login/SocialMediaAuth";
+import SocialMediaAuth from "../SocialMediaAuth";
 import { PropTypes } from "prop-types";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
