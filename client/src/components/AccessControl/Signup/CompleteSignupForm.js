@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   InputLabel,
   TextField,
@@ -28,10 +28,11 @@ const validationSchema = yup.object({
 });
 
 const CompleteSignupForm = () => {
+  const [search] = useSearchParams();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
-      email: "",
+      email: search.get("email"),
       userId: "",
       password: "",
       confirmPassword: "",

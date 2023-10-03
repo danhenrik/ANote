@@ -1,6 +1,6 @@
 import React from "react";
 import { useFormik } from "formik";
-import { Container, Paper, Typography } from "@mui/material";
+import { Container, IconButton, Paper, Typography } from "@mui/material";
 import * as yup from "yup";
 import {
   InputLabel,
@@ -8,6 +8,8 @@ import {
   TextField,
   TextArea,
 } from "../../../common/FormStyling.style";
+import CloseIcon from "@mui/icons-material/Close";
+import { PropTypes } from "prop-types";
 
 export const validationSchema = yup
   .object()
@@ -44,7 +46,7 @@ export const validationSchema = yup
     return true;
   });
 
-const SearchForm = () => {
+const SearchForm = ({ closeModal }) => {
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -71,6 +73,9 @@ const SearchForm = () => {
           alignItems: "center",
         }}
       >
+        <IconButton onClick={closeModal} sx={{ alignSelf: "flex-end" }}>
+          <CloseIcon />
+        </IconButton>
         <Typography variant='h6'>Pesquisar</Typography>
         <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
           <InputLabel htmlFor='title'>Título</InputLabel>
@@ -159,6 +164,10 @@ const SearchForm = () => {
       </Paper>
     </Container>
   );
+};
+
+SearchForm.propTypes = {
+  closeModal: PropTypes.func.isRequired,
 };
 
 export default SearchForm;

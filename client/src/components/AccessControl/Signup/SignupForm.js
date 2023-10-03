@@ -1,5 +1,11 @@
 import React from "react";
-import { Container, Divider, Paper, Typography } from "@mui/material";
+import {
+  Container,
+  Divider,
+  IconButton,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -9,7 +15,8 @@ import {
 } from "../../../common/FormStyling.style";
 import SocialMediaAuth from "../login/SocialMediaAuth";
 import { PropTypes } from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 
 const validationSchema = yup.object({
   email: yup
@@ -17,13 +24,6 @@ const validationSchema = yup.object({
     .email("Insira um email válido")
     .required("Insira seu email"),
 });
-
-const googleHandler = () => {
-  alert("hello");
-};
-const facebookHandler = () => {
-  alert("hello");
-};
 
 const SignupForm = ({ closeModal }) => {
   const navigate = useNavigate();
@@ -35,7 +35,12 @@ const SignupForm = ({ closeModal }) => {
     onSubmit: (values) => {
       closeModal();
       alert(JSON.stringify(values, null, 2));
-      navigate("/signup");
+      navigate({
+        pathname: "signup",
+        search: createSearchParams({
+          email: values.email,
+        }).toString(),
+      });
     },
   });
 
@@ -50,6 +55,9 @@ const SignupForm = ({ closeModal }) => {
           alignItems: "center",
         }}
       >
+        <IconButton onClick={closeModal} sx={{ alignSelf: "flex-end" }}>
+          <CloseIcon />
+        </IconButton>
         <Typography variant='h6' style={{ fontWeight: "bold" }}>
           Cadastre-se
         </Typography>
@@ -70,17 +78,15 @@ const SignupForm = ({ closeModal }) => {
             Cadastrar-se
           </Button>
           <Divider sx={{ mt: "30px", mb: "30px" }}>Ou</Divider>
-          <SocialMediaAuth
-            authType='Cadastro'
-            googleHandler={googleHandler}
-            facebookHandler={facebookHandler}
-          ></SocialMediaAuth>
+          <SocialMediaAuth authType='Cadastro'></SocialMediaAuth>
         </form>
       </Paper>
     </Container>
   );
 };
+
 SignupForm.propTypes = {
   closeModal: PropTypes.func.isRequired,
 };
+
 export default SignupForm;

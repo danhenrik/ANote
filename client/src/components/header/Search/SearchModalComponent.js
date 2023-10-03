@@ -25,7 +25,7 @@ function SearchModalComponent({ open, handleClose }) {
         sx={style}
       >
         <>
-          <SearchForm></SearchForm>
+          <SearchForm closeModal={handleClose}></SearchForm>
         </>
       </Modal>
     </div>

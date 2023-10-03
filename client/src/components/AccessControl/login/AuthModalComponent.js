@@ -6,9 +6,13 @@ import SignupForm from "../Signup/SignupForm";
 
 const style = {
   display: "flex",
-  alignItems: "center",
+  alignItems: "flex-start",
   justifyContent: "center",
   overflow: "auto",
+  maxHeight: "100vh",
+  "@media (min-height: 400px)": {
+    alignItems: "center",
+  },
 };
 
 function AuthModalComponent({ open, handleClose, authType }) {

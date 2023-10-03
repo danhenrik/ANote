@@ -1,5 +1,11 @@
 import React from "react";
-import { Container, Divider, Paper, Typography } from "@mui/material";
+import {
+  Container,
+  Divider,
+  IconButton,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -10,6 +16,8 @@ import {
 import SocialMediaAuth from "./SocialMediaAuth";
 import { useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";
+import CloseIcon from "@mui/icons-material/Close";
+
 const validationSchema = yup.object({
   email: yup
     .string("Insira seu email")
@@ -20,13 +28,6 @@ const validationSchema = yup.object({
     .min(8, "A senha deve conter pelo menos 8 caracteres, com uma letra")
     .required("Insira sua senha"),
 });
-
-const googleHandler = () => {
-  alert("hello");
-};
-const facebookHandler = () => {
-  alert("hello");
-};
 
 const LoginForm = ({ closeModal }) => {
   const navigate = useNavigate();
@@ -54,6 +55,9 @@ const LoginForm = ({ closeModal }) => {
           alignItems: "center",
         }}
       >
+        <IconButton onClick={closeModal} sx={{ alignSelf: "flex-end" }}>
+          <CloseIcon />
+        </IconButton>
         <Typography variant='h6' style={{ fontWeight: "bold" }}>
           Faça Login
         </Typography>
@@ -87,11 +91,7 @@ const LoginForm = ({ closeModal }) => {
             Fazer Login
           </Button>
           <Divider sx={{ mt: "30px", mb: "15px" }}>Ou</Divider>
-          <SocialMediaAuth
-            authType='Login'
-            googleHandler={googleHandler}
-            facebookHandler={facebookHandler}
-          ></SocialMediaAuth>
+          <SocialMediaAuth authType='Login'></SocialMediaAuth>
         </form>
       </Paper>
     </Container>
