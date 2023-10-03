@@ -7,8 +7,11 @@ import {
   ListItemText,
   Avatar,
 } from "@mui/material";
+import NavButtons from "./NavButtons";
+import PropTypes from "prop-types";
+import ButtonBox from "./NavList.styled";
 
-function NavList() {
+function NavList({ handleLoginModal, handleSignupModal }) {
   return (
     <>
       <div
@@ -38,9 +41,20 @@ function NavList() {
             </ListItemButton>
           </ListItem>
         ))}
+        <ButtonBox textAlign='center'>
+          <NavButtons
+            sx={{ padding: "2px" }}
+            handleLoginModal={handleLoginModal}
+            handleSignupModal={handleSignupModal}
+          />
+        </ButtonBox>
       </List>
     </>
   );
 }
+NavList.propTypes = {
+  handleLoginModal: PropTypes.func.isRequired,
+  handleSignupModal: PropTypes.func.isRequired,
+};
 
 export default NavList;

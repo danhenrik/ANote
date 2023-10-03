@@ -1,6 +1,6 @@
 import { styled } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
-import { IconButton } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -25,7 +25,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
 }));
@@ -35,4 +34,10 @@ const StyledIconButton = styled(IconButton)(() => ({
   paddingRight: "30px",
 }));
 
-export { AppBar, DrawerHeader, StyledIconButton };
+const ButtonStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    display: "none",
+  },
+}));
+
+export { AppBar, DrawerHeader, StyledIconButton, ButtonStack };
