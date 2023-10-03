@@ -18,8 +18,9 @@ function App() {
         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
           <ThemeProvider theme={theme}>
             <NavBar open={open} setOpen={setOpen} />
-            <MainContent open={open}></MainContent>
-            <Routes />
+            <MainContent open={open}>
+              <Routes />
+            </MainContent>
           </ThemeProvider>
         </GoogleOAuthProvider>
       </AuthProvider>

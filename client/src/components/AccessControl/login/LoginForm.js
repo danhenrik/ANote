@@ -12,7 +12,7 @@ import {
   InputLabel,
   Button,
   TextField,
-} from "../../../common/FormStyling.style";
+} from "../../../common/FormStyling.styled";
 import SocialMediaAuth from "../SocialMediaAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";

@@ -7,7 +7,7 @@ import {
   Button,
   TextField,
   TextArea,
-} from "../../../common/FormStyling.style";
+} from "../../../common/FormStyling.styled";
 import CloseIcon from "@mui/icons-material/Close";
 import { PropTypes } from "prop-types";
 

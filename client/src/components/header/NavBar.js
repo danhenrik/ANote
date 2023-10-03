@@ -13,7 +13,7 @@ import {
   AppBar,
   StyledIconButton,
   ButtonStack,
-} from "./NavBar.style";
+} from "./NavBar.styled";
 import NavList from "./NavList";
 import AuthModalComponent from "../AccessControl/AuthModalComponent";
 import { PropTypes } from "prop-types";

@@ -4,7 +4,7 @@ import {
   InputLabel,
   TextField,
   Button,
-} from "../../../common/FormStyling.style";
+} from "../../../common/FormStyling.styled";
 import { Container, Paper, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";

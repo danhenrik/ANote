@@ -1,6 +1,6 @@
 import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import { Search, SearchIconWrapper, StyledInputBase } from "./SearchBar.style";
+import { Search, SearchIconWrapper, StyledInputBase } from "./SearchBar.styled";
 
 function SearchBar() {
   return (
