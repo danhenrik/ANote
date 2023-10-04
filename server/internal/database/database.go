@@ -1,7 +1,7 @@
 package database
 
 import (
-	interfaces "anote/internal/interfaces/database"
+	ports "anote/internal/ports/database"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -38,7 +38,7 @@ func GetConnection() Conn {
 }
 
 // Returns only the first result of the query
-func (c Conn) QueryOne(dest interfaces.Entity, query string, args ...any) error {
+func (c Conn) QueryOne(dest ports.Entity, query string, args ...any) error {
 	queryResult := c.conn.QueryRow(query, args...)
 
 	if err := queryResult.Scan(dest.GetFieldAdresses()...); err != nil {
@@ -50,7 +50,7 @@ func (c Conn) QueryOne(dest interfaces.Entity, query string, args ...any) error 
 	return nil
 }
 
-func (c Conn) QueryMultiple(dest []interfaces.Entity, query string, args ...any) error {
+func (c Conn) QueryMultiple(dest []ports.Entity, query string, args ...any) error {
 	queryResult, err := c.conn.Query(query, args...)
 	if err != nil {
 		errMessage := fmt.Sprintf("Error on query: %v", err)

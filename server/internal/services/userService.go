@@ -1,18 +1,17 @@
 package services
 
 import (
-	"anote/internal/domain"
-	interfaces "anote/internal/interfaces/repositories"
+	ports "anote/internal/ports/repositories"
+	"anote/internal/utils"
 	"anote/internal/viewmodels"
-	utils "anote/pkg"
 	"errors"
 )
 
 type UserService struct {
-	UserRepository interfaces.UserRepository
+	UserRepository ports.UserRepository
 }
 
-func NewUserService(userRepository interfaces.UserRepository) UserService {
+func NewUserService(userRepository ports.UserRepository) UserService {
 	return UserService{UserRepository: userRepository}
 }
 
@@ -54,12 +53,12 @@ func (this UserService) GetByEmail(email string) (viewmodels.UserVM, error) {
 	return userVM, nil
 }
 
-func (_ UserService) GetAll() ([]domain.User, error) {
-	return []domain.User{}, nil
+func (_ UserService) GetAll() ([]viewmodels.UserVM, error) {
+	return []viewmodels.UserVM{}, nil
 }
 
-func (_ UserService) Update(user domain.User) (domain.User, error) {
-	return domain.User{}, nil
+func (_ UserService) Update(user viewmodels.UserVM) (viewmodels.UserVM, error) {
+	return viewmodels.UserVM{}, nil
 }
 
 func (_ UserService) Delete(username string) (bool, error) {

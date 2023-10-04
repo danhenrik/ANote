@@ -1,4 +1,4 @@
-package controllers
+package routes
 
 import (
 	httpAdapter "anote/cmd/interfaces"
@@ -20,7 +20,7 @@ func CreateUserController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("Error on create user service", err)
 		return httpAdapter.NewErrorResponse(400, "Error on create user service")
 	}
-	return httpAdapter.NewSuccessResponse(204, "")
+	return httpAdapter.NewSuccessResponse(204, nil)
 }
 
 func GetUserController(request httpAdapter.Request) httpAdapter.Response {

@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"anote/internal/domain"
-	interfaces "anote/internal/interfaces/database"
+	interfaces "anote/internal/ports/database"
 	"errors"
 	"fmt"
 	"log"

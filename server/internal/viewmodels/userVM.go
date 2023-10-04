@@ -1,8 +1,6 @@
 package viewmodels
 
-import (
-	"anote/internal/domain"
-)
+import "anote/internal/domain"
 
 type UserVM struct {
 	Username string `json:"username" form:"username"`

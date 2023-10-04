@@ -40,16 +40,16 @@ func NewRequest(Method string,
 }
 
 type Response struct {
-	StatusCode int    `json:"status_code"` // HTTP status code
-	Data       any    `json:"data"`        // Response data
-	Message    string `json:"message"`     // Error message
+	StatusCode int     `json:"status_code"` // HTTP status code
+	Data       any     `json:"data"`        // Response data
+	Message    *string `json:"message"`     // Error message
 }
 
 func NewErrorResponse(statusCode int, message string) Response {
 	return Response{
 		StatusCode: statusCode,
-		Data:       "",
-		Message:    message,
+		Data:       nil,
+		Message:    &message,
 	}
 }
 
@@ -57,15 +57,15 @@ func NewSuccessResponse(statusCode int, data any) Response {
 	return Response{
 		StatusCode: statusCode,
 		Data:       data,
-		Message:    "",
+		Message:    nil,
 	}
 }
 
-func NewNoContentRespone(statusCode int) Response {
+func NewNoContentRespone() Response {
 	return Response{
-		StatusCode: statusCode,
-		Data:       "",
-		Message:    "",
+		StatusCode: http.StatusNoContent,
+		Data:       nil,
+		Message:    nil,
 	}
 }
 
