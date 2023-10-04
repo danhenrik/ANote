@@ -1,16 +1,11 @@
 import PropTypes from "prop-types";
-import { Box, ButtonBase, Grid } from "@mui/material";
-import NoteCard from "./NoteCard";
+import { ButtonBase, Grid } from "@mui/material";
+import NoteCard from "../NoteCard/NoteCard";
+import { NotesContainer } from "./NoteList.styled";
 
-const containerStyle = {
-  display: "flex",
-  justifyContent: "center",
-  width: "70%",
-  margin: "0 auto",
-};
 function NoteList({ notes }) {
   return (
-    <Box style={containerStyle}>
+    <NotesContainer>
       <Grid container spacing={2}>
         {notes.map((note) => (
           <Grid item xs={12} sm={8} md={4} key={note.Id}>
@@ -20,7 +15,7 @@ function NoteList({ notes }) {
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </NotesContainer>
   );
 }
 

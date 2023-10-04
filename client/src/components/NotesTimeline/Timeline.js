@@ -1,6 +1,6 @@
 import { useState } from "react";
-import myData from "./notes.json";
-import NoteList from "./NoteList";
+import myData from "./Notes/notes.json";
+import NoteList from "./Notes/NoteList/NoteList";
 
 function Timeline() {
   const [notes] = useState(myData);

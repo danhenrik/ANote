@@ -54,7 +54,7 @@ const CompleteRecovery = () => {
           }}
         >
           <Typography variant='h6' style={{ fontWeight: "bold" }}>
-            Recuperar Senha
+            Cadastre uma nova senha
           </Typography>
           <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
             <InputLabel htmlFor='password'>Senha</InputLabel>

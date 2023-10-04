@@ -2,15 +2,38 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
+import {
+  AvatarAuthor,
+  AvatarBackground,
+  AvatarContainer,
+  AvatarUsernames,
+  CustomAvatar,
+  StyledLink,
+  Title,
+} from "./NoteCard.styled";
 
 function NoteCard({ note }) {
+  var randomColor = require("randomcolor");
+
   return (
     <Card>
       <CardContent>
-        <Typography variant='h5' component='div'>
+        <Title variant='h7' component='div'>
           {note.Title}
-        </Typography>
-        <Typography color='textSecondary'>Author: {note.Author}</Typography>
+        </Title>
+        <StyledLink to='/404'>
+          <AvatarBackground randomColor={randomColor}>
+            <AvatarContainer>
+              <CustomAvatar variant='square'>N</CustomAvatar>
+            </AvatarContainer>
+            <AvatarUsernames>
+              <AvatarAuthor color='textSecondary'>{note.Author}</AvatarAuthor>
+
+              <Typography color='textSecondary'>anc</Typography>
+            </AvatarUsernames>
+          </AvatarBackground>
+        </StyledLink>
+        <Typography color='textSecondary'>{note.Content}</Typography>
         <Typography color='textSecondary'>
           Published Date: {note.PublishedDate}
         </Typography>

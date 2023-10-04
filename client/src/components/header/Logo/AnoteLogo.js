@@ -1,5 +1,5 @@
 import { SvgIcon, Typography } from "@mui/material";
-import { ReactComponent as LogoIcon } from ".././logo.svg";
+import { ReactComponent as LogoIcon } from "../../../logo.svg";
 
 function AnoteLogo() {
   return (
