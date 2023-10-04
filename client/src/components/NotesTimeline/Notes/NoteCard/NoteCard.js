@@ -7,37 +7,38 @@ import {
   AvatarBackground,
   AvatarContainer,
   AvatarUsernames,
+  ContentContainer,
   CustomAvatar,
   StyledLink,
   Title,
 } from "./NoteCard.styled";
+import Tags from "./Tags";
 
 function NoteCard({ note }) {
   var randomColor = require("randomcolor");
 
   return (
-    <Card>
+    <Card sx={{ minWidth: "300px", maxWidth: "300px" }}>
       <CardContent>
         <Title variant='h7' component='div'>
           {note.Title}
         </Title>
-        <StyledLink to='/404'>
-          <AvatarBackground randomColor={randomColor}>
-            <AvatarContainer>
-              <CustomAvatar variant='square'>N</CustomAvatar>
-            </AvatarContainer>
+        <AvatarBackground randomColor={randomColor}>
+          <AvatarContainer>
+            <CustomAvatar variant='square'>N</CustomAvatar>
+          </AvatarContainer>
+          <StyledLink to='/404'>
             <AvatarUsernames>
-              <AvatarAuthor color='textSecondary'>{note.Author}</AvatarAuthor>
-
+              <AvatarAuthor>{note.Author}</AvatarAuthor>
               <Typography color='textSecondary'>anc</Typography>
             </AvatarUsernames>
-          </AvatarBackground>
-        </StyledLink>
-        <Typography color='textSecondary'>{note.Content}</Typography>
-        <Typography color='textSecondary'>
-          Published Date: {note.PublishedDate}
-        </Typography>
-        <Typography variant='body2'>{note.Content}</Typography>
+          </StyledLink>
+        </AvatarBackground>
+        <ContentContainer>
+          <Typography color='textSecondary'>{note.Content}</Typography>
+        </ContentContainer>
+        <Typography color='textSecondary'>{note.PublishedDate}</Typography>
+        <Tags tags={note.Tags}></Tags>
       </CardContent>
     </Card>
   );

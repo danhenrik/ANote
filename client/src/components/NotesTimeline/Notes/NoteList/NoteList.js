@@ -8,7 +8,14 @@ function NoteList({ notes }) {
     <NotesContainer>
       <Grid container spacing={2}>
         {notes.map((note) => (
-          <Grid item xs={12} sm={8} md={4} key={note.Id}>
+          <Grid
+            sx={{ minWidth: "300px", maxWidth: "300px", margin: "0 auto" }}
+            item
+            xs={12}
+            sm={8}
+            md={4}
+            key={note.Id}
+          >
             <ButtonBase sx={{ textAlign: "none" }}>
               <NoteCard note={note} />
             </ButtonBase>
