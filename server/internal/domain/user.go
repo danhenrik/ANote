@@ -5,7 +5,3 @@ type User struct {
 	Email    string
 	Password string
 }
-
-func (u *User) GetFieldAdresses() []any {
-	return []any{&u.Id, &u.Email, &u.Password}
-}

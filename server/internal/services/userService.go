@@ -1,10 +1,12 @@
 package services
 
 import (
-	ports "anote/internal/ports/repositories"
+	"anote/internal/domain"
+	"anote/internal/ports"
+	"anote/internal/types"
+	errors "anote/internal/types"
 	"anote/internal/utils"
 	"anote/internal/viewmodels"
-	"errors"
 )
 
 type UserService struct {
@@ -15,52 +17,50 @@ func NewUserService(userRepository ports.UserRepository) UserService {
 	return UserService{UserRepository: userRepository}
 }
 
-func (this UserService) Create(userVM viewmodels.UserVM) error {
-	if isValidEmail := utils.ValidateEmail(userVM.Email); !isValidEmail {
-		return errors.New("Invalid email")
+func (this UserService) Create(user domain.User) *types.AppError {
+	if isValidEmail := utils.ValidateEmail(user.Email); !isValidEmail {
+		return errors.NewAppError(400, "Invalid email")
 	}
-
-	hashedPassword, err := utils.Hash(userVM.Password)
+	hashedPassword, err := utils.Hash(user.Password)
 	if err != nil {
-		return err
+		return errors.NewAppError(500, "Internal server error")
 	}
-	userVM.Password = hashedPassword
+	user.Password = hashedPassword
 
-	user := userVM.ToDomainUser()
-	if err = this.UserRepository.Create(user); err != nil {
+	if err := this.UserRepository.Create(user); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (this UserService) GetByUsername(username string) (viewmodels.UserVM, error) {
+func (this UserService) GetAll() ([]domain.User, *types.AppError) {
+	users, err := this.UserRepository.GetAll()
+	if err != nil {
+		return []domain.User{}, nil
+	}
+	return users, err
+}
+
+func (this UserService) GetByUsername(username string) (*domain.User, *types.AppError) {
 	user, err := this.UserRepository.GetByUsername(username)
 	if err != nil {
-		return viewmodels.UserVM{}, err
+		return nil, err
 	}
-
-	userVM := viewmodels.UserVMFromDomainUser(user)
-	return userVM, nil
+	return user, nil
 }
 
-func (this UserService) GetByEmail(email string) (viewmodels.UserVM, error) {
+func (this UserService) GetByEmail(email string) (*domain.User, *types.AppError) {
 	user, err := this.UserRepository.GetByEmail(email)
 	if err != nil {
-		return viewmodels.UserVM{}, err
+		return nil, err
 	}
-
-	userVM := viewmodels.UserVMFromDomainUser(user)
-	return userVM, nil
+	return user, nil
 }
 
-func (_ UserService) GetAll() ([]viewmodels.UserVM, error) {
-	return []viewmodels.UserVM{}, nil
+func (_ UserService) Update(user viewmodels.UserVM) (domain.User, *types.AppError) {
+	return domain.User{}, nil
 }
 
-func (_ UserService) Update(user viewmodels.UserVM) (viewmodels.UserVM, error) {
-	return viewmodels.UserVM{}, nil
-}
-
-func (_ UserService) Delete(username string) (bool, error) {
+func (_ UserService) Delete(username string) (bool, *types.AppError) {
 	return true, nil
 }
