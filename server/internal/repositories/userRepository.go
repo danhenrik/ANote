@@ -2,10 +2,10 @@ package repositories
 
 import (
 	"anote/internal/domain"
-	interfaces "anote/internal/ports/database"
-	"errors"
-	"fmt"
+	interfaces "anote/internal/ports"
+	"anote/internal/types"
 	"log"
+	"reflect"
 )
 
 // this component is carried with making the SQL queries to the database
@@ -17,55 +17,80 @@ func NewUserRepository(DBConn interfaces.DBConnection) UserRepository {
 	}
 }
 
-func (this UserRepository) Create(user domain.User) error {
+func (this UserRepository) Create(user domain.User) *types.AppError {
 	err := this.DBConn.Exec("INSERT INTO users (id, email, password) VALUES ($1, $2, $3)", user.Id, user.Email, user.Password)
 	if err != nil {
-		log.Println("Error on insert new user: ", err)
-		return errors.New(fmt.Sprintf("Error on insert new user: %v", err))
+		log.Println("[UserRepo] Error on insert new user:", err)
+		return err
 	}
 	return nil
 }
 
-func (this UserRepository) GetByUsername(username string) (domain.User, error) {
-	var user domain.User
-	err := this.DBConn.QueryOne(&user, "SELECT * FROM users WHERE id = $1", username)
+func (this UserRepository) GetByUsername(username string) (*domain.User, *types.AppError) {
+	objType := reflect.TypeOf(domain.User{})
+
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM users WHERE id = $1", username)
 	if err != nil {
-		errMessage := fmt.Sprintf("Error on get user by username: %v", err)
-		log.Println(errMessage)
-		return user, errors.New(errMessage)
+		log.Println("[UserRepo] Error on get user by username:", err)
+		return nil, err
 	}
 
-	return user, nil
+	if user, ok := res.(domain.User); ok {
+		return &user, nil
+	}
+	return nil, nil
 }
 
-func (this UserRepository) GetByEmail(email string) (domain.User, error) {
-	var user domain.User
-	err := this.DBConn.QueryOne(&user, "SELECT * FROM users WHERE email = $1", email)
+func (this UserRepository) GetByEmail(email string) (*domain.User, *types.AppError) {
+	objType := reflect.TypeOf(domain.User{})
+
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM users WHERE email = $1", email)
 	if err != nil {
-		errMessage := fmt.Sprintf("Error on get user by email: %v", err)
-		log.Println(errMessage)
-		return user, errors.New(errMessage)
+		log.Println("[UserRepo] Error on get user by email:", err)
+		return nil, err
 	}
 
-	return user, nil
+	if user, ok := res.(domain.User); ok {
+		return &user, nil
+	}
+	return nil, nil
 }
 
-func (this UserRepository) GetAll() ([]domain.User, error) {
-	var users []domain.User
-	// err := this.DBConn.QueryMultiple(users, "SELECT * FROM users")
-	// if err != nil {
-	// 	errMessage := fmt.Sprintf("Error on get all users: %v", err)
-	// 	log.Println(errMessage)
-	// 	return users, errors.New(errMessage)
-	// }
+func (this UserRepository) GetAll() ([]domain.User, *types.AppError) {
+	objType := reflect.TypeOf(domain.User{})
 
-	return users, nil
+	res, err := this.DBConn.QueryMultiple(objType, "SELECT * FROM users")
+	if err != nil {
+		log.Println("[UserRepo] Error on get all users:", err)
+		return []domain.User{}, err
+	}
+
+	if users, ok := res.([]domain.User); ok {
+		return users, nil
+	}
+	return []domain.User{}, nil
 }
 
-func (_ UserRepository) Update(user domain.User) error {
+func (_ UserRepository) Update(user domain.User) *types.AppError {
 	return nil
 }
 
-func (this UserRepository) Delete(username string) error {
-	return this.DBConn.Exec("DELETE FROM users WHERE id = $1", username)
+func (this UserRepository) Delete(username string) *types.AppError {
+	this.DBConn.Exec("DELETE FROM users WHERE id = $1", username)
+	return nil
+}
+
+func (this UserRepository) GetUserWithPassword(key string) (*domain.User, *types.AppError) {
+	objType := reflect.TypeOf(domain.User{})
+
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM users WHERE id = $1 OR email = $1", key)
+	if err != nil {
+		log.Println("[UserRepo] Error on get user with password:", err)
+		return nil, err
+	}
+
+	if user, ok := res.(domain.User); ok {
+		return &user, nil
+	}
+	return nil, nil
 }

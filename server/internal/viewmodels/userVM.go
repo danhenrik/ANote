@@ -2,10 +2,23 @@ package viewmodels
 
 import "anote/internal/domain"
 
+type CreateUserVM struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type UserVM struct {
-	Username string `json:"username" form:"username"`
-	Email    string `json:"email" form:"email"`
-	Password string `json:"password,omitempty" form:"password"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+func (this *CreateUserVM) ToDomainUser() domain.User {
+	var user domain.User
+	user.Id = this.Username
+	user.Email = this.Email
+	user.Password = this.Password
+	return user
 }
 
 func UserVMFromDomainUser(userD domain.User) UserVM {
@@ -19,10 +32,5 @@ func (this *UserVM) ToDomainUser() domain.User {
 	var user domain.User
 	user.Id = this.Username
 	user.Email = this.Email
-	user.Password = this.Password
 	return user
-}
-
-func (this *UserVM) IsEmpty() bool {
-	return this.Username == "" || this.Email == "" || this.Password == ""
 }
