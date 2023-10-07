@@ -46,8 +46,8 @@ pg_conn = pg_conn()
 
 pg_conn.SQLCmd("""CREATE TABLE users (
                 id varchar(30) PRIMARY KEY, 
-                email varchar(255) NOT NULL, 
-                password varchar(50)
+                email varchar(255) NOT NULL UNIQUE, 
+                password varchar(72)
                );""")
 
 pg_conn.SQLCmd("""CREATE TABLE notes (
@@ -106,11 +106,42 @@ pg_conn.SQLCmd("""CREATE TABLE note_tags (
                   REFERENCES tags(id) ON DELETE CASCADE
                 );""")
 
+pg_conn.SQLCmd("""CREATE TABLE communities (
+                id uuid PRIMARY KEY,
+                name varchar(50) NOT NULL
+                );""")
+
+pg_conn.SQLCmd("""CREATE TABLE community_members (
+                id uuid PRIMARY KEY,
+                user_id varchar(30),
+                community_id uuid,
+                CONSTRAINT user_FK
+                 FOREIGN KEY(user_id)
+                  REFERENCES users(id) ON DELETE CASCADE,
+                CONSTRAINT community_FK
+                 FOREIGN KEY(community_id)
+                  REFERENCES communities(id) ON DELETE CASCADE
+                );""")
+
+pg_conn.SQLCmd("""CREATE TABLE community_notes (
+                id uuid PRIMARY KEY,
+                note_id uuid,
+                community_id uuid,
+                CONSTRAINT notes_FK
+                 FOREIGN KEY(note_id)
+                  REFERENCES notes(id) ON DELETE CASCADE,
+                CONSTRAINT community_FK
+                 FOREIGN KEY(community_id)
+                  REFERENCES communities(id) ON DELETE CASCADE
+                );""")
+
 # Create Postgres replication slot
 pg_conn.SQLCmd("""SELECT * 
                 FROM pg_create_logical_replication_slot(
                  'es_replication_slot', 
-                 'wal2json'
+                 'wal2json',
+                 false,
+                 true
                );""")
     
 # Create Postgres triggers
@@ -129,17 +160,21 @@ pg_conn.SQLCmd("""CREATE TRIGGER notify_notes
                 EXECUTE PROCEDURE notify();""")
 
 pg_conn.SQLCmd("""CREATE TRIGGER notify_likes 
-                AFTER INSERT OR UPDATE OR DELETE 
+                AFTER INSERT OR DELETE 
                 ON likes FOR EACH ROW 
                 EXECUTE PROCEDURE notify();""")
                
 pg_conn.SQLCmd("""CREATE TRIGGER notify_comments 
-                AFTER INSERT OR UPDATE OR DELETE 
+                AFTER INSERT OR DELETE 
                 ON comments FOR EACH ROW 
                 EXECUTE PROCEDURE notify();""")
                
 pg_conn.SQLCmd("""CREATE TRIGGER notify_note_tags 
-                AFTER INSERT OR UPDATE OR DELETE 
+                AFTER INSERT OR DELETE 
                 ON note_tags FOR EACH ROW 
                 EXECUTE PROCEDURE notify();""")
 
+pg_conn.SQLCmd("""CREATE TRIGGER notify_community_notes
+                AFTER INSERT OR DELETE 
+                ON community_notes FOR EACH ROW 
+                EXECUTE PROCEDURE notify();""")
