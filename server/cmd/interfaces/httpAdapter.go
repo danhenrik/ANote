@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// =======================================================================================================================
+
 type Request struct {
 	Method  string
 	Headers map[string][]string
@@ -39,13 +41,29 @@ func NewRequest(Method string,
 	}
 }
 
-type Response struct {
-	StatusCode int     `json:"status_code"` // HTTP status code
-	Data       any     `json:"data"`        // Response data
-	Message    *string `json:"message"`     // Error message
+func (req *Request) GetSingleQuery(key string) (string, bool) {
+	if value, ok := req.Query[key]; ok && len(value) > 0 {
+		return value[0], true
+	}
+	return "", false
 }
 
-func NewErrorResponse(statusCode int, message string) Response {
+func (req *Request) GetSingleParam(key string) (string, bool) {
+	if value, ok := req.Param[key]; ok && len(value) > 0 {
+		return value[0], true
+	}
+	return "", false
+}
+
+// =======================================================================================================================
+
+type Response struct {
+	StatusCode uint    `json:"-"`       // HTTP status code
+	Data       any     `json:"data"`    // Response data
+	Message    *string `json:"message"` // Error message
+}
+
+func NewErrorResponse(statusCode uint, message string) Response {
 	return Response{
 		StatusCode: statusCode,
 		Data:       nil,
@@ -53,7 +71,7 @@ func NewErrorResponse(statusCode int, message string) Response {
 	}
 }
 
-func NewSuccessResponse(statusCode int, data any) Response {
+func NewSuccessResponse(statusCode uint, data any) Response {
 	return Response{
 		StatusCode: statusCode,
 		Data:       data,
@@ -68,6 +86,8 @@ func NewNoContentRespone() Response {
 		Message:    nil,
 	}
 }
+
+// =======================================================================================================================
 
 type Controller func(request Request) Response
 
@@ -103,6 +123,6 @@ func NewGinAdapter(c Controller) func(*gin.Context) {
 		)
 
 		response := c(request)
-		ctx.JSON(response.StatusCode, response)
+		ctx.JSON(int(response.StatusCode), response)
 	}
 }
