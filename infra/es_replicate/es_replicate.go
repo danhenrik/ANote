@@ -1,24 +1,28 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/refresh"
 	"github.com/joho/godotenv"
 	"github.com/lib/pq"
 )
 
-type UpdateRow struct {
-	lsn  []uint8
-	xid  int64
-	data string
+// Shared
+type SharedContainer struct {
+	connStr string
+	db      *sql.DB
+	es      *elasticsearch.TypedClient
 }
+
+var Container SharedContainer
 
 type Update struct {
 	WalId  []uint8
@@ -37,11 +41,105 @@ type Update struct {
 	} `json:"change"`
 }
 
-type SharedContainer struct {
-	connStr string
-	db      *sql.DB
-	es      *elasticsearch.Client
+// Postgres
+type UpdateRow struct {
+	lsn  []uint8
+	xid  int64
+	data string
 }
+
+func GetUpdateFromPG() (updatesList []Update) {
+	db := Container.db
+	updates, err := db.Query("SELECT * FROM pg_logical_slot_peek_changes('es_replication_slot', NULL, NULL);")
+	if err != nil {
+		log.Println("Error on query:", err)
+	}
+	defer updates.Close()
+
+	updatesList = []Update{}
+	for updates.Next() {
+		row := UpdateRow{}
+		err := updates.Scan(&row.lsn, &row.xid, &row.data)
+		if err != nil {
+			log.Println("Error on query scan:", err)
+		}
+
+		// note: Could probably have a more performant encoding to data changes
+		update := Update{}
+		err = json.Unmarshal([]byte(row.data), &update)
+		if err != nil {
+			log.Println("Error on JSON Unmarshal: ", err)
+		}
+		update.WalId = row.lsn
+		updatesList = append(updatesList, update)
+	}
+	return updatesList
+}
+
+func ListenForUpdates(updateChan chan<- []Update) {
+	// create a new listener
+	connStr := Container.connStr
+	listener := pq.NewListener(connStr, 10*time.Second, time.Minute, nil)
+	defer listener.Close()
+	err := listener.Listen("es_replicate")
+	if err != nil {
+		log.Println("Error on listen:", err)
+	} else {
+		log.Println("Listening for notifications...")
+	}
+
+	// continuously listen for notifications
+	timeIdle := 0
+	for {
+		select {
+		case <-listener.Notify:
+			log.Println("Received update notification, reaching for changes...")
+			updatesList := GetUpdateFromPG()
+			if len(updatesList) > 0 {
+				log.Println("Received", len(updatesList), "updates")
+				log.Println(updatesList)
+				updateChan <- updatesList
+				timeIdle = 0
+			} else {
+				log.Println("Notification sent falsely")
+			}
+		case <-time.After(time.Minute):
+			timeIdle++
+			if timeIdle == 0 {
+				log.Println("Received no events for", timeIdle, "minute")
+			} else {
+				log.Println("Received no events for", timeIdle, "minutes")
+			}
+			updatesList := GetUpdateFromPG()
+			if len(updatesList) > 0 {
+				log.Println("Found", len(updatesList), "updates!")
+				log.Println(updatesList)
+				updateChan <- updatesList
+				timeIdle = 0
+			}
+		}
+	}
+}
+
+func SetLastItemReplicated(lsn []uint8) {
+	db := Container.db
+	_, err := db.Exec("SELECT pg_replication_slot_advance('es_replication_slot', $1);", lsn)
+	if err != nil {
+		log.Println("Error on replication callback:", err)
+	}
+}
+
+func GetTagById(id string) (tag Tag) {
+	db := Container.db
+	query := db.QueryRow("SELECT * FROM tags WHERE id = $1;", id)
+	err := query.Scan(&tag.Id, &tag.Name)
+	if err != nil {
+		log.Println("Error on query scan:", err)
+	}
+	return tag
+}
+
+// Elasticsearch
 
 type strArr []string
 
@@ -54,98 +152,46 @@ func (arr strArr) indexOf(element string) int {
 	return -1
 }
 
-var container SharedContainer
-
-func GetUpdateFromPG() (updatesList []Update) {
-	db := container.db
-	updates, err := db.Query("SELECT * FROM pg_logical_slot_peek_changes('es_replication_slot', NULL, NULL);")
-	if err != nil {
-		fmt.Println("Error on query: ", err)
-	}
-	defer updates.Close()
-
-	updatesList = []Update{}
-	for updates.Next() {
-		row := UpdateRow{}
-		err := updates.Scan(&row.lsn, &row.xid, &row.data)
-		if err != nil {
-			fmt.Print("Error on query scan: ", err)
-		}
-
-		// note: Could probably have a more performant encoding to data changes
-		update := Update{}
-		err = json.Unmarshal([]byte(row.data), &update)
-		if err != nil {
-			fmt.Print("Error on JSON Unmarshal: ", err)
-		}
-		update.WalId = row.lsn
-		updatesList = append(updatesList, update)
-	}
-	return updatesList
+type Community struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
-func ListenForUpdates(updateChan chan<- []Update) {
-	// create a new listener
-	connStr := container.connStr
-	listener := pq.NewListener(connStr, 10*time.Second, time.Minute, nil)
-	defer listener.Close()
-	err := listener.Listen("es_replicate")
-	if err != nil {
-		fmt.Println("Error on listen: ", err)
-	} else {
-		fmt.Println("Listening for notifications...")
-	}
+type Tag struct {
+	Id    string `json:"id"`
+	TagId string `json:"tag_id"`
+	Name  string `json:"name"`
+}
 
-	// continuously listen for notifications
-	timeIdle := 0
-	for {
-		select {
-		case <-listener.Notify:
-			fmt.Println("Received update notification, reaching for changes...")
-			updatesList := GetUpdateFromPG()
-			if len(updatesList) > 0 {
-				fmt.Println("Received ", len(updatesList), " updates")
-				fmt.Println(updatesList)
-				updateChan <- updatesList
-				timeIdle = 0
-			} else {
-				fmt.Println("Notification sent falsely")
-			}
-		case <-time.After(time.Minute):
-			timeIdle++
-			if timeIdle == 0 {
-				fmt.Println("Received no events for ", timeIdle, " minute")
-			} else {
-				fmt.Println("Received no events for ", timeIdle, " minutes")
-			}
-			updatesList := GetUpdateFromPG()
-			if len(updatesList) > 0 {
-				fmt.Println("Found ", len(updatesList), " updates!")
-				fmt.Println(updatesList)
-				updateChan <- updatesList
-				timeIdle = 0
-			}
-		}
-	}
+type Like struct {
+	Id     string `json:"id"`
+	UserId string `json:"user_id"`
+}
+
+type Comment struct {
+	Id     string `json:"id"`
+	UserId string `json:"user_id"`
 }
 
 type Note struct {
-	Id            string   `json:"id"`
-	Title         string   `json:"title"`
-	Content       string   `json:"content"`
-	LikesCount    int      `json:"likes_count"`
-	Likes         []string `json:"likes"` // usernames (id)
-	PublishedDate string   `json:"published_date"`
-	UpdatedDate   string   `json:"updated_date"`
-	Author        string   `json:"author"` // username (id)
-	Tags          []string `json:"tags"`   // tag names (id)
-	CommentCount  int      `json:"comment_count"`
-	Commenters    []string `json:"commenters"` // usernames (id)
+	Id            string      `json:"id"`
+	Title         string      `json:"title"`
+	Content       string      `json:"content"`
+	PublishedDate string      `json:"published_date"`
+	UpdatedDate   string      `json:"updated_date"`
+	Author        string      `json:"author"` // username (id)
+	Communities   []Community `json:"communities"`
+	Tags          []Tag       `json:"tags"`
+	LikesCount    int         `json:"likes_count"`
+	Likes         []Like      `json:"likes"` // usernames (id)
+	CommentCount  int         `json:"comment_count"`
+	Commenters    []Comment   `json:"commenters"` // usernames (id)
 }
 
 func ESIndex(updates []Update) {
-	fmt.Println("Indexing to Elasticsearch...")
-	es := container.es
+	log.Println("Indexing to Elasticsearch...")
+
+	es := Container.es
 	indexName := "notes"
 
 	for _, update := range updates {
@@ -154,10 +200,10 @@ func ESIndex(updates []Update) {
 				switch change.Table {
 				case "notes":
 					noteId := change.OldKeys.KeyValues[0]
-					log.Println("Deleting note w/ id ", noteId, " from Elasticsearch")
-					_, err := es.Delete(indexName, noteId)
+					log.Println("Deleting note w/ id", noteId, "from Elasticsearch")
+					_, err := es.Delete(indexName, noteId).Do(context.Background())
 					if err != nil {
-						log.Println("Error deleting note w/ id, ", noteId, " from Elasticsearch: ", err)
+						log.Println("Error deleting note w/ id", noteId, "from Elasticsearch: ", err)
 					}
 					log.Println("Successfully deleted")
 					return
@@ -169,74 +215,169 @@ func ESIndex(updates []Update) {
 					// remove tag
 				}
 			}
+
 			note := Note{}
 			switch change.Table {
 			case "notes":
-				log.Println(change)
-				noteId := change.OldKeys.KeyValues[0]
-				res, err := es.Get(indexName, noteId)
+				idIndex := strArr(change.ColumnNames).indexOf("id")
+				noteId := change.ColumnValues[idIndex]
+
 				// get note info
+				res, err := es.Get(indexName, noteId).Do(context.Background())
 				if err != nil {
-					fmt.Print("Error on GET ES request: ", err)
+					log.Println("Error on GET ES request:", err)
 				}
 
-				json.NewDecoder(res.Body).Decode(&note)
-				log.Println(note)
+				err = json.Unmarshal(res.Source_, &note)
 				if err != nil {
-					fmt.Print("Error on JSON decoding: ", err)
+					log.Println("Error on JSON decoding:", err)
 				}
 
 				// update or insert note info
+				note.Id = change.ColumnValues[idIndex]
 				titleIndex := strArr(change.ColumnNames).indexOf("title")
 				note.Title = change.ColumnValues[titleIndex]
 				contentIndex := strArr(change.ColumnNames).indexOf("content")
 				note.Content = change.ColumnValues[contentIndex]
+				publishedDateIndex := strArr(change.ColumnNames).indexOf("created_at")
+				note.PublishedDate = change.ColumnValues[publishedDateIndex]
 				updatedDateIndex := strArr(change.ColumnNames).indexOf("updated_at")
 				note.UpdatedDate = change.ColumnValues[updatedDateIndex]
+				authorIndex := strArr(change.ColumnNames).indexOf("user_id")
+				note.Author = change.ColumnValues[authorIndex]
 
-				if change.Kind == "insert" {
-					idIndex := strArr(change.ColumnNames).indexOf("id")
-					note.Id = change.ColumnValues[idIndex]
-					authorIndex := strArr(change.ColumnNames).indexOf("user_id")
-					note.Author = change.ColumnValues[authorIndex]
-					publishedDateIndex := strArr(change.ColumnNames).indexOf("created_at")
-					note.PublishedDate = change.ColumnValues[publishedDateIndex]
-				}
-
-				jsonString, err := json.Marshal(note)
-				res, err = es.Index(
-					indexName,
-					strings.NewReader(string(jsonString)),
-					es.Index.WithWaitForActiveShards("all"),
-				)
+				// jsonString, err := json.Marshal(note)
+				_, err = es.Index(indexName).
+					Id(noteId).
+					Request(note).
+					Refresh(refresh.True).
+					Do(context.Background())
 				if err != nil {
-					fmt.Println("Error on ES indexing: ", err)
+					log.Println("Error on ES indexing:", err)
 				}
-				log.Println("Successfully indexed note w/ id ", note.Id, " to Elasticsearch")
 
+				log.Println("Successfully indexed note w/ id", note.Id)
+				SetLastItemReplicated(update.WalId)
+				break
 			case "likes":
-				// 0: ID, 1: user_id, 2: note_id
-				noteId := change.ColumnValues[2]
-				res, err := es.Get(indexName, noteId)
-				if err != nil {
-					fmt.Print("Error on GET ES request: ", err)
-				}
+				// Likes can only be inserted and deleted
+				if change.Kind == "insert" {
+					idIndex := strArr(change.ColumnNames).indexOf("note_id")
+					noteId := change.ColumnValues[idIndex]
 
-				json.NewDecoder(res.Body).Decode(&note)
-				log.Println(note)
-				if err != nil {
-					fmt.Print("Error on JSON decoding: ", err)
+					// get note info
+					res, err := es.Get(indexName, noteId).Do(context.Background())
+					if err != nil {
+						log.Println("Error on GET ES request:", err)
+					}
+
+					err = json.Unmarshal(res.Source_, &note)
+					if err != nil {
+						log.Println("Error on JSON decoding:", err)
+					}
+
+					// update or insert note info
+					idIndex = strArr(change.ColumnNames).indexOf("id")
+					userIdIndex := strArr(change.ColumnNames).indexOf("user_id")
+					like := Like{Id: change.ColumnValues[idIndex], UserId: change.ColumnValues[userIdIndex]}
+					note.Likes = append(note.Likes, like)
+					note.LikesCount = len(note.Likes)
+
+					// jsonString, err := json.Marshal(note)
+					_, err = es.
+						Index(indexName).
+						Id(noteId).
+						Request(note).
+						Do(context.Background())
+					if err != nil {
+						log.Println("Error on ES indexing:", err)
+					}
+
+					log.Println("Successfully indexed likes from note w/ id", note.Id)
+					SetLastItemReplicated(update.WalId)
+					break
 				}
+				log.Println("Likes can't be updated")
 			case "comments":
-				// 0: ID, 1: user_id, 2: note_id, 3: content
+				// comments can only be inserted and deleted
+				if change.Kind == "insert" {
+					idIndex := strArr(change.ColumnNames).indexOf("note_id")
+					noteId := change.ColumnValues[idIndex]
 
+					// get note info
+					res, err := es.Get(indexName, noteId).Do(context.Background())
+					if err != nil {
+						log.Println("Error on GET ES request:", err)
+					}
+					err = json.Unmarshal(res.Source_, &note)
+					if err != nil {
+						log.Println("Error on JSON decoding:", err)
+					}
+
+					// update or insert note info
+					idIndex = strArr(change.ColumnNames).indexOf("id")
+					userIdIndex := strArr(change.ColumnNames).indexOf("user_id")
+					comment := Comment{Id: change.ColumnValues[idIndex], UserId: change.ColumnValues[userIdIndex]}
+
+					note.Commenters = append(note.Commenters, comment)
+					note.CommentCount = len(note.Commenters)
+
+					// jsonString, err := json.Marshal(note)
+					_, err = es.
+						Index(indexName).
+						Id(noteId).
+						Request(note).
+						Do(context.Background())
+					if err != nil {
+						log.Println("Error on ES indexing:", err)
+					}
+
+					log.Println("Successfully indexed comments from note w/ id", note.Id)
+					SetLastItemReplicated(update.WalId)
+					break
+				}
+				log.Println("Comments can't be updated")
 			case "note_tags":
+				// tags can only be inserted and deleted
+				if change.Kind == "insert" {
+					idIndex := strArr(change.ColumnNames).indexOf("note_id")
+					noteId := change.ColumnValues[idIndex]
+
+					// get note info
+					res, err := es.Get(indexName, noteId).Do(context.Background())
+					if err != nil {
+						log.Println("Error on GET ES request:", err)
+					}
+					err = json.Unmarshal(res.Source_, &note)
+					if err != nil {
+						log.Println("Error on JSON decoding:", err)
+					}
+
+					// update or insert note info
+					idIndex = strArr(change.ColumnNames).indexOf("id")
+					tagIdIndex := strArr(change.ColumnNames).indexOf("tag_id")
+					tag := GetTagById(change.ColumnValues[tagIdIndex])
+					tag.Id = change.ColumnValues[idIndex]
+
+					note.Tags = append(note.Tags, tag)
+
+					// jsonString, err := json.Marshal(note)
+					_, err = es.
+						Index(indexName).
+						Id(noteId).
+						Request(note).
+						Do(context.Background())
+
+					if err != nil {
+						log.Println("Error on ES indexing:", err)
+					}
+
+					SetLastItemReplicated(update.WalId)
+					break
+				}
+				log.Println("Tags can't be updated")
 			}
 		}
-
-		// esIndex := "notes"
-		es.Info()
-		// es.Index(esIndex)
 	}
 }
 
@@ -247,34 +388,39 @@ func main() {
 	var pg_password string = os.Getenv("PG_PASSWORD")
 	var pg_dbname string = os.Getenv("PG_DATABASE")
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", pg_user, pg_password, pg_dbname)
-	container.connStr = connStr
+	Container.connStr = connStr
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("Error connecting to PostgreSQL: %s", err)
 	}
 	log.Println("Connected to PostgreSQL")
-	container.db = db
+	Container.db = db
 	defer db.Close()
 
 	// Connect to Elasticsearch
+	// cfg := elasticsearch.Config{
+	// 	Addresses: []string{"http://elasticsearch:9200"},
+	// }
 	cfg := elasticsearch.Config{
-		Addresses: []string{"http://elasticsearch:9200"},
+		Addresses: []string{"http://localhost:9200"},
 	}
 
-	es, err := elasticsearch.NewClient(cfg)
+	es, err := elasticsearch.NewTypedClient(cfg)
 	if err != nil {
 		log.Fatalf("Error connecting to Elasticsearch: %s", err)
 	}
 	log.Println("Connected to Elasticsearch")
-	container.es = es
+	Container.es = es
 
 	updateChan := make(chan []Update)
 	go ListenForUpdates(updateChan)
 	for {
 		updates := <-updateChan
+		log.Println("Received updates:", updates)
 
 		// write to elasticsearch
 		ESIndex(updates)
+		log.Println("Indexed updates:", updates)
 	}
 }
