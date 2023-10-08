@@ -1,4 +1,4 @@
-version: '3.7'  
+version: "3.7"
 
 services:
   database:
@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: anote
       POSTGRES_PASSWORD: anote
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
       - ./infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
@@ -78,7 +78,7 @@ services:
       dockerfile: dockerfile
       context: ./server
     ports:
-      - '8080:8080'
+      - "8080:8080"
     depends_on:
       - database
 
@@ -90,6 +90,14 @@ services:
     depends_on:
       - elasticsearch
       - database
+
+  client:
+    container_name: client
+    build:
+      dockerfile: dockerfile
+      context: ./client
+    ports:
+      - "3002:3000"
 
 volumes:
   pg-data:
