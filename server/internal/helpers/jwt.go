@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"anote/internal/config"
+	"anote/internal/constants"
 	"anote/internal/domain"
 	"time"
 
@@ -22,12 +22,12 @@ func (_ JwtHelper) CreateToken(user *domain.User) (string, error) {
 	claims["exp"] = time.Now().Add(time.Hour).Unix()
 	claims["id"] = user.Id
 
-	return token.SignedString([]byte(config.JWT_SECRET))
+	return token.SignedString([]byte(constants.JWT_SECRET))
 }
 
 func (_ JwtHelper) ValidateToken(token string) bool {
 	_, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.JWT_SECRET), nil
+		return []byte(constants.JWT_SECRET), nil
 	})
 	if err != nil {
 		return false

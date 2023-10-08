@@ -1,9 +1,11 @@
 package database
 
 import (
+	"anote/internal/constants"
 	"anote/internal/types"
 	errors "anote/internal/types"
 	"database/sql"
+	"fmt"
 	"log"
 	"reflect"
 	"sync"
@@ -22,7 +24,13 @@ var once sync.Once
 
 func GetConnection() Conn {
 	once.Do(func() {
-		connStr := "user=anote password=anote dbname=anote sslmode=disable"
+		connStr := fmt.Sprintf(
+			"host=%s user=%s password=%s dbname=%s sslmode=disable",
+			constants.DB_ADDR,
+			constants.DB_USER,
+			constants.DB_PWD,
+			constants.DB_NAME,
+		)
 		c, err := sql.Open("postgres", connStr)
 		if err != nil {
 			log.Fatal(err)

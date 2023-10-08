@@ -1,7 +1,16 @@
-FROM golang:1.21.1
+# build the server
+FROM golang:1.21.1 as build
 
-COPY . /
+WORKDIR /app
 
-WORKDIR /
+COPY go.mod ./
 
-RUN echo "Running"
+COPY go.sum ./
+
+COPY . ./
+
+RUN go mod download
+
+RUN go build -o bin/server cmd/anote/main.go
+
+ENTRYPOINT [ "./bin/server" ]

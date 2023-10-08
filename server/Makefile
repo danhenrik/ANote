@@ -31,6 +31,6 @@ run:
 	go run cmd/anote/main.go
 
 build:
-	go build -o bin/anote cmd/anote/main.go
+	go build -o bin/server cmd/anote/main.go
 
 	

@@ -24,7 +24,7 @@ services:
       - database
     restart: always
     ports:
-      - 3000:8080
+      - "3000:8080"
 
   elasticsearch:
     container_name: elasticsearch
@@ -43,8 +43,8 @@ services:
     cap_add:
       - IPC_LOCK
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9200:9200"
+      - "9300:9300"
     volumes:
       - es-data:/usr/share/elasticsearch/data
 
@@ -54,33 +54,12 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - 3001:5601
+      - "3001:5601"
     restart: always
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
       - kbn-data:/usr/share/kibana/data
-
-  es_replicate:
-    container_name: es_replicate
-    build:
-      dockerfile: dockerfile
-      context: ./infra/es_replicate
-    depends_on:
-      - database
-      - elasticsearch
-    ports:
-      - 1:1
-
-  server:
-    container_name: server
-    build:
-      dockerfile: dockerfile
-      context: ./server
-    ports:
-      - "8080:8080"
-    depends_on:
-      - database
 
   setup:
     container_name: setup
@@ -98,6 +77,41 @@ services:
       context: ./client
     ports:
       - "3002:3000"
+
+  server:
+    container_name: server
+    build:
+      dockerfile: dockerfile
+      context: ./server
+    environment:
+      - PORT=8080
+      - DATABASE_ADDR=database
+      - ELASTICSEARCH_ADDR=elasticsearch
+      - PG_DATABASE=anote
+      - PG_USER=anote
+      - PG_PASSWORD=anote
+    ports:
+      - "8080:8080"
+    depends_on:
+      - elasticsearch
+      - database
+
+  es_replicate:
+    container_name: es_replicate
+    build:
+      dockerfile: dockerfile
+      context: ./infra/es_replicate
+    environment:
+      - DATABASE_ADDR=database
+      - ELASTICSEARCH_ADDR=elasticsearch
+      - PG_DATABASE=anote
+      - PG_USER=anote
+      - PG_PASSWORD=anote
+    depends_on:
+      - database
+      - elasticsearch
+    ports:
+      - "1:1"
 
 volumes:
   pg-data:

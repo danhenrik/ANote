@@ -1,10 +1,9 @@
 package services
 
 import (
+	"anote/internal/helpers"
 	"anote/internal/ports"
-	"anote/internal/types"
 	errors "anote/internal/types"
-	"anote/internal/utils"
 	"anote/internal/viewmodels"
 	"log"
 )
@@ -21,7 +20,7 @@ func NewAuthService(userRepository ports.UserRepository, JwtProvider ports.JwtPr
 	}
 }
 
-func (this AuthService) Login(login viewmodels.LoginVM) (string, *types.AppError) {
+func (this AuthService) Login(login viewmodels.LoginVM) (string, *errors.AppError) {
 	userFromDB, err := this.UserRepository.GetUserWithPassword(login.Login)
 	if err != nil {
 		log.Println("[Login] Error on get user:", err)
@@ -31,7 +30,7 @@ func (this AuthService) Login(login viewmodels.LoginVM) (string, *types.AppError
 		return "", errors.NewAppError(400, "User not found")
 	}
 
-	if passwordMatch := utils.CheckHash(login.Password, userFromDB.Password); !passwordMatch {
+	if passwordMatch := helpers.CheckHash(login.Password, userFromDB.Password); !passwordMatch {
 		return "", errors.NewAppError(400, "Invalid password")
 	}
 
