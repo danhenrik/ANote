@@ -1,21 +1,31 @@
 package container
 
 import (
+	"anote/internal/constants"
 	"anote/internal/database"
 	"anote/internal/helpers"
+	"anote/internal/ports"
 	"anote/internal/repositories"
 	"anote/internal/services"
 )
 
-// this file is used to setup the dependencies of the application
+// This is a DI container
+func Config() {
+	constants.Config()
 
-// Setup DB Connection
-var DBConn = database.GetConnection()
-var JwtProvider = helpers.NewJwtProvider()
+	DBConn = database.GetConnection()
+	JwtProvider = helpers.NewJwtProvider()
 
-// Setup Repositories
-var UserRepository = repositories.NewUserRepository(DBConn)
+	UserRepository = repositories.NewUserRepository(DBConn)
 
-// Setup Services
-var UserService = services.NewUserService(UserRepository)
-var AuthService = services.NewAuthService(UserRepository, JwtProvider)
+	UserService = services.NewUserService(UserRepository)
+	AuthService = services.NewAuthService(UserRepository, JwtProvider)
+}
+
+var DBConn ports.DBConnection
+var JwtProvider ports.JwtProvider
+
+var UserRepository ports.UserRepository
+
+var UserService services.UserService
+var AuthService services.AuthService

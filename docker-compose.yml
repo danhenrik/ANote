@@ -84,12 +84,13 @@ services:
       dockerfile: dockerfile
       context: ./server
     environment:
-      - PORT=8080
-      - DATABASE_ADDR=database
-      - ELASTICSEARCH_ADDR=elasticsearch
+      - ENV=PRD
+      - DB_ADDR=database
+      - ES_ADDR=elasticsearch
       - PG_DATABASE=anote
       - PG_USER=anote
       - PG_PASSWORD=anote
+      - JWT_SECRET=secret
     ports:
       - "8080:8080"
     depends_on:

@@ -1,12 +1,12 @@
 help:
 	@echo "=========================================================================\n \
-		run - Run backend server\n \
-		infra [up|down] - Run infrastructure (DB, Background services, ES)\n \
-		full - Run infrastructure and server application\n \
+		dev - Run server locally\n \
+		full-dev - Run server locally and the rest of infra\n \
+		infra [up|down] - Run server and its dependencies (Server, Background services, DB, ES)\n \
 		build - Build the server executable in bin folder \
-		\n=========================================================================" 
+		\n========================================================================="
 
-full:
+full-dev:
 	@echo "=========================================================================\n \
 		Initializing infra.. \
 		\n========================================================================="
@@ -16,21 +16,22 @@ full:
 		\n========================================================================="
 	make run
 
+dev: 
+	go run cmd/anote/main.go
+
+build:
+	go build -o bin/server cmd/anote/main.go
+
 infra:
 	@echo "=========================================================================\n \
 		Usage: make infra [up|down] \
 		\n========================================================================="
 
 up:
-	docker compose up -d
+	docker compose up setup server es_replicate adminer kibana -d
 
 down:
-	docker compose down
+	docker compose down setup server es_replicate database adminer elasticsearch kibana
 
-run: 
-	go run cmd/anote/main.go
-
-build:
-	go build -o bin/server cmd/anote/main.go
 
 	

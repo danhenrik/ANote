@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/lib/pq"
-	_ "github.com/lib/pq"
 )
 
 // This component is carried with connecting to the database and sending the queries
