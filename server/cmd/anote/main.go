@@ -19,7 +19,7 @@ func main() {
 	r.GET("/users", httpAdapter.NewGinAdapter(routes.GetAllUsersController))
 	r.GET("/users/username/:username", httpAdapter.NewGinAdapter(routes.GetUserByUsernameController))
 	r.GET("/users/email/:email", httpAdapter.NewGinAdapter(routes.GetUserByEmailController))
-	r.POST("/login", httpAdapter.NewGinAdapter(routes.Login))
+	r.POST("/auth/login", httpAdapter.NewGinAdapter(routes.Login))
 
 	r.Run()
 }

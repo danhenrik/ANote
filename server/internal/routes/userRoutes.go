@@ -39,7 +39,7 @@ func GetAllUsersController(request httpAdapter.Request) httpAdapter.Response {
 }
 
 func GetUserByUsernameController(request httpAdapter.Request) httpAdapter.Response {
-	var userVM viewmodels.UserVM
+	var userVM any = nil
 	userId, ok := request.GetSingleParam("username")
 	if ok && userId != "" {
 		user, err := container.UserService.GetByUsername(userId)
@@ -47,13 +47,16 @@ func GetUserByUsernameController(request httpAdapter.Request) httpAdapter.Respon
 			log.Println("[UserController] Error on get user by username:", err)
 			return httpAdapter.NewErrorResponse(err.Status, err.Message)
 		}
-		userVM = viewmodels.UserVMFromDomainUser(*user)
+
+		if user != nil {
+			userVM = viewmodels.UserVMFromDomainUser(*user)
+		}
 	}
 	return httpAdapter.NewSuccessResponse(http.StatusOK, userVM)
 }
 
 func GetUserByEmailController(request httpAdapter.Request) httpAdapter.Response {
-	var userVM viewmodels.UserVM
+	var userVM any
 	email, ok := request.GetSingleParam("email")
 	if ok && email != "" {
 		user, err := container.UserService.GetByEmail(email)
@@ -61,7 +64,9 @@ func GetUserByEmailController(request httpAdapter.Request) httpAdapter.Response 
 			log.Println("[UserController] Error on get user by email:", err)
 			return httpAdapter.NewErrorResponse(err.Status, err.Message)
 		}
-		userVM = viewmodels.UserVMFromDomainUser(*user)
+		if user != nil {
+			userVM = viewmodels.UserVMFromDomainUser(*user)
+		}
 	}
 	return httpAdapter.NewSuccessResponse(http.StatusOK, userVM)
 }
