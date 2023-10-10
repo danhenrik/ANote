@@ -47,7 +47,8 @@ pg_conn = pg_conn()
 pg_conn.SQLCmd("""CREATE TABLE users (
                 id varchar(30) PRIMARY KEY, 
                 email varchar(255) NOT NULL UNIQUE, 
-                password varchar(72)
+                password varchar(72),
+                google_id varchar
                );""")
 
 pg_conn.SQLCmd("""CREATE TABLE notes (

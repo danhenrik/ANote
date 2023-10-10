@@ -24,7 +24,7 @@ services:
       - database
     restart: always
     ports:
-      - "3000:8080"
+      - "3002:8080"
 
   elasticsearch:
     container_name: elasticsearch
@@ -54,7 +54,7 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - "3001:5601"
+      - "3003:5601"
     restart: always
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
@@ -76,7 +76,7 @@ services:
       dockerfile: dockerfile
       context: ./client
     ports:
-      - "3002:3000"
+      - "3000:3000"
 
   server:
     container_name: server
@@ -103,8 +103,8 @@ services:
       dockerfile: dockerfile
       context: ./infra/es_replicate
     environment:
-      - DATABASE_ADDR=database
-      - ELASTICSEARCH_ADDR=elasticsearch
+      - DB_ADDR=database
+      - ES_ADDR=elasticsearch
       - PG_DATABASE=anote
       - PG_USER=anote
       - PG_PASSWORD=anote
