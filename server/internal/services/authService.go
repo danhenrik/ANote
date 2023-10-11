@@ -3,25 +3,29 @@ package services
 import (
 	"anote/internal/helpers"
 	"anote/internal/ports"
+	IRepo "anote/internal/ports/repositories"
 	errors "anote/internal/types"
 	"anote/internal/viewmodels"
 	"log"
 )
 
 type AuthService struct {
-	UserRepository ports.UserRepository
-	JwtProvider    ports.JwtProvider
+	userRepository IRepo.UserRepository
+	jwtProvider    ports.JwtProvider
 }
 
-func NewAuthService(userRepository ports.UserRepository, JwtProvider ports.JwtProvider) AuthService {
+func NewAuthService(
+	userRepository IRepo.UserRepository,
+	JwtProvider ports.JwtProvider,
+) AuthService {
 	return AuthService{
-		UserRepository: userRepository,
-		JwtProvider:    JwtProvider,
+		userRepository: userRepository,
+		jwtProvider:    JwtProvider,
 	}
 }
 
 func (this AuthService) Login(login viewmodels.LoginVM) (string, *errors.AppError) {
-	userFromDB, err := this.UserRepository.GetUserWithPassword(login.Login)
+	userFromDB, err := this.userRepository.GetUserWithPassword(login.Login)
 	if err != nil {
 		log.Println("[Login] Error on get user:", err)
 		return "", err
@@ -34,7 +38,7 @@ func (this AuthService) Login(login viewmodels.LoginVM) (string, *errors.AppErro
 		return "", errors.NewAppError(400, "Invalid password")
 	}
 
-	jwt, e := this.JwtProvider.CreateToken(userFromDB)
+	jwt, e := this.jwtProvider.CreateToken(userFromDB)
 	if e != nil {
 		log.Println("[Login] Error on JWT creation:", e)
 		return "", errors.NewAppError(500, "Error on JWT creation")

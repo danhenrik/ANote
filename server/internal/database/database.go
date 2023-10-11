@@ -2,7 +2,6 @@ package database
 
 import (
 	"anote/internal/constants"
-	"anote/internal/types"
 	errors "anote/internal/types"
 	"database/sql"
 	"fmt"
@@ -60,9 +59,9 @@ func (c Conn) Exec(query string, args ...any) *errors.AppError {
 	if err != nil {
 		log.Println("[DBConn] Exec error: ", err)
 		if e := err.(*pq.Error); e.Code == "23505" {
-			return types.NewAppError(400, "Resource already exists")
+			return errors.NewAppError(400, "Resource already exists")
 		}
-		return types.NewAppError(500, "Internal server error")
+		return errors.NewAppError(500, "Internal server error")
 	}
 	return nil
 }

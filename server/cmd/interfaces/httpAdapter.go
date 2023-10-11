@@ -1,6 +1,7 @@
 package httpAdapter
 
 import (
+	errors "anote/internal/types"
 	"io"
 	"log"
 	"net/http"
@@ -10,46 +11,59 @@ import (
 
 // =======================================================================================================================
 
+type UserIdentity struct {
+	ID    string
+	Email string
+}
+
 type Request struct {
-	Method  string
-	Headers map[string][]string
-	Body    string
-	Query   map[string][]string
-	Param   map[string][]string
-	Path    string
-	IP      string
-	Cookies []*http.Cookie
+	Method      string
+	Headers     map[string][]string
+	Body        string
+	QueryParams map[string][]string
+	PathParams  map[string][]string
+	Path        string
+	IP          string
+	Cookies     []*http.Cookie
+	User        UserIdentity
 }
 
 func NewRequest(Method string,
 	Headers map[string][]string,
 	Body string,
-	Query map[string][]string,
-	Param map[string][]string,
+	QueryParams map[string][]string,
+	PathParams map[string][]string,
 	Path string,
 	IP string,
 	Cookies []*http.Cookie) Request {
 	return Request{
-		Method:  Method,
-		Headers: Headers,
-		Body:    Body,
-		Query:   Query,
-		Param:   Param,
-		Path:    Path,
-		IP:      IP,
-		Cookies: Cookies,
+		Method:      Method,
+		Headers:     Headers,
+		Body:        Body,
+		QueryParams: QueryParams,
+		PathParams:  PathParams,
+		Path:        Path,
+		IP:          IP,
+		Cookies:     Cookies,
 	}
 }
 
+func (req *Request) GetHeader(key string) (string, bool) {
+	if value, ok := req.Headers[key]; ok && len(value) > 0 {
+		return value[0], true
+	}
+	return "", false
+}
+
 func (req *Request) GetSingleQuery(key string) (string, bool) {
-	if value, ok := req.Query[key]; ok && len(value) > 0 {
+	if value, ok := req.QueryParams[key]; ok && len(value) > 0 {
 		return value[0], true
 	}
 	return "", false
 }
 
 func (req *Request) GetSingleParam(key string) (string, bool) {
-	if value, ok := req.Param[key]; ok && len(value) > 0 {
+	if value, ok := req.PathParams[key]; ok && len(value) > 0 {
 		return value[0], true
 	}
 	return "", false
@@ -91,7 +105,10 @@ func NewNoContentRespone() Response {
 
 type Controller func(request Request) Response
 
-func NewGinAdapter(c Controller) func(*gin.Context) {
+func NewGinAdapter(
+	c Controller,
+	middlewares ...func(Request) (Request, *errors.AppError),
+) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		method := ctx.Request.Method
 		header := ctx.Request.Header
@@ -102,10 +119,10 @@ func NewGinAdapter(c Controller) func(*gin.Context) {
 		}
 		defer ctx.Request.Body.Close()
 		body := string(requestBody)
-		query := ctx.Request.URL.Query()
-		param := make(map[string][]string)
+		queryParams := ctx.Request.URL.Query()
+		pathParams := make(map[string][]string)
 		for _, entry := range ctx.Params {
-			param[entry.Key] = append(param[entry.Key], entry.Value)
+			pathParams[entry.Key] = append(pathParams[entry.Key], entry.Value)
 		}
 		path := ctx.Request.URL.Path
 		clientIp := ctx.ClientIP()
@@ -115,12 +132,21 @@ func NewGinAdapter(c Controller) func(*gin.Context) {
 			method,
 			header,
 			body,
-			query,
-			param,
+			queryParams,
+			pathParams,
 			path,
 			clientIp,
 			cookies,
 		)
+
+		for _, middleware := range middlewares {
+			newReq, err := middleware(request)
+			if err != nil {
+				ctx.JSON(int(err.Status), err.Message)
+				return
+			}
+			request = newReq
+		}
 
 		response := c(request)
 		ctx.JSON(int(response.StatusCode), response)

@@ -25,12 +25,22 @@ func (_ JwtHelper) CreateToken(user *domain.User) (string, error) {
 	return token.SignedString([]byte(constants.JWT_SECRET))
 }
 
-func (_ JwtHelper) ValidateToken(token string) bool {
-	_, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+func (_ JwtHelper) ValidateToken(token string) (bool, string) {
+	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(constants.JWT_SECRET), nil
 	})
 	if err != nil {
-		return false
+		return false, ""
 	}
-	return true
+
+	claims, ok := t.Claims.(jwt.MapClaims)
+	if !ok {
+		return false, ""
+	}
+
+	userId, found := claims["id"]
+	if !found {
+		return false, ""
+	}
+	return true, userId.(string)
 }

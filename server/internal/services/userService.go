@@ -3,17 +3,19 @@ package services
 import (
 	"anote/internal/domain"
 	"anote/internal/helpers"
-	"anote/internal/ports"
+	IRepo "anote/internal/ports/repositories"
 	errors "anote/internal/types"
 	"anote/internal/viewmodels"
 )
 
 type UserService struct {
-	UserRepository ports.UserRepository
+	userRepository IRepo.UserRepository
 }
 
-func NewUserService(userRepository ports.UserRepository) UserService {
-	return UserService{UserRepository: userRepository}
+func NewUserService(userRepository IRepo.UserRepository) UserService {
+	return UserService{
+		userRepository: userRepository,
+	}
 }
 
 func (this UserService) Create(user domain.User) *errors.AppError {
@@ -26,14 +28,14 @@ func (this UserService) Create(user domain.User) *errors.AppError {
 	}
 	user.Password = hashedPassword
 
-	if err := this.UserRepository.Create(user); err != nil {
+	if err := this.userRepository.Create(user); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (this UserService) GetAll() ([]domain.User, *errors.AppError) {
-	users, err := this.UserRepository.GetAll()
+	users, err := this.userRepository.GetAll()
 	if err != nil {
 		return []domain.User{}, nil
 	}
@@ -41,7 +43,7 @@ func (this UserService) GetAll() ([]domain.User, *errors.AppError) {
 }
 
 func (this UserService) GetByUsername(username string) (*domain.User, *errors.AppError) {
-	user, err := this.UserRepository.GetByUsername(username)
+	user, err := this.userRepository.GetByUsername(username)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +51,7 @@ func (this UserService) GetByUsername(username string) (*domain.User, *errors.Ap
 }
 
 func (this UserService) GetByEmail(email string) (*domain.User, *errors.AppError) {
-	user, err := this.UserRepository.GetByEmail(email)
+	user, err := this.userRepository.GetByEmail(email)
 	if err != nil {
 		return nil, err
 	}

@@ -21,7 +21,7 @@ func CreateUserController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[UserController] Error on create user:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewSuccessResponse(204, nil)
+	return httpAdapter.NewNoContentRespone()
 }
 
 func GetAllUsersController(request httpAdapter.Request) httpAdapter.Response {
