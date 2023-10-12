@@ -1,7 +1,7 @@
-package ports
+package interfaces
 
 import (
-	errors "anote/internal/types"
+	"anote/internal/errors"
 	"reflect"
 )
 

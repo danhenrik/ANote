@@ -22,3 +22,21 @@ func Login(request httpAdapter.Request) httpAdapter.Response {
 	}
 	return httpAdapter.NewSuccessResponse(200, jwt)
 }
+
+func RequestPasswordReset(request httpAdapter.Request) httpAdapter.Response {
+	// generate password reset token
+
+	// save token to database
+
+	// send password reset token to email via link
+
+	return httpAdapter.NewNoContentRespone()
+}
+
+func ChangePassword(request httpAdapter.Request) httpAdapter.Response {
+	// check token validity
+
+	// reset password
+
+	return httpAdapter.NewNoContentRespone()
+}

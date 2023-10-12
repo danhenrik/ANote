@@ -1,4 +1,4 @@
-package types
+package errors
 
 type AppError struct {
 	Status  uint
@@ -12,3 +12,5 @@ func (this AppError) Error() string {
 func NewAppError(status uint, message string) *AppError {
 	return &AppError{Status: status, Message: message}
 }
+
+// TODO: Define errors internal to the application (Objective is to decouple from HTTP Status Codes)

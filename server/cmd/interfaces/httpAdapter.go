@@ -1,7 +1,7 @@
 package httpAdapter
 
 import (
-	errors "anote/internal/types"
+	"anote/internal/errors"
 	"io"
 	"log"
 	"net/http"
@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// =======================================================================================================================
+// =================================== Types =============================================================================
 // =======================================================================================================================
 
 type UserIdentity struct {
@@ -102,14 +104,18 @@ func NewNoContentRespone() Response {
 }
 
 // =======================================================================================================================
+// =================================== HTTP Adapter ======================================================================
+// =======================================================================================================================
 
 type Controller func(request Request) Response
 
+// convert gin request into our app request
 func NewGinAdapter(
 	c Controller,
 	middlewares ...func(Request) (Request, *errors.AppError),
 ) func(*gin.Context) {
 	return func(ctx *gin.Context) {
+		// create request object
 		method := ctx.Request.Method
 		header := ctx.Request.Header
 		requestBody, err := io.ReadAll(ctx.Request.Body)
@@ -139,6 +145,7 @@ func NewGinAdapter(
 			cookies,
 		)
 
+		// execute middlewares
 		for _, middleware := range middlewares {
 			newReq, err := middleware(request)
 			if err != nil {
@@ -148,7 +155,10 @@ func NewGinAdapter(
 			request = newReq
 		}
 
+		// execute controller/handler
 		response := c(request)
+
+		// parse response and return
 		ctx.JSON(int(response.StatusCode), response)
 	}
 }

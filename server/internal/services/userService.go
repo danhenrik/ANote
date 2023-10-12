@@ -2,9 +2,9 @@ package services
 
 import (
 	"anote/internal/domain"
+	"anote/internal/errors"
 	"anote/internal/helpers"
-	IRepo "anote/internal/ports/repositories"
-	errors "anote/internal/types"
+	IRepo "anote/internal/interfaces/repositories"
 	"anote/internal/viewmodels"
 )
 
@@ -18,7 +18,7 @@ func NewUserService(userRepository IRepo.UserRepository) UserService {
 	}
 }
 
-func (this UserService) Create(user domain.User) *errors.AppError {
+func (this UserService) Create(user *domain.User) *errors.AppError {
 	if isValidEmail := helpers.ValidateEmail(user.Email); !isValidEmail {
 		return errors.NewAppError(400, "Invalid email")
 	}

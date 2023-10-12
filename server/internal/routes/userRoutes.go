@@ -17,7 +17,7 @@ func CreateUserController(request httpAdapter.Request) httpAdapter.Response {
 	}
 
 	user := userVM.ToDomainUser()
-	if err := container.UserService.Create(user); err != nil {
+	if err := container.UserService.Create(&user); err != nil {
 		log.Println("[UserController] Error on create user:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}

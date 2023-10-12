@@ -4,8 +4,8 @@ import (
 	"anote/internal/constants"
 	"anote/internal/database"
 	"anote/internal/helpers"
-	"anote/internal/ports"
-	IRepo "anote/internal/ports/repositories"
+	"anote/internal/interfaces"
+	IRepo "anote/internal/interfaces/repositories"
 	"anote/internal/repositories"
 	"anote/internal/services"
 )
@@ -18,25 +18,24 @@ func Config() {
 	JwtProvider = helpers.NewJwtProvider()
 
 	UserRepository = repositories.NewUserRepository(DBConn)
-	// NoteTagRepository = repositories.NewNoteTagRepository(DBConn)
+	NoteTagRepository = repositories.NewNoteTagRepository(DBConn)
 	NoteRepository = repositories.NewNoteRepository(DBConn)
 
 	UserService = services.NewUserService(UserRepository)
 	AuthService = services.NewAuthService(UserRepository, JwtProvider)
-	// NoteService = services.NewNoteTagService(NoteTagRepository, UserRepository, NoteRepository)
-	// NoteService = services.NewNoteService(NoteTagRepository, UserRepository, NoteRepository)
+	NoteService = services.NewNoteService(UserRepository, NoteRepository, NoteTagRepository)
+	NoteTagService = services.NewNoteTagService(NoteTagRepository)
 }
 
-var DBConn ports.DBConnection
-var JwtProvider ports.JwtProvider
+var DBConn interfaces.DBConnection
+var JwtProvider interfaces.JwtProvider
 
 var UserRepository IRepo.UserRepository
 
-// var NoteTagRepository IRepo.NoteTagRepository
+var NoteTagRepository IRepo.NoteTagRepository
 var NoteRepository IRepo.NoteRepository
 
 var UserService services.UserService
 var AuthService services.AuthService
-
-// var NoteTagService services.NoteTagService
-// var NoteService services.NoteService
+var NoteService services.NoteService
+var NoteTagService services.NoteTagService

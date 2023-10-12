@@ -1,22 +1,22 @@
 package services
 
 import (
+	"anote/internal/errors"
 	"anote/internal/helpers"
-	"anote/internal/ports"
-	IRepo "anote/internal/ports/repositories"
-	errors "anote/internal/types"
+	"anote/internal/interfaces"
+	IRepo "anote/internal/interfaces/repositories"
 	"anote/internal/viewmodels"
 	"log"
 )
 
 type AuthService struct {
 	userRepository IRepo.UserRepository
-	jwtProvider    ports.JwtProvider
+	jwtProvider    interfaces.JwtProvider
 }
 
 func NewAuthService(
 	userRepository IRepo.UserRepository,
-	JwtProvider ports.JwtProvider,
+	JwtProvider interfaces.JwtProvider,
 ) AuthService {
 	return AuthService{
 		userRepository: userRepository,

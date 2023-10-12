@@ -2,7 +2,7 @@ package database
 
 import (
 	"anote/internal/constants"
-	errors "anote/internal/types"
+	"anote/internal/errors"
 	"database/sql"
 	"fmt"
 	"log"
