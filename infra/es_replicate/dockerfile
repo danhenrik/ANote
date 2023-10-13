@@ -1,9 +1,12 @@
-FROM golang:1.21.1 AS build
-
-COPY ./ /app
+# build the server
+FROM golang:1.21.1 as build
 
 WORKDIR /app
 
+COPY ./ ./
+
 RUN go mod download
 
-CMD [ "go", "run", "." ]
+RUN go build -o  main main.go
+
+ENTRYPOINT [ "./main" ]

@@ -16,13 +16,14 @@ var db *sql.DB
 var connStr string
 
 func Connect() {
-	connStr := fmt.Sprintf(
+	str := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s sslmode=disable",
 		constants.DB_ADDR,
 		constants.DB_USER,
 		constants.DB_PWD,
 		constants.DB_NAME,
 	)
+	connStr = str
 
 	database, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -68,8 +69,8 @@ func GetUpdateFromPG() (updatesList []types.Update) {
 func ListenForUpdates(updateChan chan<- []types.Update) {
 	// create a new listener
 	listener := pq.NewListener(connStr, 10*time.Second, time.Minute, nil)
-	defer listener.Close()
 	err := listener.Listen("es_replicate")
+	defer listener.Close()
 	if err != nil {
 		log.Fatalln("Error on listen:", err)
 	} else {
@@ -91,7 +92,7 @@ func ListenForUpdates(updateChan chan<- []types.Update) {
 			} else {
 				log.Println("Notification sent falsely")
 			}
-		case <-time.After(5 * time.Minute):
+		case <-time.After(time.Minute):
 			timeIdle++
 			if timeIdle == 0 {
 				log.Println("Received no events for", timeIdle, "minute")
@@ -116,11 +117,22 @@ func SetLastItemReplicated(lsn []uint8) {
 	}
 }
 
-func GetTagById(id string) (tag types.Tag) {
+func GetTagById(id string) (tag *types.Tag) {
 	query := db.QueryRow("SELECT * FROM tags WHERE id = $1;", id)
 	err := query.Scan(&tag.Id, &tag.Name)
 	if err != nil {
 		log.Println("Error on query scan:", err)
+		return nil
 	}
 	return tag
+}
+
+func GetCommunityById(id string) (community *types.Community) {
+	query := db.QueryRow("SELECT * FROM communities WHERE id = $1;", id)
+	err := query.Scan(&community.Id, &community.Name)
+	if err != nil {
+		log.Println("Error on query scan:", err)
+		return nil
+	}
+	return community
 }
