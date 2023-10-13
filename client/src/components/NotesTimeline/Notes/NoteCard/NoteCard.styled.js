@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Card, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export const AvatarBackground = styled("div")(({ randomColor }) => ({
@@ -56,5 +56,12 @@ export const ContentContainer = styled("div")`
   text-overflow: ellipsis;
   p {
     color: black;
+  }
+`;
+
+export const NotesCard = styled(Card)`
+  &:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.02);
   }
 `;
