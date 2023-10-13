@@ -17,6 +17,7 @@ import SocialMediaAuth from "../SocialMediaAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAuth } from "../../../store/auth-context";
 
 const validationSchema = yup.object({
   email: yup
@@ -30,6 +31,7 @@ const validationSchema = yup.object({
 });
 
 const LoginForm = ({ closeModal }) => {
+  const auth = useAuth();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -38,9 +40,9 @@ const LoginForm = ({ closeModal }) => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      auth.login(values, "EMAIL");
       closeModal();
-      navigate("/login");
+      navigate("/");
     },
   });
 

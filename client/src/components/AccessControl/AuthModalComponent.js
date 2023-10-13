@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import Modal from "@mui/material/Modal";
-import LoginForm from "./login/LoginForm";
+import LoginForm from "./Login/LoginForm";
 import SignupForm from "./Signup/SignupForm";
 
 const style = {

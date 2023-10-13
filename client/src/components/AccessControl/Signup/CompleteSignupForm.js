@@ -8,15 +8,16 @@ import {
 import { Container, Paper, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import axios from "axios";
 
 const validationSchema = yup.object({
   email: yup
     .string("Insira um email")
     .email("Insira um email válido")
     .required("Insira um email"),
-  userId: yup
-    .string("Insira um ID de usuário")
-    .required("Insira um ID de usuário"),
+  username: yup
+    .string("Insira um nome de usuário")
+    .required("Insira um nome de usuário"),
   password: yup
     .string("Insira uma senha")
     .min(8, "A senha deve ter pelo menos 8 caracteres")
@@ -33,14 +34,27 @@ const CompleteSignupForm = () => {
   const formik = useFormik({
     initialValues: {
       email: search.get("email"),
-      userId: "",
+      username: "",
       password: "",
       confirmPassword: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      navigate("/signup");
+    onSubmit: async (values) => {
+      try {
+        const userData = {
+          email: values.email,
+          username: values.username,
+          password: values.password,
+        };
+
+        const response = await axios.post("/users", userData);
+
+        console.log("Registration successful:", response.data);
+
+        navigate("/login");
+      } catch (error) {
+        console.error("Registration failed:", error);
+      }
     },
   });
 
@@ -80,14 +94,14 @@ const CompleteSignupForm = () => {
               helperText={formik.touched.email && formik.errors.email}
               autoComplete='email'
             />
-            <InputLabel htmlFor='userId'>Id do Usuario</InputLabel>
+            <InputLabel htmlFor='username'>Nome do Usuario</InputLabel>
             <TextField
               fullWidth
-              id='userId'
-              name='userId'
+              id='username'
+              name='username'
               value={formik.values.userId}
               onChange={formik.handleChange}
-              placeholder='Digite um id de usuario'
+              placeholder='Digite um nome de usuario'
               onBlur={formik.handleBlur}
               error={formik.touched.userId && Boolean(formik.errors.userId)}
               helperText={formik.touched.userId && formik.errors.userId}
