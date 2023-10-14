@@ -15,7 +15,6 @@ import {
   ButtonStack,
 } from "./NavBar.styled";
 import NavList from "./NavList";
-import AuthModalComponent from "../AccessControl/AuthModalComponent";
 import { PropTypes } from "prop-types";
 import { useState } from "react";
 import SearchModalComponent from "./Search/SearchModalComponent";
@@ -23,23 +22,23 @@ import { Link } from "react-router-dom";
 import NavButtons from "./NavButtons";
 import AnoteLogo from "./Logo/AnoteLogo";
 import { useAuth } from "../../store/auth-context";
+import { useModal } from "../../store/modal-context";
+import LoginForm from "./../AccessControl/Login/LoginForm";
+import SignupForm from "./../AccessControl/Signup/SignupForm";
 
 function NavBar({ open, setOpen }) {
   const drawerWidth = 240;
   const theme = useTheme();
   const auth = useAuth();
-  const [openAuth, setOpenAuth] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
-  const [authType, setAuthType] = useState("");
+  const modal = useModal();
 
   const handleLoginModal = () => {
-    setOpenAuth((open) => !open);
-    setAuthType("Login");
+    modal.openModal(<LoginForm closeModal={modal.closeModal}></LoginForm>);
   };
 
   const handleSignupModal = () => {
-    setOpenAuth((open) => !open);
-    setAuthType("Signup");
+    modal.openModal(<SignupForm closeModal={modal.closeModal}></SignupForm>);
   };
 
   const handleDrawer = () => {
@@ -50,15 +49,8 @@ function NavBar({ open, setOpen }) {
 
   const handleCloseSearch = () => setOpenSearch(false);
 
-  const handleCloseAuth = () => setOpenAuth(false);
-
   return (
     <>
-      <AuthModalComponent
-        open={openAuth}
-        handleClose={handleCloseAuth}
-        authType={authType}
-      />
       <SearchModalComponent open={openSearch} handleClose={handleCloseSearch} />
 
       <AppBar position='fixed' open={open}>

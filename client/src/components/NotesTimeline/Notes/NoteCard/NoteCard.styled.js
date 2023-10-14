@@ -3,10 +3,7 @@ import { Avatar, Card, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export const AvatarBackground = styled("div")(({ randomColor }) => ({
-  backgroundColor: randomColor({
-    luminosity: "light",
-    format: "rgb",
-  }),
+  backgroundColor: randomColor,
   width: "100%",
   display: "flex",
   aligItems: "center",

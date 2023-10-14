@@ -9,6 +9,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import config from "./configs.json";
 import { AuthProvider } from "./store/auth-context";
 import Routes from "./Routes/Routes";
+import { ModalProvider } from "./store/modal-context";
+
 function App() {
   const [open, setOpen] = useState(false);
 
@@ -17,10 +19,12 @@ function App() {
       <AuthProvider>
         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
           <ThemeProvider theme={theme}>
-            <NavBar open={open} setOpen={setOpen} />
-            <MainContent open={open}>
-              <Routes />
-            </MainContent>
+            <ModalProvider>
+              <NavBar open={open} setOpen={setOpen} />
+              <MainContent open={open}>
+                <Routes />
+              </MainContent>
+            </ModalProvider>
           </ThemeProvider>
         </GoogleOAuthProvider>
       </AuthProvider>

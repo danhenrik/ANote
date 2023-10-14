@@ -1,10 +1,3 @@
-const initialState = {
-  user: null,
-  isAuthenticated: false,
-  isLoading: false,
-  token: null,
-};
-
 const SET_USER = "SET_USER";
 const LOGOUT = "LOGOUT";
 
@@ -31,4 +24,4 @@ const authReducer = (state, action) => {
   }
 };
 
-export { initialState, authReducer, SET_USER, LOGOUT };
+export { authReducer, SET_USER, LOGOUT };

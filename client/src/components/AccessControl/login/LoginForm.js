@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Container,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -16,7 +10,6 @@ import {
 import SocialMediaAuth from "../SocialMediaAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";
-import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from "../../../store/auth-context";
 
 const validationSchema = yup.object({
@@ -47,65 +40,52 @@ const LoginForm = ({ closeModal }) => {
   });
 
   return (
-    <Container maxWidth='xs'>
-      <Paper
-        elevation={3}
-        sx={{
-          padding: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <IconButton onClick={closeModal} sx={{ alignSelf: "flex-end" }}>
-          <CloseIcon />
-        </IconButton>
-        <Typography variant='h6' style={{ fontWeight: "bold" }}>
-          Faça Login
-        </Typography>
-        <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-          <InputLabel htmlFor='email'>E-Mail ou Usuário</InputLabel>
-          <TextField
-            fullWidth
-            id='email'
-            name='email'
-            placeholder='Digite seu email'
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-          />
-          <InputLabel htmlFor='password'>Senha</InputLabel>
-          <TextField
-            fullWidth
-            id='password'
-            name='password'
-            type='password'
-            placeholder='Digite sua senha'
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-          />
-          <Button variant='contained' fullWidth type='submit'>
-            Fazer Login
-          </Button>
-          <div style={{ marginTop: "10px" }}>
-            <Link
-              style={{ color: "blue" }}
-              to='/passwordrecovery'
-              onClick={closeModal}
-            >
-              Esqueceu sua senha?
-            </Link>
-          </div>
-          <Divider sx={{ mt: "30px", mb: "15px" }}>Ou</Divider>
-          <SocialMediaAuth authType='Login'></SocialMediaAuth>
-        </form>
-      </Paper>
-    </Container>
+    <>
+      <Typography variant='h6' style={{ fontWeight: "bold" }}>
+        Faça Login
+      </Typography>
+      <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
+        <InputLabel htmlFor='email'>E-Mail ou Usuário</InputLabel>
+        <TextField
+          fullWidth
+          id='email'
+          name='email'
+          placeholder='Digite seu email'
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
+        />
+        <InputLabel htmlFor='password'>Senha</InputLabel>
+        <TextField
+          fullWidth
+          id='password'
+          name='password'
+          type='password'
+          placeholder='Digite sua senha'
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
+        />
+        <Button variant='contained' fullWidth type='submit'>
+          Fazer Login
+        </Button>
+        <div style={{ marginTop: "10px" }}>
+          <Link
+            style={{ color: "blue" }}
+            to='/passwordrecovery'
+            onClick={closeModal}
+          >
+            Esqueceu sua senha?
+          </Link>
+        </div>
+        <Divider sx={{ mt: "30px", mb: "15px" }}>Ou</Divider>
+        <SocialMediaAuth authType='Login'></SocialMediaAuth>
+      </form>
+    </>
   );
 };
 

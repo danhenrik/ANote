@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Container,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -16,7 +10,6 @@ import {
 import SocialMediaAuth from "../SocialMediaAuth";
 import { PropTypes } from "prop-types";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
 
 const validationSchema = yup.object({
   email: yup
@@ -45,43 +38,30 @@ const SignupForm = ({ closeModal }) => {
   });
 
   return (
-    <Container maxWidth='xs'>
-      <Paper
-        elevation={3}
-        sx={{
-          padding: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <IconButton onClick={closeModal} sx={{ alignSelf: "flex-end" }}>
-          <CloseIcon />
-        </IconButton>
-        <Typography variant='h6' style={{ fontWeight: "bold" }}>
-          Cadastre-se
-        </Typography>
-        <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-          <InputLabel htmlFor='email'>E-Mail</InputLabel>
-          <TextField
-            fullWidth
-            id='email'
-            name='email'
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            placeholder='Digite seu e-mail'
-            onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-          />
-          <Button variant='contained' fullWidth type='submit'>
-            Cadastrar-se
-          </Button>
-          <Divider sx={{ mt: "30px", mb: "30px" }}>Ou</Divider>
-          <SocialMediaAuth authType='Cadastro'></SocialMediaAuth>
-        </form>
-      </Paper>
-    </Container>
+    <>
+      <Typography variant='h6' style={{ fontWeight: "bold" }}>
+        Cadastre-se
+      </Typography>
+      <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
+        <InputLabel htmlFor='email'>E-Mail</InputLabel>
+        <TextField
+          fullWidth
+          id='email'
+          name='email'
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          placeholder='Digite seu e-mail'
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
+        />
+        <Button variant='contained' fullWidth type='submit'>
+          Cadastrar-se
+        </Button>
+        <Divider sx={{ mt: "30px", mb: "30px" }}>Ou</Divider>
+        <SocialMediaAuth authType='Cadastro'></SocialMediaAuth>
+      </form>
+    </>
   );
 };
 

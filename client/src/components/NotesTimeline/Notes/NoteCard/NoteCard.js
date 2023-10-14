@@ -12,10 +12,18 @@ import {
   StyledLink,
   Title,
 } from "./NoteCard.styled";
-import Tags from "./Tags";
+import Tags from "./Tags/Tags";
+import { useMemo } from "react";
 
 function NoteCard({ note }) {
   var randomColor = require("randomcolor");
+
+  const randomColorElement = useMemo(() => {
+    return randomColor({
+      luminosity: "light",
+      format: "rgb",
+    });
+  }, []);
 
   return (
     <NotesCard sx={{ minWidth: "300px", maxWidth: "300px" }}>
@@ -23,7 +31,7 @@ function NoteCard({ note }) {
         <Title variant='h7' component='div'>
           {note.Title}
         </Title>
-        <AvatarBackground randomColor={randomColor}>
+        <AvatarBackground randomColor={randomColorElement}>
           <AvatarContainer>
             <CustomAvatar variant='square'>N</CustomAvatar>
           </AvatarContainer>

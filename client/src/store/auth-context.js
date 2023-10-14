@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { initialState, authReducer, SET_USER, LOGOUT } from "./authReducer";
+import { authReducer, SET_USER, LOGOUT } from "./authReducer";
 
 const AuthContext = createContext();
 
@@ -10,6 +10,15 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+
+  const initialState = {
+    user: storedUser ? storedUser.user : null,
+    isAuthenticated: Boolean(storedUser),
+    isLoading: false,
+    token: storedUser ? storedUser.token : null,
+  };
+
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
