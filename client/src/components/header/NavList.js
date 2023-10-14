@@ -9,9 +9,22 @@ import {
 } from "@mui/material";
 import NavButtons from "./NavButtons";
 import PropTypes from "prop-types";
-import ButtonBox from "./NavList.styled";
+import { ButtonBox, ListLink } from "./NavList.styled";
+import { useAuth } from "../../store/auth-context";
 
 function NavList({ handleLoginModal, handleSignupModal }) {
+  const auth = useAuth();
+
+  let listOptions = [
+    "Minhas Notas",
+    "Notas Públicas",
+    "Minhas Comunidades",
+    "Comunidades Populares",
+    "Amigos",
+  ];
+
+  auth.isAuthenticated && listOptions.push("Logout");
+
   return (
     <>
       <div
@@ -27,23 +40,19 @@ function NavList({ handleLoginModal, handleSignupModal }) {
       </div>
       <Divider sx={{ backgroundColor: "white" }} />
       <List>
-        {[
-          "Minhas Notas",
-          "Notas Públicas",
-          "Minhas Comunidades",
-          "Comunidades Populares",
-          "Amigos",
-        ].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon></ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
+        {listOptions.map((text) => (
+          <ListLink key={text} to={`/${text}`}>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon></ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          </ListLink>
         ))}
         <ButtonBox textAlign='center'>
           <NavButtons
-            sx={{ padding: "2px" }}
+            sx={{ padding: "2px", display: "flex" }}
             handleLoginModal={handleLoginModal}
             handleSignupModal={handleSignupModal}
           />

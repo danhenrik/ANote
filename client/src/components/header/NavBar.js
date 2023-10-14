@@ -22,11 +22,12 @@ import SearchModalComponent from "./Search/SearchModalComponent";
 import { Link } from "react-router-dom";
 import NavButtons from "./NavButtons";
 import AnoteLogo from "./Logo/AnoteLogo";
+import { useAuth } from "../../store/auth-context";
 
 function NavBar({ open, setOpen }) {
   const drawerWidth = 240;
   const theme = useTheme();
-
+  const auth = useAuth();
   const [openAuth, setOpenAuth] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [authType, setAuthType] = useState("");
@@ -62,15 +63,17 @@ function NavBar({ open, setOpen }) {
 
       <AppBar position='fixed' open={open}>
         <Toolbar>
-          <IconButton
-            color='inherit'
-            aria-label='open drawer'
-            onClick={handleDrawer}
-            edge='start'
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {auth.isAuthenticated && (
+            <IconButton
+              color='inherit'
+              aria-label='open drawer'
+              onClick={handleDrawer}
+              edge='start'
+              sx={{ mr: 2, ...(open && { display: "none" }) }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Link to='/' style={{ textDecoration: "none" }}>
             <AnoteLogo />
           </Link>
@@ -81,43 +84,46 @@ function NavBar({ open, setOpen }) {
           <StyledIconButton>
             <Groups2RoundedIcon />
           </StyledIconButton>
-          <ButtonStack direction='row' spacing={3}>
-            <NavButtons
-              handleLoginModal={handleLoginModal}
-              handleSignupModal={handleSignupModal}
-            />
-          </ButtonStack>
+          {!auth.isAuthenticated && (
+            <ButtonStack direction='row' spacing={3}>
+              <NavButtons
+                handleLoginModal={handleLoginModal}
+                handleSignupModal={handleSignupModal}
+              />
+            </ButtonStack>
+          )}
         </Toolbar>
       </AppBar>
-
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            backgroundColor: "black",
-            color: "orange",
-          },
-        }}
-        variant='persistent'
-        anchor='left'
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawer}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon sx={{ color: "white" }} />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <NavList
-          handleLoginModal={handleLoginModal}
-          handleSignupModal={handleSignupModal}
-        />
-      </Drawer>
+      {auth.isAuthenticated && (
+        <Drawer
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              backgroundColor: "black",
+              color: "orange",
+            },
+          }}
+          variant='persistent'
+          anchor='left'
+          open={open}
+        >
+          <DrawerHeader>
+            <IconButton onClick={handleDrawer}>
+              {theme.direction === "ltr" ? (
+                <ChevronLeftIcon sx={{ color: "white" }} />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <NavList
+            handleLoginModal={handleLoginModal}
+            handleSignupModal={handleSignupModal}
+          />
+        </Drawer>
+      )}
     </>
   );
 }

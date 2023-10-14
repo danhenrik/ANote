@@ -64,7 +64,7 @@ const LoginForm = ({ closeModal }) => {
           Faça Login
         </Typography>
         <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-          <InputLabel htmlFor='email'>E-Mail</InputLabel>
+          <InputLabel htmlFor='email'>E-Mail ou Usuário</InputLabel>
           <TextField
             fullWidth
             id='email'

@@ -6,12 +6,17 @@ import NotFound from "../pages/NotFound";
 import VerificationCode from "../components/AccessControl/PasswordRecovery/VerficationCode";
 import CompleteRecovery from "../components/AccessControl/PasswordRecovery/CompleteRecovery";
 import Timeline from "../components/NotesTimeline/Timeline";
+import NoteForm from "../components/NotesTimeline/Notes/NoteForm/NoteForm";
 
 function Routes() {
   return useRoutes([
     {
       path: "/",
       element: <Timeline />,
+    },
+    {
+      path: "/note",
+      element: <NoteForm />,
     },
     {
       path: "/signup",
