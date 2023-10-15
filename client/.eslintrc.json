@@ -26,6 +26,7 @@
         "jsxSingleQuote": true,
         "endOfLine": "auto"
       }
-    ]
+    ],
+    "no-unused-vars": "warn"
   }
 }

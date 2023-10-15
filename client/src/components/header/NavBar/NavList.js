@@ -10,17 +10,28 @@ import {
 import NavButtons from "./NavButtons";
 import PropTypes from "prop-types";
 import { ButtonBox, ListLink } from "./NavList.styled";
-import { useAuth } from "../../store/auth-context";
+import { useAuth } from "../../../store/auth-context";
 
-function NavList({ handleLoginModal, handleSignupModal }) {
+function NavList({ handleLoginModal, handleSignupModal, handleDrawer }) {
   const auth = useAuth();
 
+  const handleLogout = () => {
+    handleDrawer();
+    auth.logout();
+  };
   let listOptions = [
-    "Minhas Notas",
-    "Notas Públicas",
-    "Minhas Comunidades",
-    "Comunidades Populares",
-    "Amigos",
+    { text: "Minhas Notas", route: { path: "/timeline" } },
+    {
+      text: "Notas Públicas",
+      route: { path: "/timeline", queryParams: "world=true" },
+    },
+    { text: "Minhas Comunidades", route: { path: "/communities" } },
+    {
+      text: "Comunidades Populares",
+      route: { path: "/communities", queryParams: "world=true" },
+    },
+    { text: "Amigos", route: { path: "/friends" } },
+    { text: "Logout", action: () => handleLogout() },
   ];
 
   auth.isAuthenticated && listOptions.push("Logout");
@@ -40,12 +51,21 @@ function NavList({ handleLoginModal, handleSignupModal }) {
       </div>
       <Divider sx={{ backgroundColor: "white" }} />
       <List>
-        {listOptions.map((text) => (
-          <ListLink key={text} to={`/${text}`}>
+        {listOptions.map((option, idx) => (
+          <ListLink
+            key={idx}
+            onClick={option.action}
+            to={
+              option.route && {
+                pathname: option.route.path,
+                search: option.route.queryParams,
+              }
+            }
+          >
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemIcon></ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={option.text} />
               </ListItemButton>
             </ListItem>
           </ListLink>
@@ -64,6 +84,7 @@ function NavList({ handleLoginModal, handleSignupModal }) {
 NavList.propTypes = {
   handleLoginModal: PropTypes.func.isRequired,
   handleSignupModal: PropTypes.func.isRequired,
+  handleDrawer: PropTypes.func.isRequired,
 };
 
 export default NavList;

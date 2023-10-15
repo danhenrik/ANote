@@ -37,5 +37,31 @@
     "Tags": ["tag1", "tag5"],
     "CommentCount": 3,
     "Commenters": ["user2", "user4", "user"]
+  },
+  {
+    "Id": "4",
+    "Title": "Note 3",
+    "Content": "Content for Note 3",
+    "LikesCount": 8,
+    "Likes": ["user3", "user4", "user5"],
+    "PublishedDate": "2023-10-03T11:20:00Z",
+    "UpdatedDate": "2023-10-03T16:45:00Z",
+    "Author": "bob_jones",
+    "Tags": ["tag1", "tag5"],
+    "CommentCount": 3,
+    "Commenters": ["user2", "user4", "user"]
+  },
+  {
+    "Id": "5",
+    "Title": "Note 3",
+    "Content": "Content for Note 3",
+    "LikesCount": 8,
+    "Likes": ["user3", "user4", "user5"],
+    "PublishedDate": "2023-10-03T11:20:00Z",
+    "UpdatedDate": "2023-10-03T16:45:00Z",
+    "Author": "bob_jones",
+    "Tags": ["tag1", "tag5"],
+    "CommentCount": 3,
+    "Commenters": ["user2", "user4", "user"]
   }
 ]

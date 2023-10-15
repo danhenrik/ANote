@@ -1,64 +1,75 @@
-import styled from "@emotion/styled";
+import { styled } from "@mui/material/styles";
 import { Avatar, Card, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-export const AvatarBackground = styled("div")(({ randomColor }) => ({
+const AvatarBackground = styled("div")(({ randomColor }) => ({
   backgroundColor: randomColor,
   width: "100%",
   display: "flex",
-  aligItems: "center",
+  alignItems: "center", // Fixed typo here, changed "aligItems" to "alignItems"
 }));
 
-export const Title = styled(Typography)`
-  text-align: left;
-  font-weight: bold;
-`;
+const Title = styled(Typography)(() => ({
+  textAlign: "left",
+  fontWeight: "bold",
+}));
 
-export const AvatarAuthor = styled(Typography)`
-  color: black;
-  margin-left: 10px;
-  font-weight: bold;
-`;
+const AvatarAuthor = styled(Typography)(() => ({
+  color: "black",
+  marginLeft: "10px",
+  fontWeight: "bold",
+}));
 
-export const AvatarContainer = styled("div")`
-  height: 60px;
-`;
+const AvatarContainer = styled("div")({
+  height: "60px",
+});
 
-export const AvatarUsernames = styled("div")`
-  align-items: center;
-`;
+const AvatarUsernames = styled("div")({
+  alignItems: "center",
+});
 
-export const CustomAvatar = styled(Avatar)`
-  background-color: black;
-  width: 60px;
-  height: 60px;
-`;
+const CustomAvatar = styled(Avatar)(() => ({
+  backgroundColor: "black",
+  width: "60px",
+  height: "60px",
+}));
 
-export const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-  &:hover {
-    text-decoration: underline; /* Apply underline on hover */
-  }
-`;
+const StyledLink = styled(Link)(() => ({
+  textDecoration: "none",
+  color: "inherit",
+  "&:hover": {
+    textDecoration: "underline",
+  },
+}));
 
-export const ContentContainer = styled("div")`
-  min-height: 9em;
-  max-height: 9em;
-  overflow-y: hidden;
+const ContentContainer = styled("div")({
+  minHeight: "9em",
+  maxHeight: "9em",
+  overflowY: "hidden", // Updated CSS property name
+  wordWrap: "break-word",
+  lineHeight: "1.8em",
+  textAlign: "left",
+  textOverflow: "ellipsis",
+  p: {
+    color: "black",
+  },
+});
 
-  word-wrap: break-word;
-  line-height: 1.8em;
-  text-align: left;
-  text-overflow: ellipsis;
-  p {
-    color: black;
-  }
-`;
+const NotesCard = styled(Card)({
+  "&:hover": {
+    backgroundColor: "#f0f0f0",
+    transform: "scale(1.02)",
+  },
+});
 
-export const NotesCard = styled(Card)`
-  &:hover {
-    background-color: #f0f0f0;
-    transform: scale(1.02);
-  }
-`;
+export {
+  AvatarBackground,
+  Title,
+  AvatarAuthor,
+  AvatarContainer,
+  AvatarUsernames,
+  CustomAvatar,
+  StyledLink,
+  ContentContainer,
+  NotesCard,
+};

@@ -11,6 +11,7 @@ import SocialMediaAuth from "../SocialMediaAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import { useAuth } from "../../../store/auth-context";
+import { useModal } from "../../../store/modal-context";
 
 const validationSchema = yup.object({
   email: yup
@@ -23,9 +24,10 @@ const validationSchema = yup.object({
     .required("Insira sua senha"),
 });
 
-const LoginForm = ({ closeModal }) => {
+const LoginForm = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+  const modal = useModal();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -34,7 +36,7 @@ const LoginForm = ({ closeModal }) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       auth.login(values, "EMAIL");
-      closeModal();
+      modal.closeModal();
       navigate("/");
     },
   });
@@ -77,7 +79,7 @@ const LoginForm = ({ closeModal }) => {
           <Link
             style={{ color: "blue" }}
             to='/passwordrecovery'
-            onClick={closeModal}
+            onClick={modal.closeModal}
           >
             Esqueceu sua senha?
           </Link>
@@ -87,10 +89,6 @@ const LoginForm = ({ closeModal }) => {
       </form>
     </>
   );
-};
-
-LoginForm.propTypes = {
-  closeModal: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

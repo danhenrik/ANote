@@ -10,6 +10,7 @@ import {
 import SocialMediaAuth from "../SocialMediaAuth";
 import { PropTypes } from "prop-types";
 import { createSearchParams, useNavigate } from "react-router-dom";
+import { useModal } from "../../../store/modal-context";
 
 const validationSchema = yup.object({
   email: yup
@@ -18,15 +19,16 @@ const validationSchema = yup.object({
     .required("Insira seu email"),
 });
 
-const SignupForm = ({ closeModal }) => {
+const SignupForm = () => {
   const navigate = useNavigate();
+  const modal = useModal();
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      closeModal();
+      modal.closeModal();
       alert(JSON.stringify(values, null, 2));
       navigate({
         pathname: "signup",
@@ -63,10 +65,6 @@ const SignupForm = ({ closeModal }) => {
       </form>
     </>
   );
-};
-
-SignupForm.propTypes = {
-  closeModal: PropTypes.func.isRequired,
 };
 
 export default SignupForm;

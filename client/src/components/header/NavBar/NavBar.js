@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FilterAltRoundedIcon from "@mui/icons-material/FilterAltRounded";
-import SearchBar from "./Search/SearchBar";
+import SearchBar from "../Search/SearchBar";
 import {
   DrawerHeader,
   AppBar,
@@ -17,14 +17,14 @@ import {
 import NavList from "./NavList";
 import { PropTypes } from "prop-types";
 import { useState } from "react";
-import SearchModalComponent from "./Search/SearchModalComponent";
+import SearchModalComponent from "../Search/SearchModalComponent";
 import { Link } from "react-router-dom";
 import NavButtons from "./NavButtons";
-import AnoteLogo from "./Logo/AnoteLogo";
-import { useAuth } from "../../store/auth-context";
-import { useModal } from "../../store/modal-context";
-import LoginForm from "./../AccessControl/Login/LoginForm";
-import SignupForm from "./../AccessControl/Signup/SignupForm";
+import AnoteLogo from "../Logo/AnoteLogo";
+import { useAuth } from "../../../store/auth-context";
+import { useModal } from "../../../store/modal-context";
+import LoginForm from "../../AccessControl/Login/LoginForm";
+import SignupForm from "../../AccessControl/Signup/SignupForm";
 
 function NavBar({ open, setOpen }) {
   const drawerWidth = 240;
@@ -113,6 +113,7 @@ function NavBar({ open, setOpen }) {
           <NavList
             handleLoginModal={handleLoginModal}
             handleSignupModal={handleSignupModal}
+            handleDrawer={handleDrawer}
           />
         </Drawer>
       )}

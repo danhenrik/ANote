@@ -7,6 +7,9 @@ import {
   Button,
   TextField,
 } from "../../../../common/FormStyling.styled";
+import PropTypes from "prop-types";
+import { useModal } from "../../../../store/modal-context";
+
 const validationSchema = yup.object({
   title: yup.string("Insira o título").required("Título é obrigatório"),
   description: yup
@@ -18,7 +21,8 @@ const validationSchema = yup.object({
     .required("Privacidade é obrigatória"),
 });
 
-const NoteForm = () => {
+const NoteForm = ({ notes }) => {
+  const modal = useModal();
   //const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -29,7 +33,22 @@ const NoteForm = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      notes.push({
+        Id: "6",
+        Title: "Note 2",
+        Content:
+          "Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2Content for Note 2",
+        LikesCount: 15,
+        Likes: ["user2", "user3", "user4"],
+        PublishedDate: "2023-10-02T09:45:00Z",
+        UpdatedDate: "2023-10-02T14:15:00Z",
+        Author: "jane_smith",
+        Tags: ["tag2", "tag3", "tag4"],
+        CommentCount: 7,
+        Commenters: ["user1", "user3", "user5", "user6", "user8"],
+      });
       console.log(values);
+      modal.closeModal();
     },
   });
 
@@ -59,9 +78,9 @@ const NoteForm = () => {
           value={formik.values.description}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={
-            formik.touched.description && Boolean(formik.errors.description)
-          }
+          {...(formik.touched.description && formik.errors.description
+            ? { error: "true" }
+            : {})}
           minRows={4}
           style={{
             width: "100%",
@@ -99,6 +118,10 @@ const NoteForm = () => {
       </form>
     </>
   );
+};
+
+NoteForm.propTypes = {
+  notes: PropTypes.array.isRequired,
 };
 
 export default NoteForm;

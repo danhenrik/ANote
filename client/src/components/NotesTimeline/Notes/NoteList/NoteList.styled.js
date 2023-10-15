@@ -1,8 +1,17 @@
-import styled from "@emotion/styled";
+import { Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-export const NotesContainer = styled("div")(() => ({
+const GridWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
-  width: "70%",
+  width: "90%",
   margin: "0 auto",
 }));
+
+const CreateButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: "white",
+  whiteSpace: "nowrap",
+}));
+
+export { GridWrapper, CreateButton };

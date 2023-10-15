@@ -1,8 +1,6 @@
-// theme.js
 import { createTheme } from "@mui/material/styles";
 
-// Define your custom theme
-const theme = createTheme({
+const defaultTheme = createTheme({
   palette: {
     primary: {
       main: "#7F56D9",
@@ -17,4 +15,4 @@ const theme = createTheme({
   },
 });
 
-export default theme;
+export default defaultTheme;
