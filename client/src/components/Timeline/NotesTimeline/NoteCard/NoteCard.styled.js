@@ -6,7 +6,7 @@ const AvatarBackground = styled("div")(({ randomColor }) => ({
   backgroundColor: randomColor,
   width: "100%",
   display: "flex",
-  alignItems: "center", // Fixed typo here, changed "aligItems" to "alignItems"
+  alignItems: "center",
 }));
 
 const Title = styled(Typography)(() => ({
@@ -45,7 +45,7 @@ const StyledLink = styled(Link)(() => ({
 const ContentContainer = styled("div")({
   minHeight: "9em",
   maxHeight: "9em",
-  overflowY: "hidden", // Updated CSS property name
+  overflowY: "hidden",
   wordWrap: "break-word",
   lineHeight: "1.8em",
   textAlign: "left",
@@ -55,7 +55,7 @@ const ContentContainer = styled("div")({
   },
 });
 
-const NotesCard = styled(Card)({
+const NotesCardContainer = styled(Card)({
   "&:hover": {
     backgroundColor: "#f0f0f0",
     transform: "scale(1.02)",
@@ -71,5 +71,5 @@ export {
   CustomAvatar,
   StyledLink,
   ContentContainer,
-  NotesCard,
+  NotesCardContainer,
 };

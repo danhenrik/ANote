@@ -2,7 +2,7 @@ import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { Search, SearchIconWrapper, StyledInputBase } from "./SearchBar.styled";
 
-function SearchBar() {
+const SearchBar = () => {
   return (
     <Search>
       <SearchIconWrapper>
@@ -17,6 +17,6 @@ function SearchBar() {
       />
     </Search>
   );
-}
+};
 
 export default SearchBar;

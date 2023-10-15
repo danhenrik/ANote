@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { LoginButton, SignupButton } from "./NavButtons.styled";
 
-function NavButtons({ handleLoginModal, handleSignupModal }) {
+const NavButtons = ({ handleLoginModal, handleSignupModal }) => {
   return (
     <>
       <LoginButton onClick={handleLoginModal} variant='contained'>
@@ -12,7 +12,7 @@ function NavButtons({ handleLoginModal, handleSignupModal }) {
       </SignupButton>
     </>
   );
-}
+};
 
 NavButtons.propTypes = {
   handleLoginModal: PropTypes.func.isRequired,

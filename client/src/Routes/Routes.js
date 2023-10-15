@@ -5,7 +5,8 @@ import PasswordRecovery from "../components/AccessControl/PasswordRecovery/Passw
 import NotFound from "../pages/NotFound";
 import VerificationCode from "../components/AccessControl/PasswordRecovery/VerficationCode";
 import CompleteRecovery from "../components/AccessControl/PasswordRecovery/CompleteRecovery";
-import Timeline from "../components/NotesTimeline/Timeline";
+import Timeline from "../components/Timeline/NotesTimeline/Timeline";
+import Communities from "../components/Timeline/Communities/Communities";
 
 function Routes() {
   return useRoutes([
@@ -16,6 +17,10 @@ function Routes() {
     {
       path: "/timeline",
       element: <Timeline />,
+    },
+    {
+      path: "/communities",
+      element: <Communities />,
     },
     {
       path: "/signup",

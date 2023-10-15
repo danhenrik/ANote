@@ -9,7 +9,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
   const initialState = {
@@ -81,7 +81,7 @@ export function AuthProvider({ children }) {
       {state.isLoading ? <p>Loading...</p> : children}
     </AuthContext.Provider>
   );
-}
+};
 
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,

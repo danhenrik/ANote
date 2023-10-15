@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import { ButtonBox, ListLink } from "./NavList.styled";
 import { useAuth } from "../../../store/auth-context";
 
-function NavList({ handleLoginModal, handleSignupModal, handleDrawer }) {
+const NavList = ({ handleLoginModal, handleSignupModal, handleDrawer }) => {
   const auth = useAuth();
 
   const handleLogout = () => {
@@ -80,7 +80,7 @@ function NavList({ handleLoginModal, handleSignupModal, handleDrawer }) {
       </List>
     </>
   );
-}
+};
 NavList.propTypes = {
   handleLoginModal: PropTypes.func.isRequired,
   handleSignupModal: PropTypes.func.isRequired,

@@ -1,7 +1,7 @@
 import { SvgIcon, Typography } from "@mui/material";
 import { ReactComponent as LogoIcon } from "../../../logo.svg";
 
-function AnoteLogo() {
+const AnoteLogo = () => {
   return (
     <div style={{ display: "flex" }}>
       <SvgIcon sx={{ mr: "10px" }} component={LogoIcon} inheritViewBox />
@@ -17,6 +17,6 @@ function AnoteLogo() {
       </Typography>
     </div>
   );
-}
+};
 
 export default AnoteLogo;

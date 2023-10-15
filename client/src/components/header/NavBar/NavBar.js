@@ -26,7 +26,7 @@ import { useModal } from "../../../store/modal-context";
 import LoginForm from "../../AccessControl/Login/LoginForm";
 import SignupForm from "../../AccessControl/Signup/SignupForm";
 
-function NavBar({ open, setOpen }) {
+const NavBar = ({ open, setOpen }) => {
   const drawerWidth = 240;
   const theme = useTheme();
   const auth = useAuth();
@@ -119,7 +119,7 @@ function NavBar({ open, setOpen }) {
       )}
     </>
   );
-}
+};
 
 NavBar.propTypes = {
   open: PropTypes.bool.isRequired,

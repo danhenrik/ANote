@@ -8,14 +8,14 @@ import {
   AvatarUsernames,
   ContentContainer,
   CustomAvatar,
-  NotesCard,
+  NotesCardContainer,
   StyledLink,
   Title,
 } from "./NoteCard.styled";
-import Tags from "./Tags/Tags";
+import Tags from "../../Tags/Tags";
 import { useMemo } from "react";
 
-function NoteCard({ note }) {
+const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
 
   const randomColorElement = useMemo(() => {
@@ -26,7 +26,7 @@ function NoteCard({ note }) {
   }, []);
 
   return (
-    <NotesCard sx={{ minWidth: "300px", maxWidth: "300px" }}>
+    <NotesCardContainer sx={{ minWidth: "300px", maxWidth: "300px" }}>
       <CardContent>
         <Title variant='h7' component='div'>
           {note.Title}
@@ -47,9 +47,9 @@ function NoteCard({ note }) {
         <Tags tags={note.Tags}></Tags>
         <Typography color='textSecondary'>{note.PublishedDate}</Typography>
       </CardContent>
-    </NotesCard>
+    </NotesCardContainer>
   );
-}
+};
 
 const noteShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,

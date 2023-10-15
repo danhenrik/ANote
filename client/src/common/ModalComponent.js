@@ -15,7 +15,7 @@ const style = {
   },
 };
 
-function ModalComponent({ handleClose, open, content }) {
+const ModalComponent = ({ handleClose, open, content }) => {
   return (
     <Modal
       sx={style}
@@ -42,7 +42,7 @@ function ModalComponent({ handleClose, open, content }) {
       </Container>
     </Modal>
   );
-}
+};
 
 ModalComponent.propTypes = {
   handleClose: PropTypes.func.isRequired,

@@ -1,16 +1,13 @@
 import PropTypes from "prop-types";
 import { ButtonBase, Grid } from "@mui/material";
 import NoteCard from "../NoteCard/NoteCard";
-import {
-  CreateButton as NotesButton,
-  GridWrapper as NotesWrapper,
-} from "./NoteList.styled";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
 import NoteForm from "../NoteForm/NoteForm";
 import LoginForm from "../../../AccessControl/Login/LoginForm";
+import TimelineList from "../../TimelineList";
 
-function NoteList({ notes }) {
+const NoteList = ({ notes }) => {
   const modal = useModal();
   const auth = useAuth();
 
@@ -23,36 +20,23 @@ function NoteList({ notes }) {
       )
     );
   };
+  const buttonText = "Adicionar Nota";
 
   return (
-    <>
-      <NotesWrapper>
-        <Grid
-          container
-          spacing={{ xs: 2, md: 3 }}
-          columns={{ xs: 1, sm: 1, md: 3 }}
-        >
-          <Grid
-            item
-            key='button'
-            sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}
-          >
-            <NotesButton onClick={handleAddNoteModal}>
-              Adicionar Nota
-            </NotesButton>
-          </Grid>
-          {notes.map((note) => (
-            <Grid item key={note.Id}>
-              <ButtonBase>
-                <NoteCard note={note} />
-              </ButtonBase>
-            </Grid>
-          ))}
+    <TimelineList
+      handleAddModal={handleAddNoteModal}
+      addButtonText={buttonText}
+    >
+      {notes.map((note) => (
+        <Grid item key={note.Id}>
+          <ButtonBase>
+            <NoteCard note={note} />
+          </ButtonBase>
         </Grid>
-      </NotesWrapper>
-    </>
+      ))}
+    </TimelineList>
   );
-}
+};
 
 const noteShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,

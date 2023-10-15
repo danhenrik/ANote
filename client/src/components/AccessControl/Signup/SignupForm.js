@@ -8,7 +8,6 @@ import {
   TextField,
 } from "../../../common/FormStyling.styled";
 import SocialMediaAuth from "../SocialMediaAuth";
-import { PropTypes } from "prop-types";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { useModal } from "../../../store/modal-context";
 
