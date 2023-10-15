@@ -47,7 +47,7 @@ const noteShape = PropTypes.shape({
   PublishedDate: PropTypes.string.isRequired,
   UpdatedDate: PropTypes.string.isRequired,
   Author: PropTypes.string.isRequired,
-  Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  Tags: PropTypes.arrayOf(PropTypes.string),
   CommentCount: PropTypes.number.isRequired,
   Commenters: PropTypes.arrayOf(PropTypes.string).isRequired,
 });

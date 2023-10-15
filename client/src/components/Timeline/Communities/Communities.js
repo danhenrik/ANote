@@ -1,7 +1,14 @@
+import { useEffect, useState } from "react";
 import CommunityList from "./CommunityList/CommunityList";
-
+import myData from "./communities.json";
 const Communities = () => {
-  return <CommunityList></CommunityList>;
+  const [communities, setCommunities] = useState(myData);
+
+  useEffect(() => {
+    setCommunities(myData);
+  }, [myData]);
+
+  return <CommunityList communities={communities}></CommunityList>;
 };
 
 export default Communities;

@@ -5,6 +5,7 @@ import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
 import TimelineList from "../../TimelineList";
 import LoginForm from "../../../AccessControl/Login/LoginForm";
+import CommunityCard from "../CommunityCard/CommunityCard";
 
 const CommunityList = ({ communities }) => {
   const modal = useModal();
@@ -31,7 +32,9 @@ const CommunityList = ({ communities }) => {
     >
       {communities.map((community) => (
         <Grid item key={community.Id}>
-          <ButtonBase>{/* Display the community data */}</ButtonBase>
+          <ButtonBase>
+            <CommunityCard community={community}></CommunityCard>
+          </ButtonBase>
         </Grid>
       ))}
     </TimelineList>
@@ -41,8 +44,8 @@ const CommunityList = ({ communities }) => {
 const communityShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Name: PropTypes.string.isRequired,
-  Tags: PropTypes.string,
-  Privacy: PropTypes.string,
+  Tags: PropTypes.arrayOf(PropTypes.string),
+  Privacy: PropTypes.string.isRequired,
 });
 
 CommunityList.propTypes = {

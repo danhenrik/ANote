@@ -4,6 +4,7 @@ const defaultTheme = createTheme({
   palette: {
     primary: {
       main: "#7F56D9",
+      hover: "#593f94",
     },
     background: {
       main: "black",

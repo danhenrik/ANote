@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Select, MenuItem } from "@mui/material";
+import { Typography, Select, MenuItem, IconButton } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -9,6 +9,8 @@ import {
 } from "../../../../common/FormStyling.styled";
 import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
+import { CustomSelect } from "../../TimelineForms.styled";
+import AddIcon from "@mui/icons-material/Add";
 
 const validationSchema = yup.object({
   name: yup.string("Insira o nome").required("Nome é obrigatório"),
@@ -52,14 +54,32 @@ const CommunityForm = ({ communities }) => {
           helperText={formik.touched.name && formik.errors.name}
         />
         <InputLabel htmlFor='tags'>Tags</InputLabel>
-        <TextField
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <TextField
+            fullWidth
+            id='tags'
+            name='tags'
+            placeholder='Insira as tags'
+            value={formik.values.tags}
+            onChange={formik.handleChange}
+          />
+          <IconButton style={{ marginLeft: "5px" }}>
+            <AddIcon />
+          </IconButton>
+        </div>
+        <InputLabel htmlFor='privacy'>Privacidade</InputLabel>
+        <CustomSelect
           fullWidth
-          id='tags'
-          name='tags'
-          placeholder='Insira as tags'
-          value={formik.values.tags}
+          id='privacy'
+          name='privacy'
+          value={formik.values.privacy}
           onChange={formik.handleChange}
-        />
+          onBlur={formik.handleBlur}
+          error={formik.touched.privacy && Boolean(formik.errors.privacy)}
+        >
+          <MenuItem value='public'>Público</MenuItem>
+          <MenuItem value='private'>Privado</MenuItem>
+        </CustomSelect>
         <InputLabel htmlFor='privacy'>Privacidade</InputLabel>
         <Select
           fullWidth

@@ -12,7 +12,7 @@ import {
   StyledLink,
   Title,
 } from "./NoteCard.styled";
-import Tags from "../../Tags/Tags";
+import Tags from "../../Tags/TagsList";
 import { useMemo } from "react";
 
 const NoteCard = ({ note }) => {
@@ -44,7 +44,9 @@ const NoteCard = ({ note }) => {
         <ContentContainer>
           <Typography color='textSecondary'>{note.Content}</Typography>
         </ContentContainer>
-        <Tags tags={note.Tags}></Tags>
+        <ContentContainer sx={{ marginTop: "10px" }}>
+          <Tags tags={note.Tags}></Tags>
+        </ContentContainer>
         <Typography color='textSecondary'>{note.PublishedDate}</Typography>
       </CardContent>
     </NotesCardContainer>

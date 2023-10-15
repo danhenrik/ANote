@@ -12,6 +12,9 @@ const CreateButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: "white",
   whiteSpace: "nowrap",
+  "&:hover": {
+    backgroundColor: theme.palette.primary.hover,
+  },
 }));
 
 export { GridWrapper, CreateButton };

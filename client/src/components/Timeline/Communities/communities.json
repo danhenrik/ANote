@@ -1,0 +1,20 @@
+[
+  {
+    "Id": "1",
+    "Name": "Sports Enthusiasts",
+    "Tags": ["Sports", "Fitness", "Health"],
+    "Privacy": "public"
+  },
+  {
+    "Id": "2",
+    "Name": "Tech Geeks",
+    "Tags": ["Technology", "Programming", "Gadgets"],
+    "Privacy": "private"
+  },
+  {
+    "Id": "3",
+    "Name": "Food Lovers",
+    "Tags": ["Cooking", "Recipes", "Cuisine"],
+    "Privacy": "public"
+  }
+]

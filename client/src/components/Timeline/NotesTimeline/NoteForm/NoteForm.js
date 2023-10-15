@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Select, MenuItem, TextareaAutosize } from "@mui/material";
+import { Typography, MenuItem, IconButton } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -9,6 +9,8 @@ import {
 } from "../../../../common/FormStyling.styled";
 import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
+import { CustomSelect, CustomTextArea } from "../../TimelineForms.styled";
+import AddIcon from "@mui/icons-material/Add";
 
 const validationSchema = yup.object({
   title: yup.string("Insira o título").required("Título é obrigatório"),
@@ -71,7 +73,7 @@ const NoteForm = ({ notes }) => {
           helperText={formik.touched.title && formik.errors.title}
         />
         <InputLabel htmlFor='description'>Descrição</InputLabel>
-        <TextareaAutosize
+        <CustomTextArea
           id='description'
           name='description'
           placeholder='Insira a descrição'
@@ -82,25 +84,23 @@ const NoteForm = ({ notes }) => {
             ? { error: "true" }
             : {})}
           minRows={4}
-          style={{
-            width: "100%",
-            border: "1px solid #ced4da",
-            borderRadius: "4px",
-            padding: "10px",
-            fontSize: "16px",
-          }}
         />
         <InputLabel htmlFor='tags'>Tags</InputLabel>
-        <TextField
-          fullWidth
-          id='tags'
-          name='tags'
-          placeholder='Insira as tags'
-          value={formik.values.tags}
-          onChange={formik.handleChange}
-        />
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <TextField
+            fullWidth
+            id='tags'
+            name='tags'
+            placeholder='Insira as tags'
+            value={formik.values.tags}
+            onChange={formik.handleChange}
+          />
+          <IconButton style={{ marginLeft: "5px" }}>
+            <AddIcon />
+          </IconButton>
+        </div>
         <InputLabel htmlFor='privacy'>Privacidade</InputLabel>
-        <Select
+        <CustomSelect
           fullWidth
           id='privacy'
           name='privacy'
@@ -111,7 +111,7 @@ const NoteForm = ({ notes }) => {
         >
           <MenuItem value='public'>Público</MenuItem>
           <MenuItem value='private'>Privado</MenuItem>
-        </Select>
+        </CustomSelect>
         <Button variant='contained' fullWidth type='submit'>
           Criar Nota
         </Button>

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { TagLink, TagList } from "./Tags.styled";
+import { TagLink, TagList } from "./TagsList.styled";
 
 const Tags = ({ tags }) => {
   return (
