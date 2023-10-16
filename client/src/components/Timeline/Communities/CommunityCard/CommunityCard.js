@@ -11,7 +11,7 @@ import Tags from "../../Tags/TagsList";
 
 const CommunityCard = ({ community }) => {
   return (
-    <CommunityCardContainer>
+    <CommunityCardContainer sx={{ minWidth: "350px", maxWidth: "350px" }}>
       <CardContent>
         <Title variant='h7' component='div'>
           {community.Name}
@@ -20,7 +20,9 @@ const CommunityCard = ({ community }) => {
           <Typography color='textSecondary'>{community.Name}</Typography>
         </StyledLink>
         <ContentContainer>abc</ContentContainer>
-        <Tags tags={community.Tags} />
+        <ContentContainer sx={{ marginTop: "10px" }}>
+          <Tags tags={community.Tags} />
+        </ContentContainer>
       </CardContent>
     </CommunityCardContainer>
   );

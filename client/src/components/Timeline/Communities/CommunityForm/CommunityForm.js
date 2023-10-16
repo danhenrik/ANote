@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Select, MenuItem, IconButton } from "@mui/material";
+import { Typography, MenuItem, IconButton } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -26,7 +26,7 @@ const CommunityForm = ({ communities }) => {
     initialValues: {
       name: "",
       tags: "",
-      privacy: "public",
+      privacy: "private",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -80,19 +80,6 @@ const CommunityForm = ({ communities }) => {
           <MenuItem value='public'>Público</MenuItem>
           <MenuItem value='private'>Privado</MenuItem>
         </CustomSelect>
-        <InputLabel htmlFor='privacy'>Privacidade</InputLabel>
-        <Select
-          fullWidth
-          id='privacy'
-          name='privacy'
-          value={formik.values.privacy}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.privacy && Boolean(formik.errors.privacy)}
-        >
-          <MenuItem value='public'>Público</MenuItem>
-          <MenuItem value='private'>Privado</MenuItem>
-        </Select>
         <Button variant='contained' fullWidth type='submit'>
           Criar Comunidade
         </Button>

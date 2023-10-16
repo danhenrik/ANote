@@ -31,7 +31,7 @@ const NoteForm = ({ notes }) => {
       title: "",
       description: "",
       tags: "",
-      privacy: "public",
+      privacy: "private",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {

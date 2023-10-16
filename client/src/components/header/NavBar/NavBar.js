@@ -66,7 +66,7 @@ const NavBar = ({ open, setOpen }) => {
               <MenuIcon />
             </IconButton>
           )}
-          <Link to='/' style={{ textDecoration: "none" }}>
+          <Link to='/timeline' style={{ textDecoration: "none" }}>
             <AnoteLogo />
           </Link>
           <SearchBar />

@@ -62,6 +62,17 @@ const NotesCardContainer = styled(Card)({
   },
 });
 
+const ModalStyling = {
+  display: "flex",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  overflow: "auto",
+  maxHeight: "100vh",
+  "@media (min-height: 400px)": {
+    alignItems: "center",
+  },
+};
+
 export {
   AvatarBackground,
   Title,
@@ -72,4 +83,5 @@ export {
   StyledLink,
   ContentContainer,
   NotesCardContainer,
+  ModalStyling,
 };

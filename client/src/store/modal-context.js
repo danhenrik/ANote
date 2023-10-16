@@ -8,6 +8,19 @@ export const ModalProvider = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
 
+  const defaultStyle = {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    overflow: "auto",
+    maxHeight: "100vh",
+    "@media (min-height: 400px)": {
+      alignItems: "center",
+    },
+  };
+
+  const [modalStyling, setModalStyling] = useState(defaultStyle);
+
   const openModal = (content) => {
     setModalContent(content);
     setIsModalOpen(true);
@@ -19,12 +32,13 @@ export const ModalProvider = ({ children }) => {
   };
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, setModalStyling }}>
       {children}
       <ModalComponent
         content={modalContent}
         open={isModalOpen}
         handleClose={closeModal}
+        style={modalStyling}
       />
     </ModalContext.Provider>
   );

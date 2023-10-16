@@ -8,40 +8,15 @@ import {
   AvatarUsernames,
   ContentContainer,
   CustomAvatar,
-  ModalStyling,
   NotesCardContainer,
   StyledLink,
   Title,
-} from "./NoteCard.styled";
-import Tags from "../../Tags/TagsList";
-import { useState } from "react";
-import { useModal } from "../../../../store/modal-context";
-import ExpandedCard from "./ExpandedCard/ExpandedCard";
+} from "../NoteCard.styled";
+import Tags from "../../../Tags/TagsList";
 
-const NoteCard = ({ note }) => {
-  var randomColor = require("randomcolor");
-  const modal = useModal();
-
-  const [randomColorElement] = useState(
-    randomColor({ luminosity: "light", format: "rgb" })
-  );
-
-  const handleExpandedNote = (event) => {
-    if (event.target.closest("a")) return;
-    modal.openModal(
-      <ExpandedCard
-        note={note}
-        randomColorElement={randomColorElement}
-      ></ExpandedCard>
-    );
-    modal.setModalStyling(ModalStyling);
-  };
-
+const ExpandedCard = ({ note, randomColorElement }) => {
   return (
-    <NotesCardContainer
-      onClick={handleExpandedNote}
-      sx={{ minWidth: "300px", maxWidth: "300px" }}
-    >
+    <NotesCardContainer>
       <CardContent>
         <Title variant='h7' component='div'>
           {note.Title}
@@ -82,8 +57,9 @@ const noteShape = PropTypes.shape({
   Commenters: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
-NoteCard.propTypes = {
+ExpandedCard.propTypes = {
   note: noteShape.isRequired,
+  randomColorElement: PropTypes.func.isRequired,
 };
 
-export default NoteCard;
+export default ExpandedCard;

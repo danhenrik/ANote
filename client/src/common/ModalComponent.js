@@ -4,18 +4,7 @@ import Modal from "@mui/material/Modal";
 import { Container, IconButton, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const style = {
-  display: "flex",
-  alignItems: "flex-start",
-  justifyContent: "center",
-  overflow: "auto",
-  maxHeight: "100vh",
-  "@media (min-height: 400px)": {
-    alignItems: "center",
-  },
-};
-
-const ModalComponent = ({ handleClose, open, content }) => {
+const ModalComponent = ({ handleClose, open, content, style }) => {
   return (
     <Modal
       sx={style}
@@ -48,6 +37,7 @@ ModalComponent.propTypes = {
   handleClose: PropTypes.func.isRequired,
   content: PropTypes.node,
   open: PropTypes.bool.isRequired,
+  style: PropTypes.node,
 };
 
 export default ModalComponent;
