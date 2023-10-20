@@ -403,6 +403,7 @@ func ESIndex(updates []appTypes.Update) {
 					// insert tag
 					tagIdIdx := strArr(change.ColumnNames).indexOf("tag_id")
 					tagId := change.ColumnValues[tagIdIdx]
+					log.Println("tagId:", tagId)
 					tag := db.GetTagById(tagId)
 					idIndex := strArr(change.ColumnNames).indexOf("id")
 					tag.RId = change.ColumnValues[idIndex]
@@ -445,7 +446,9 @@ func ESIndex(updates []appTypes.Update) {
 					break
 				}
 				log.Println("Community notes can't be updated")
-
+			default:
+				log.Println("Table", change.Table, "not supported")
+				db.SetLastItemReplicated(update.WalId)
 			}
 		}
 	}

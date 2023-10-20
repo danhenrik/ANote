@@ -119,6 +119,7 @@ func SetLastItemReplicated(lsn []uint8) {
 
 func GetTagById(id string) (tag *types.Tag) {
 	query := db.QueryRow("SELECT * FROM tags WHERE id = $1;", id)
+	tag = &types.Tag{}
 	err := query.Scan(&tag.Id, &tag.Name)
 	if err != nil {
 		log.Println("Error on query scan:", err)
@@ -129,6 +130,7 @@ func GetTagById(id string) (tag *types.Tag) {
 
 func GetCommunityById(id string) (community *types.Community) {
 	query := db.QueryRow("SELECT * FROM communities WHERE id = $1;", id)
+	community = &types.Community{}
 	err := query.Scan(&community.Id, &community.Name)
 	if err != nil {
 		log.Println("Error on query scan:", err)

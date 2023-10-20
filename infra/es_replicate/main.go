@@ -11,9 +11,11 @@ import (
 // Elasticsearch
 
 func init() {
+	log.Println("Initializing...")
 	constants.Config()
 	database.Connect()
 	es.Connect()
+	log.Println("Initialization is complete!")
 }
 
 func main() {

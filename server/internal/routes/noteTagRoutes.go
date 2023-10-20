@@ -23,3 +23,26 @@ func CreateTagController(request httpAdapter.Request) httpAdapter.Response {
 	}
 	return httpAdapter.NewSuccessResponse(201, map[string]string{"id": tag.Id})
 }
+
+func GetTagsController(request httpAdapter.Request) httpAdapter.Response {
+	tags, err := container.NoteTagRepository.GetAll()
+	if err != nil {
+		log.Println("[NoteTagController] Error on get tags:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewSuccessResponse(200, tags)
+}
+
+func DeleteTagController(request httpAdapter.Request) httpAdapter.Response {
+	id, ok := request.GetSingleParam("id")
+	if !ok {
+		log.Println("[NoteTagController] Error on delete tag: id not found")
+		return httpAdapter.NewErrorResponse(400, "id not found")
+	}
+
+	if err := container.NoteTagService.Delete(id); err != nil {
+		log.Println("[NoteTagController] Error on delete tag:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewNoContentRespone()
+}

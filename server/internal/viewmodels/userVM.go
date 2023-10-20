@@ -8,6 +8,20 @@ type CreateUserVM struct {
 	Password string `json:"password"`
 }
 
+type UpdateEmailVM struct {
+	Email string `json:"email"`
+}
+
+type UpdatePasswordVM struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+type ChangePasswordVM struct {
+	Token       string `json:"token"`
+	NewPassword string `json:"new_password"`
+}
+
 type UserVM struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`

@@ -64,6 +64,13 @@ func (req *Request) GetSingleQuery(key string) (string, bool) {
 	return "", false
 }
 
+func (req *Request) GetQuerySlice(key string) ([]string, bool) {
+	if value, ok := req.QueryParams[key]; ok && len(value) > 0 {
+		return value, true
+	}
+	return nil, false
+}
+
 func (req *Request) GetSingleParam(key string) (string, bool) {
 	if value, ok := req.PathParams[key]; ok && len(value) > 0 {
 		return value[0], true
@@ -108,11 +115,12 @@ func NewNoContentRespone() Response {
 // =======================================================================================================================
 
 type Controller func(request Request) Response
+type Middleware func(Request) (Request, *errors.AppError)
 
 // convert gin request into our app request
 func NewGinAdapter(
 	c Controller,
-	middlewares ...func(Request) (Request, *errors.AppError),
+	middlewares ...Middleware,
 ) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		// create request object

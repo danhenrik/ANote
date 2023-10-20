@@ -26,6 +26,7 @@ func Config() {
 		DB_PWD = os.Getenv("PG_PASSWORD")
 		DB_NAME = os.Getenv("PG_DATABASE")
 		DB_ADDR = os.Getenv("DB_ADDR")
+		ES_ADDR = os.Getenv("ES_ADDR")
 		JWT_SECRET = os.Getenv("JWT_SECRET")
 
 		log.Println("Environment variables configured!")
@@ -39,4 +40,5 @@ var DB_USER string
 var DB_PWD string
 var DB_NAME string
 var DB_ADDR string
+var ES_ADDR string
 var JWT_SECRET string

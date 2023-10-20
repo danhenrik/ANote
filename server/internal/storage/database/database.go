@@ -70,6 +70,10 @@ func (c Conn) QueryOne(objType reflect.Type, query string, args ...any) (any, *e
 	queryResult := c.conn.QueryRow(query, args...)
 	if queryResult.Err() != nil {
 		log.Println("[DBConn] QueryOne query error: ", queryResult.Err())
+		// invalid id when not uuid > return like no user was found
+		if queryResult.Err().(*pq.Error).Code == "22P02" {
+			return nil, nil
+		}
 		return nil, errors.NewAppError(500, "Internal server error")
 	}
 

@@ -7,10 +7,9 @@ import (
 
 type NoteRepository interface {
 	Create(note *domain.Note) *errors.AppError
-
+	AddTags(noteId string, tagIds []string) *errors.AppError
+	RemoveTags(noteId string, tagIds []string) *errors.AppError
 	GetByID(id string) (*domain.Note, *errors.AppError)
-	GetByTitle(title string) ([]domain.Note, *errors.AppError)
-
-	Update(user *domain.Note) *errors.AppError
-	Delete(username string) *errors.AppError
+	Update(note *domain.Note) *errors.AppError
+	Delete(id string) *errors.AppError
 }

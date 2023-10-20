@@ -5,7 +5,6 @@ import (
 	"anote/internal/errors"
 	"anote/internal/helpers"
 	IRepo "anote/internal/interfaces/repositories"
-	"anote/internal/viewmodels"
 )
 
 type UserService struct {
@@ -58,10 +57,49 @@ func (this UserService) GetByEmail(email string) (*domain.User, *errors.AppError
 	return user, nil
 }
 
-func (_ UserService) Update(user viewmodels.UserVM) (domain.User, *errors.AppError) {
-	return domain.User{}, nil
+func (this UserService) UpdateEmail(username string, email string) *errors.AppError {
+	err := this.userRepository.UpdateEmail(username, email)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (_ UserService) Delete(username string) (bool, *errors.AppError) {
-	return true, nil
+func (this UserService) UpdatePassword(
+	username string,
+	oldPassword string,
+	newPassword string,
+) *errors.AppError {
+	user, err := this.userRepository.GetUserWithPassword(username)
+	if err != nil {
+		return err
+	}
+	if isValidPassword := helpers.CheckHash(oldPassword, user.Password); !isValidPassword {
+		return errors.NewAppError(400, "Invalid password")
+	}
+
+	err = this.userRepository.UpdatePassword(username, newPassword)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Not implemented as token mechanism is not implemented because of emailing limitations
+func (_ UserService) ChangePassword(
+	token string,
+	newPassword string,
+) *errors.AppError {
+	// get user by token
+	// if user not found return error
+	// update password
+	return nil
+}
+
+func (this UserService) Delete(username string) *errors.AppError {
+	err := this.userRepository.Delete(username)
+	if err != nil {
+		return err
+	}
+	return nil
 }

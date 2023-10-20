@@ -2,12 +2,12 @@ package container
 
 import (
 	"anote/internal/constants"
-	"anote/internal/database"
 	"anote/internal/helpers"
 	"anote/internal/interfaces"
 	IRepo "anote/internal/interfaces/repositories"
 	"anote/internal/repositories"
 	"anote/internal/services"
+	"anote/internal/storage/database"
 )
 
 // This is a DI container
