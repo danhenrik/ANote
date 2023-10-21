@@ -82,6 +82,13 @@ const LoginForm = () => {
           >
             Esqueceu sua senha?
           </Link>
+          <Link
+            style={{ color: "blue", float: "right" }}
+            to='/signup'
+            onClick={modal.closeModal}
+          >
+            Cadastre-se
+          </Link>
         </div>
         <Divider sx={{ mt: "30px", mb: "15px" }}>Ou</Divider>
         <SocialMediaAuth authType='Login'></SocialMediaAuth>
