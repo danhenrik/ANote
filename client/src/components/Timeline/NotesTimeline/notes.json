@@ -2,14 +2,14 @@
   {
     "Id": "1",
     "Title": "Note 1",
+    "Author": "john_doe",
     "Content": "Content for Note 1",
-    "LikesCount": 10,
-    "Likes": ["user1", "user2", "user3"],
     "PublishedDate": "2023-10-01T10:00:00Z",
     "UpdatedDate": "2023-10-01T15:30:00Z",
-    "Author": "john_doe",
-    "Tags": ["tag121212121", "tag2", "tag3"],
+    "LikesCount": 10,
     "CommentCount": 5,
+    "Tags": ["tag121212121", "tag2", "tag3"],
+    "Likes": ["user1", "user2", "user3"],
     "Commenters": ["user4", "user5", "user6", "user7", "user8"]
   },
   {

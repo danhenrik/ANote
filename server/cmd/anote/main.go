@@ -35,6 +35,7 @@ func main() {
 	r.GET("/notes/:id", httpAdapter.NewGinAdapter(routes.GetNoteByIDController))
 	r.PATCH("/notes", httpAdapter.NewGinAdapter(routes.UpdateNoteController, middlewares.AuthenticateUser))
 	r.DELETE("/notes/:id", httpAdapter.NewGinAdapter(routes.DeleteNoteController, middlewares.AuthenticateUser))
+	r.GET("/notes", httpAdapter.NewGinAdapter(routes.GetAllNoteController))
 
 	// tags endpoints
 	r.POST("/tags", httpAdapter.NewGinAdapter(routes.CreateTagController, middlewares.AuthenticateUser))

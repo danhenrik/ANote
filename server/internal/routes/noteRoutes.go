@@ -6,6 +6,7 @@ import (
 	"anote/internal/viewmodels"
 	"encoding/json"
 	"log"
+	"net/http"
 )
 
 func CreateNoteController(request httpAdapter.Request) httpAdapter.Response {
@@ -42,7 +43,6 @@ func UpdateNoteController(request httpAdapter.Request) httpAdapter.Response {
 }
 
 func GetNoteController(request httpAdapter.Request) httpAdapter.Response {
-
 	return httpAdapter.NewSuccessResponse(200, "Hello from get note")
 }
 
@@ -80,4 +80,14 @@ func DeleteNoteController(request httpAdapter.Request) httpAdapter.Response {
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
 	return httpAdapter.NewNoContentRespone()
+}
+
+func GetAllNoteController(request httpAdapter.Request) httpAdapter.Response {
+	notes, err := container.NoteService.GetAll()
+	if err != nil {
+		log.Println("[NoteController] Error on get all notes:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+
+	return httpAdapter.NewSuccessResponse(http.StatusOK, notes)
 }
