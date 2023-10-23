@@ -75,6 +75,8 @@ services:
     build:
       dockerfile: dockerfile
       context: ./client
+    volumes:
+      - ./client/src:/app/src
     ports:
       - "3000:3000"
 
@@ -96,6 +98,9 @@ services:
     depends_on:
       - elasticsearch
       - database
+    volumes:
+      - ./server/cmd:/app/cmd
+      - ./server/internal:/app/internal
 
   es_replicate:
     container_name: es_replicate

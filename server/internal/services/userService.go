@@ -36,7 +36,7 @@ func (this UserService) Create(user *domain.User) *errors.AppError {
 func (this UserService) GetAll() ([]domain.User, *errors.AppError) {
 	users, err := this.userRepository.GetAll()
 	if err != nil {
-		return []domain.User{}, nil
+		return []domain.User{}, err
 	}
 	return users, err
 }

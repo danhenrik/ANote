@@ -17,10 +17,32 @@ Um webapp de anotações com a possibilidade de menção de usuários e de outra
 
 Para rodar o sistema será necessário que você tenha instalado docker em sua máquina. 
 
-Com o docker instalado basta na pasta root (```../ANote/```) do projeto rodar o comando ```docker compose up -d``` para inicializar o projeto (Backend + Elasticsearch + PostgreSQL + Ferramentas de interação com as bases de dados). O cliente pode ser acessado em localhost:3002.
+Com o docker instalado basta na pasta root (```../ANote/```) do projeto rodar o comando ```docker compose up -d``` para inicializar o projeto (Frontend + Backend + Elasticsearch + PostgreSQL + Ferramentas de interação com as bases de dados). O frontend pode ser acessado em localhost:3000.
 
 OBS: Isso pode demorar um bom tempo na primeira vez.
 
+## Architecture
+
+![image](https://github.com/danhenrik/ANote/assets/42657692/84b2bccc-fd42-4256-be59-ae25ad649e52)
+
+A arquitetura consiste em um client e um server monolítico. A comunicação entre o client e o server é feita via HTTP.
+
+Para a funcionalidade de pesquisa foi utilizado elasticsearch (ES), para replicar os dados do banco de dados PostgreSQL (PG) para o elasticsearch foi desenvolvido um componente chamado es_replicate. 
+
+Este componente se conecta ao PostgreSQL e se inscreve no tópico de notificação "es_replicate" criado no próprio PosgreSQL, esse tópico recebe notificações toda vez que tabelas de interesse sofrem alterações no PostgreSQL, isto é feito por meio do uso de triggers. 
+
+Quando uma notificação é recebida o componente "es_replicate" busca no banco de dados as mudanças desde sua última atualização, isto é possível devido ao mecanismo de replication slot disponível neste SGBD que possibilita o acesso ao WAL (Write Ahead Log) em formato json, o que torna fácil seu consumo.
+
+Write Ahead Log em uma visão simplificada é um componente do PostgreSQL que guarda todas as mudanças feitas no banco de dados.
+
+Uma forma mais fácil de visualizar essa interação pode ser vista a seguir:
+
+![image](https://github.com/danhenrik/ANote/assets/42657692/ef257bd6-5f84-41bb-869a-ddb1bfbfae42)
+1. Server escreve no banco
+2. Antes mesmo da escrita de Server a escrita é persistida no WAL
+3. Ao finalizar a escrita de Server o trigger é ativado e o componente "es_replicate" é notificado
+4. "es_replicate" busca as mudanças no WAL 
+5. "es_replicate" interpreta as mudanças de acordo com a tabela onde foi feita a mudança e replica essa mudança nos documentos
 
 ## Product Backlog
 

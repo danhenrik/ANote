@@ -63,6 +63,21 @@ func (this NoteRepository) RemoveTags(noteId string, tagIds []string) *errors.Ap
 	return nil
 }
 
+func (this NoteRepository) GetAll() ([]domain.Note, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Note{})
+
+	res, err := this.DBConn.QueryMultiple(objType, "SELECT * FROM notes")
+	if err != nil {
+		log.Println("[NoteRepo] Error on get all notes:", err)
+		return []domain.Note{}, err
+	}
+
+	if notes, ok := res.([]domain.Note); ok {
+		return notes, nil
+	}
+	return []domain.Note{}, nil
+}
+
 func (this NoteRepository) GetByID(id string) (*domain.Note, *errors.AppError) {
 	objType := reflect.TypeOf(domain.Note{})
 	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM notes WHERE id = $1", id)

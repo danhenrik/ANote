@@ -82,12 +82,14 @@ func (this NoteService) GetById(id string) (*domain.FullNote, *errors.AppError) 
 	}
 
 	fnote := domain.FullNote{
-		Id:        note.Id,
-		Title:     note.Title,
-		Content:   note.Content,
-		AuthorID:  note.AuthorID,
-		CreatedAt: note.CreatedAt,
-		UpdatedAt: note.UpdatedAt,
+		Id:        		note.Id,
+		Title:     		note.Title,
+		Content:   		note.Content,
+		AuthorID:  		note.AuthorID,
+		CreatedAt: 		note.CreatedAt,
+		UpdatedAt:	 	note.UpdatedAt,
+		LikeCount: 		note.LikeCount,
+		CommentCount: note.CommentCount,
 		Tags:      tags,
 		// TODO: Insert communities
 	}
@@ -238,4 +240,46 @@ func (this NoteService) Delete(id string) *errors.AppError {
 		return err
 	}
 	return nil
+}
+
+func (this NoteService) GetAll() ([]domain.FullNoteList, *errors.AppError) {
+	notes, err := this.noteRepository.GetAll()
+	if err != nil {
+		log.Println("[NoteService] Error on get note:", err)
+		return nil, err
+	}
+
+	var fnote []domain.FullNoteList
+	for _, note := range notes {
+		tags, errTag := this.noteTagRepository.GetByNoteId(note.Id)
+		user, errUser := this.userRepository.GetByUsername(note.AuthorID)
+		if errTag != nil {
+			log.Println("[NoteService] Error on get note tags:", errTag)
+			return nil, errTag
+		} else if errUser != nil {
+			log.Println("[NoteService] Error on get user note:", errUser)
+			return nil, errUser
+		}
+	
+		var tagsDescription []string
+		for _, tag := range tags {
+			tagsDescription = append(tagsDescription, tag.Name)
+		}
+
+		fnote = append(fnote, domain.FullNoteList{
+			Id:        		note.Id,
+			Title:     		note.Title,
+			Content:   		note.Content,
+			AuthorID:  		note.AuthorID,
+			Author:				user.Email,
+			PublishedDate: 		note.CreatedAt,
+			UpdatedDate: 		note.UpdatedAt,
+			LikesCount: 		note.LikeCount,
+			CommentCount: note.CommentCount,
+			Tags:      		tagsDescription,
+			// TODO: Insert communities
+		})
+	}
+
+	return fnote, nil
 }

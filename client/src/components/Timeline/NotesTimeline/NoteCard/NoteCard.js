@@ -17,6 +17,8 @@ import Tags from "../../Tags/TagsList";
 import { useState } from "react";
 import { useModal } from "../../../../store/modal-context";
 import ExpandedCard from "./ExpandedCard/ExpandedCard";
+import LikeButton from "./LikeButton";
+import CommentIcon from "@mui/icons-material/Comment";
 
 const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
@@ -28,6 +30,7 @@ const NoteCard = ({ note }) => {
 
   const handleExpandedNote = (event) => {
     if (event.target.closest("a")) return;
+    if (event.target.closest("#note-actions")) return;
     modal.openModal(
       <ExpandedCard
         note={note}
@@ -63,6 +66,13 @@ const NoteCard = ({ note }) => {
           <Tags tags={note.Tags}></Tags>
         </ContentContainer>
         <Typography color='textSecondary'>{note.PublishedDate}</Typography>
+        <div
+          id='note-actions'
+          style={{ float: "right", marginBottom: "10px", marginTop: "10px" }}
+        >
+          <LikeButton countLikes={note.LikesCount}></LikeButton>
+          <CommentIcon style={{ marginLeft: "10px", color: "blue" }} />
+        </div>
       </CardContent>
     </NotesCardContainer>
   );

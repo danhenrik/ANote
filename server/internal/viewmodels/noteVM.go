@@ -27,7 +27,22 @@ type NoteVM struct {
 	AuthorID  string      `json:"author_id"`
 	CreatedAt string      `json:"created_at"`
 	UpdatedAt string      `json:"updated_at"`
+	LikeCount 	 int      `json:"LikesCount"`
+	CommentCount int      `json:"CommentCount"`
 	Tags      []NoteTagVM `json:"tags"`
+}
+
+type NoteListVM struct {
+	Id        	 string   `json:"Id"`
+	Title     	 string   `json:"Title"`
+	Content   	 string   `json:"Content"`
+	AuthorID  	 string   `json:"author_id"`
+	Author			 string		`json:"Author"`
+	PublishedDate 	 string   `json:"PublishedDate"`
+	UpdatedDate 	 string   `json:"UpdatedDate"`
+	LikesCount 	 int      `json:"LikesCount"`
+	CommentCount int      `json:"CommentCount"`
+	Tags      	 []string	`json:"Tags"`
 }
 
 func (note CreateNoteVM) ToDomainNote() domain.Note {
@@ -39,14 +54,16 @@ func (note CreateNoteVM) ToDomainNote() domain.Note {
 
 func (n NoteVM) FromDomain(note domain.FullNote) NoteVM {
 	n = NoteVM{
-		Id:        note.Id,
-		Title:     note.Title,
-		Content:   note.Content,
-		AuthorID:  note.AuthorID,
-		CreatedAt: note.CreatedAt,
-		UpdatedAt: note.UpdatedAt,
-		Tags:      []NoteTagVM{},
-	}
+		Id:        		note.Id,
+		Title:     		note.Title,
+		Content:   		note.Content,
+		AuthorID:  		note.AuthorID,
+		CreatedAt: 		note.CreatedAt,
+		UpdatedAt: 		note.UpdatedAt,
+		LikeCount: 		note.LikeCount,
+		CommentCount: note.CommentCount,
+		Tags:      		[]NoteTagVM{},
+	}	
 	for _, tag := range note.Tags {
 		n.Tags = append(n.Tags, NoteTagVM{
 			Id:   tag.Id,
