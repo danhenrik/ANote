@@ -33,6 +33,7 @@ func main() {
 	// notes endpoints
 	r.POST("/notes", httpAdapter.NewGinAdapter(routes.CreateNoteController, middlewares.AuthenticateUser))
 	r.GET("/notes/:id", httpAdapter.NewGinAdapter(routes.GetNoteByIDController))
+	r.GET("/notes", httpAdapter.NewGinAdapter(routes.SearchNoteController))
 	r.PATCH("/notes", httpAdapter.NewGinAdapter(routes.UpdateNoteController, middlewares.AuthenticateUser))
 	r.DELETE("/notes/:id", httpAdapter.NewGinAdapter(routes.DeleteNoteController, middlewares.AuthenticateUser))
 

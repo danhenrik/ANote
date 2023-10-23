@@ -5,6 +5,7 @@ import (
 	"anote/internal/errors"
 	"anote/internal/helpers"
 	IRepo "anote/internal/interfaces/repositories"
+	"anote/internal/storage/es"
 	"anote/internal/viewmodels"
 	"fmt"
 	"log"
@@ -91,6 +92,56 @@ func (this NoteService) GetById(id string) (*domain.FullNote, *errors.AppError) 
 		// TODO: Insert communities
 	}
 	return &fnote, nil
+}
+
+func (this NoteService) Search(
+	title string,
+	content string,
+	authorID string,
+	tags []string,
+	communities []string,
+	createdAt [2]string,
+) ([]domain.FilteredNote, *errors.AppError) {
+	qb := es.NewNoteQueryBuilder()
+	if len(tags) > 0 {
+		qb.AddTagsQuery(tags)
+	}
+	if authorID != "" {
+		qb.AddAuthorQuery(authorID)
+	}
+	if title != "" {
+		qb.AddTitleQuery(title)
+	}
+	if content != "" {
+		qb.AddContentQuery(content)
+	}
+	if createdAt[0] != "" && createdAt[1] == "" {
+		ok := helpers.ValidateDate(createdAt[0])
+		if !ok {
+			return nil, errors.NewAppError(400, "Invalid time format")
+		}
+		qb.AddCreatedAtMatchQuery(createdAt[0])
+	} else if createdAt[0] != "" && createdAt[1] != "" {
+		ok := helpers.ValidateDate(createdAt[0])
+		if !ok {
+			return nil, errors.NewAppError(400, "Invalid upper limit time format")
+		}
+		ok = helpers.ValidateDate(createdAt[1])
+		if !ok {
+			return nil, errors.NewAppError(400, "Invalid upper limit time format")
+		}
+		qb.AddCreatedAtRangeQuery(createdAt[0], createdAt[1])
+	}
+	if len(communities) > 0 {
+		qb.AddCommunitiesQuery(communities)
+	}
+
+	notes, err := qb.Query()
+	if err != nil {
+		log.Println("[NoteService] Error on query notes:", err)
+		return nil, err
+	}
+	return notes, nil
 }
 
 func (this NoteService) Update(requestUserId string, noteVM viewmodels.UpdateNoteVM) *errors.AppError {

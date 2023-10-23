@@ -17,25 +17,26 @@ func Config() {
 	DBConn = database.GetConnection()
 	JwtProvider = helpers.NewJwtProvider()
 
-	UserRepository = repositories.NewUserRepository(DBConn)
-	NoteTagRepository = repositories.NewNoteTagRepository(DBConn)
+	AuthRepository = repositories.NewAuthRepository(DBConn)
 	NoteRepository = repositories.NewNoteRepository(DBConn)
+	NoteTagRepository = repositories.NewNoteTagRepository(DBConn)
+	UserRepository = repositories.NewUserRepository(DBConn)
 
-	UserService = services.NewUserService(UserRepository)
-	AuthService = services.NewAuthService(UserRepository, JwtProvider)
+	AuthService = services.NewAuthService(AuthRepository, UserRepository, JwtProvider)
 	NoteService = services.NewNoteService(UserRepository, NoteRepository, NoteTagRepository)
 	NoteTagService = services.NewNoteTagService(NoteTagRepository)
+	UserService = services.NewUserService(UserRepository)
 }
 
 var DBConn interfaces.DBConnection
 var JwtProvider interfaces.JwtProvider
 
+var AuthRepository IRepo.AuthRepository
+var NoteRepository IRepo.NoteRepository
+var NoteTagRepository IRepo.NoteTagRepository
 var UserRepository IRepo.UserRepository
 
-var NoteTagRepository IRepo.NoteTagRepository
-var NoteRepository IRepo.NoteRepository
-
-var UserService services.UserService
 var AuthService services.AuthService
 var NoteService services.NoteService
 var NoteTagService services.NoteTagService
+var UserService services.UserService
