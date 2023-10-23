@@ -21,7 +21,7 @@ class pg_conn:
       print("Execution failed!\nError: "+ e.__str__())
       self.conn.commit()
 
-print("Waiting 10 for services to start")
+print("Waiting 10 seconds for services to start")
 time.sleep(10)
 
 # Create ES Index
@@ -38,8 +38,33 @@ except Exception as e:
   print(e.__str__())
 
 # Configure ES Index
-
-
+# configure date format
+try:
+  res = requests.put('http://elasticsearch:9200/notes/_mapping', 
+    headers={
+      'Content-Type': 'application/json'
+    },
+    json={
+        "properties": {
+          "published_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss.SSSSSS"
+          },
+          "updated_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss.SSSSSS"
+          }
+        }
+      })
+  print(res)
+  if str(res.status_code).startswith('2'):
+    print("ES Index configured")
+  else:
+    print("ES Index configuration failed")
+    obj = json.loads(res.content.decode('utf-8'),)
+    print(obj.get('error').get('root_cause')[0].get('type'))
+except Exception as e:
+  print(e.__str__())
 
 # Create Postgres Tables
 pg_conn = pg_conn()
@@ -134,6 +159,15 @@ pg_conn.SQLCmd("""CREATE TABLE community_notes (
                 CONSTRAINT community_FK
                  FOREIGN KEY(community_id)
                   REFERENCES communities(id) ON DELETE CASCADE
+                );""")
+
+pg_conn.SQLCmd("""CREATE TABLE tokens (
+                id SERIAL PRIMARY KEY,
+                token varchar(255) NOT NULL,
+                user_id varchar(30) NOT NULL,
+                CONSTRAINT user_FK
+                 FOREIGN KEY(user_id)
+                  REFERENCES users(id) ON DELETE CASCADE
                 );""")
 
 # Create Postgres replication slot
