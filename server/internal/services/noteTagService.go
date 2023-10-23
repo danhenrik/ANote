@@ -15,7 +15,7 @@ func NewNoteTagService(repo IRepo.NoteTagRepository) NoteTagService {
 	return NoteTagService{noteTagRepo: repo}
 }
 
-func (this NoteTagService) Create(tag *domain.NoteTag) *errors.AppError {
+func (this NoteTagService) Create(tag *domain.Tag) *errors.AppError {
 	tag.Id = helpers.NewUUID()
 	err := this.noteTagRepo.Create(tag)
 	if err != nil {
@@ -24,7 +24,7 @@ func (this NoteTagService) Create(tag *domain.NoteTag) *errors.AppError {
 	return nil
 }
 
-func (this NoteTagService) GetAll() ([]domain.NoteTag, *errors.AppError) {
+func (this NoteTagService) GetAll() ([]domain.Tag, *errors.AppError) {
 	tags, err := this.noteTagRepo.GetAll()
 	if err != nil {
 		return nil, err

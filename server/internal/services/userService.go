@@ -21,11 +21,11 @@ func (this UserService) Create(user *domain.User) *errors.AppError {
 	if isValidEmail := helpers.ValidateEmail(user.Email); !isValidEmail {
 		return errors.NewAppError(400, "Invalid email")
 	}
-	hashedPassword, err := helpers.Hash(user.Password)
+	hashedPassword, err := helpers.Hash(*user.Password)
 	if err != nil {
 		return errors.NewAppError(500, "Internal server error")
 	}
-	user.Password = hashedPassword
+	user.Password = &hashedPassword
 
 	if err := this.userRepository.Create(user); err != nil {
 		return err
@@ -74,7 +74,7 @@ func (this UserService) UpdatePassword(
 	if err != nil {
 		return err
 	}
-	if isValidPassword := helpers.CheckHash(oldPassword, user.Password); !isValidPassword {
+	if isValidPassword := helpers.CheckHash(oldPassword, *user.Password); !isValidPassword {
 		return errors.NewAppError(400, "Invalid password")
 	}
 

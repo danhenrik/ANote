@@ -9,6 +9,8 @@ type NoteRepository interface {
 	Create(note *domain.Note) *errors.AppError
 	AddTags(noteId string, tagIds []string) *errors.AppError
 	RemoveTags(noteId string, tagIds []string) *errors.AppError
+	AddCommunities(noteId string, communityIds []string) *errors.AppError
+	RemoveCommunities(noteId string, communityIds []string) *errors.AppError
 	GetAll() ([]domain.Note, *errors.AppError)
 	GetByID(id string) (*domain.Note, *errors.AppError)
 	Update(note *domain.Note) *errors.AppError

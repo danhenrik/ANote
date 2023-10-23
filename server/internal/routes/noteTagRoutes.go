@@ -15,7 +15,7 @@ func CreateTagController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[NoteTagController] Error on create tag unmarshal:", err)
 		return httpAdapter.NewErrorResponse(400, "Invlaid content-type")
 	}
-	tag := domain.NoteTag{Name: tagVM.Name}
+	tag := domain.Tag{Name: tagVM.Name}
 
 	if err := container.NoteTagService.Create(&tag); err != nil {
 		log.Println("[NoteTagController] Error on create tag:", err)
@@ -24,8 +24,8 @@ func CreateTagController(request httpAdapter.Request) httpAdapter.Response {
 	return httpAdapter.NewSuccessResponse(201, map[string]string{"id": tag.Id})
 }
 
-func GetTagsController(request httpAdapter.Request) httpAdapter.Response {
-	tags, err := container.NoteTagRepository.GetAll()
+func GetAllTagsController(request httpAdapter.Request) httpAdapter.Response {
+	tags, err := container.NoteTagService.GetAll()
 	if err != nil {
 		log.Println("[NoteTagController] Error on get tags:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)

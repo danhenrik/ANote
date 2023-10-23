@@ -18,7 +18,7 @@ func NewNoteTagRepository(
 	return NoteTagRepository{DBConn: DBConn}
 }
 
-func (this NoteTagRepository) Create(tag *domain.NoteTag) *errors.AppError {
+func (this NoteTagRepository) Create(tag *domain.Tag) *errors.AppError {
 	err := this.DBConn.Exec(
 		"INSERT INTO tags (id, name) VALUES ($1, $2)",
 		tag.Id,
@@ -31,22 +31,22 @@ func (this NoteTagRepository) Create(tag *domain.NoteTag) *errors.AppError {
 	return nil
 }
 
-func (this NoteTagRepository) GetAll() ([]domain.NoteTag, *errors.AppError) {
-	objType := reflect.TypeOf(domain.NoteTag{})
+func (this NoteTagRepository) GetAll() ([]domain.Tag, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Tag{})
 	res, err := this.DBConn.QueryMultiple(objType, "SELECT * FROM tags")
 	if err != nil {
 		log.Println("[NoteTagRepo] Error on get all tags:", err)
 		return nil, err
 	}
 
-	if tags, ok := res.([]domain.NoteTag); ok {
+	if tags, ok := res.([]domain.Tag); ok {
 		return tags, nil
 	}
-	return []domain.NoteTag{}, nil
+	return []domain.Tag{}, nil
 }
 
-func (this NoteTagRepository) GetById(id string) (*domain.NoteTag, *errors.AppError) {
-	objType := reflect.TypeOf(domain.NoteTag{})
+func (this NoteTagRepository) GetById(id string) (*domain.Tag, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Tag{})
 	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM tags WHERE id = $1", id)
 	if err != nil {
 		log.Println("[NoteTagRepo] Error on get tag by id:", err)
@@ -56,14 +56,14 @@ func (this NoteTagRepository) GetById(id string) (*domain.NoteTag, *errors.AppEr
 		return nil, nil
 	}
 
-	if tag, ok := res.(domain.NoteTag); ok {
+	if tag, ok := res.(domain.Tag); ok {
 		return &tag, nil
 	}
 	return nil, nil
 }
 
-func (this NoteTagRepository) GetByNoteId(noteId string) ([]domain.NoteTag, *errors.AppError) {
-	objType := reflect.TypeOf(domain.NoteTag{})
+func (this NoteTagRepository) GetByNoteId(noteId string) ([]domain.Tag, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Tag{})
 
 	res, err := this.DBConn.QueryMultiple(
 		objType,
@@ -78,10 +78,10 @@ func (this NoteTagRepository) GetByNoteId(noteId string) ([]domain.NoteTag, *err
 		return nil, err
 	}
 
-	if tags, ok := res.([]domain.NoteTag); ok {
+	if tags, ok := res.([]domain.Tag); ok {
 		return tags, nil
 	}
-	return []domain.NoteTag{}, nil
+	return []domain.Tag{}, nil
 }
 
 func (this NoteTagRepository) Delete(id string) *errors.AppError {

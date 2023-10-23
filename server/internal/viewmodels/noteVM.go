@@ -5,9 +5,10 @@ import (
 )
 
 type CreateNoteVM struct {
-	Title   string   `json:"title"`
-	Content string   `json:"content"`
-	Tags    []string `json:"tags"`
+	Title       string   `json:"title"`
+	Content     string   `json:"content"`
+	Tags        []string `json:"tags"`
+	Communities []string `json:"communities"`
 }
 
 type UpdateNoteVM struct {
@@ -21,28 +22,14 @@ type UpdateNoteVM struct {
 }
 
 type NoteVM struct {
-	Id        string      `json:"id"`
-	Title     string      `json:"title"`
-	Content   string      `json:"content"`
-	AuthorID  string      `json:"author_id"`
-	CreatedAt string      `json:"created_at"`
-	UpdatedAt string      `json:"updated_at"`
-	LikeCount 	 int      `json:"LikesCount"`
-	CommentCount int      `json:"CommentCount"`
-	Tags      []NoteTagVM `json:"tags"`
-}
-
-type NoteListVM struct {
-	Id        	 string   `json:"Id"`
-	Title     	 string   `json:"Title"`
-	Content   	 string   `json:"Content"`
-	AuthorID  	 string   `json:"author_id"`
-	Author			 string		`json:"Author"`
-	PublishedDate 	 string   `json:"PublishedDate"`
-	UpdatedDate 	 string   `json:"UpdatedDate"`
-	LikesCount 	 int      `json:"LikesCount"`
-	CommentCount int      `json:"CommentCount"`
-	Tags      	 []string	`json:"Tags"`
+	Id          string        `json:"id"`
+	Title       string        `json:"title"`
+	Content     string        `json:"content"`
+	AuthorID    string        `json:"author_id"`
+	CreatedAt   string        `json:"created_at"`
+	UpdatedAt   string        `json:"updated_at"`
+	Tags        []NoteTagVM   `json:"tags"`
+	Communities []CommunityVM `json:"communities"`
 }
 
 func (note CreateNoteVM) ToDomainNote() domain.Note {
@@ -54,20 +41,25 @@ func (note CreateNoteVM) ToDomainNote() domain.Note {
 
 func (n NoteVM) FromDomain(note domain.FullNote) NoteVM {
 	n = NoteVM{
-		Id:        		note.Id,
-		Title:     		note.Title,
-		Content:   		note.Content,
-		AuthorID:  		note.AuthorID,
-		CreatedAt: 		note.CreatedAt,
-		UpdatedAt: 		note.UpdatedAt,
-		LikeCount: 		note.LikeCount,
-		CommentCount: note.CommentCount,
-		Tags:      		[]NoteTagVM{},
-	}	
+		Id:          note.Id,
+		Title:       note.Title,
+		Content:     note.Content,
+		AuthorID:    note.AuthorID,
+		CreatedAt:   note.CreatedAt,
+		UpdatedAt:   note.UpdatedAt,
+		Tags:        []NoteTagVM{},
+		Communities: []CommunityVM{},
+	}
 	for _, tag := range note.Tags {
 		n.Tags = append(n.Tags, NoteTagVM{
 			Id:   tag.Id,
 			Name: tag.Name,
+		})
+	}
+	for _, community := range note.Communities {
+		n.Communities = append(n.Communities, CommunityVM{
+			Id:   community.Id,
+			Name: community.Name,
 		})
 	}
 	return n

@@ -27,6 +27,5 @@ func main() {
 
 		// write to elasticsearch
 		es.ESIndex(updates)
-		log.Println("Indexed updates:", updates)
 	}
 }

@@ -63,9 +63,39 @@ func (this NoteRepository) RemoveTags(noteId string, tagIds []string) *errors.Ap
 	return nil
 }
 
+func (this NoteRepository) AddCommunities(noteId string, communityIds []string) *errors.AppError {
+	for _, communityId := range communityIds {
+		err := this.DBConn.Exec(
+			"INSERT INTO community_notes (id, note_id, community_id) VALUES ($1, $2, $3)",
+			helpers.NewUUID(),
+			noteId,
+			communityId,
+		)
+		if err != nil {
+			log.Println("[NoteRepo] Error on add community to note:", err)
+			return err
+		}
+	}
+	return nil
+}
+
+func (this NoteRepository) RemoveCommunities(noteId string, communityIds []string) *errors.AppError {
+	for _, communityId := range communityIds {
+		err := this.DBConn.Exec(
+			"DELETE FROM community_notes WHERE note_id = $1 AND community_id = $2",
+			noteId,
+			communityId,
+		)
+		if err != nil {
+			log.Println("[NoteRepo] Error on remove community from note:", err)
+			return err
+		}
+	}
+	return nil
+}
+
 func (this NoteRepository) GetAll() ([]domain.Note, *errors.AppError) {
 	objType := reflect.TypeOf(domain.Note{})
-
 	res, err := this.DBConn.QueryMultiple(objType, "SELECT * FROM notes")
 	if err != nil {
 		log.Println("[NoteRepo] Error on get all notes:", err)

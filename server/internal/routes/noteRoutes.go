@@ -19,7 +19,7 @@ func CreateNoteController(request httpAdapter.Request) httpAdapter.Response {
 	note := noteVM.ToDomainNote()
 	note.AuthorID = request.User.ID
 
-	noteId, err := container.NoteService.Create(&note, noteVM.Tags)
+	noteId, err := container.NoteService.Create(&note, noteVM.Tags, noteVM.Communities)
 	if err != nil {
 		log.Println("[NoteController] Error on create note:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)

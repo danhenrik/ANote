@@ -6,9 +6,9 @@ import (
 )
 
 type NoteTagRepository interface {
-	Create(noteTag *domain.NoteTag) *errors.AppError
-	GetAll() ([]domain.NoteTag, *errors.AppError)
-	GetById(id string) (*domain.NoteTag, *errors.AppError)
-	GetByNoteId(noteId string) ([]domain.NoteTag, *errors.AppError)
+	Create(noteTag *domain.Tag) *errors.AppError
+	GetAll() ([]domain.Tag, *errors.AppError)
+	GetById(id string) (*domain.Tag, *errors.AppError)
+	GetByNoteId(noteId string) ([]domain.Tag, *errors.AppError)
 	Delete(id string) *errors.AppError
 }

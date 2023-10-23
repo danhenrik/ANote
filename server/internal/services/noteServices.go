@@ -13,26 +13,30 @@ import (
 )
 
 type NoteService struct {
-	userRepository    IRepo.UserRepository
-	noteRepository    IRepo.NoteRepository
-	noteTagRepository IRepo.NoteTagRepository
+	userRepository      IRepo.UserRepository
+	communityRepository IRepo.CommunityRepository
+	noteRepository      IRepo.NoteRepository
+	noteTagRepository   IRepo.NoteTagRepository
 }
 
 func NewNoteService(
 	userRepo IRepo.UserRepository,
+	communityRepo IRepo.CommunityRepository,
 	noteRepo IRepo.NoteRepository,
 	tagRepo IRepo.NoteTagRepository,
 ) NoteService {
 	return NoteService{
-		userRepository:    userRepo,
-		noteRepository:    noteRepo,
-		noteTagRepository: tagRepo,
+		userRepository:      userRepo,
+		noteRepository:      noteRepo,
+		noteTagRepository:   tagRepo,
+		communityRepository: communityRepo,
 	}
 }
 
 func (this NoteService) Create(
 	note *domain.Note,
 	tagIDs []string,
+	communityIDs []string,
 ) (string, *errors.AppError) {
 	user, _ := this.userRepository.GetByUsername(note.AuthorID)
 	if user == nil {
@@ -50,6 +54,25 @@ func (this NoteService) Create(
 		}
 	}
 
+	for _, communityID := range communityIDs {
+		community, err := this.communityRepository.GetById(communityID)
+		if community == nil {
+			return "", errors.NewAppError(400, "Invalid community provided")
+		}
+		if err != nil {
+			log.Println("[NoteService] Error on get community by id:", err)
+			return "", err
+		}
+		isMember, err := this.communityRepository.CheckMember(communityID, user.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on check member:", err)
+			return "", errors.NewAppError(400, "Error while checking if member is part of community")
+		}
+		if !isMember {
+			return "", errors.NewAppError(400, "User not member of community")
+		}
+	}
+
 	note.Id = helpers.NewUUID()
 	err := this.noteRepository.Create(note)
 	if err != nil {
@@ -60,7 +83,12 @@ func (this NoteService) Create(
 	err = this.noteRepository.AddTags(note.Id, tagIDs)
 	if err != nil {
 		log.Println("[NoteService] Error on add tags:", err)
-		return "", errors.NewAppError(500, "Error on add tags, note created")
+		return "", errors.NewAppError(200, "Note created but couldn't save tags")
+	}
+	err = this.noteRepository.AddCommunities(note.Id, communityIDs)
+	if err != nil {
+		log.Println("[NoteService] Error on add communities:", err)
+		return "", errors.NewAppError(200, "Note created but couldn't save communities")
 	}
 	return note.Id, nil
 }
@@ -82,14 +110,12 @@ func (this NoteService) GetById(id string) (*domain.FullNote, *errors.AppError) 
 	}
 
 	fnote := domain.FullNote{
-		Id:        		note.Id,
-		Title:     		note.Title,
-		Content:   		note.Content,
-		AuthorID:  		note.AuthorID,
-		CreatedAt: 		note.CreatedAt,
-		UpdatedAt:	 	note.UpdatedAt,
-		LikeCount: 		note.LikeCount,
-		CommentCount: note.CommentCount,
+		Id:        note.Id,
+		Title:     note.Title,
+		Content:   note.Content,
+		AuthorID:  note.AuthorID,
+		CreatedAt: note.CreatedAt,
+		UpdatedAt: note.UpdatedAt,
 		Tags:      tags,
 		// TODO: Insert communities
 	}
@@ -197,8 +223,46 @@ func (this NoteService) Update(requestUserId string, noteVM viewmodels.UpdateNot
 	}
 
 	// get communities
-
-	// check if user is member of communities
+	communities, err := this.communityRepository.GetByNoteId(noteVM.Id)
+	if err != nil {
+		log.Println("[NoteService] Error on get note communities:", err)
+		return err
+	}
+	// validate communities
+	for _, communityID := range noteVM.RemoveCommunities {
+		community, err := this.communityRepository.GetById(communityID)
+		if community == nil {
+			return errors.NewAppError(400, fmt.Sprintf("Invalid remove community provided w/ id %s not found", communityID))
+		}
+		if err != nil {
+			log.Println("[NoteService] Error on get remove community by id:", err)
+			return err
+		}
+		if !slices.Contains(communities, *community) {
+			return errors.NewAppError(400, fmt.Sprintf("Remove community w/id %s not present in note communities", communityID))
+		}
+	}
+	for _, communityID := range noteVM.AddCommunities {
+		community, err := this.communityRepository.GetById(communityID)
+		if community == nil {
+			return errors.NewAppError(400, fmt.Sprintf("Invalid add community provided w/ id %s", communityID))
+		}
+		if err != nil {
+			log.Println("[NoteService] Error on get add community by id:", err)
+			return err
+		}
+		if slices.Contains(communities, *community) {
+			return errors.NewAppError(400, fmt.Sprintf("Add community w/id %s already present in note communities", communityID))
+		}
+		userIsMember, err := this.communityRepository.CheckMember(communityID, requestUserId)
+		if err != nil {
+			log.Println("[NoteService] Error on check member:", err)
+			return errors.NewAppError(400, "Error while checking if member is part of community:"+communityID)
+		}
+		if !userIsMember {
+			return errors.NewAppError(400, "User not member of community: "+communityID)
+		}
+	}
 
 	// update note
 	if noteVM.Title != "" {
@@ -230,6 +294,20 @@ func (this NoteService) Update(requestUserId string, noteVM viewmodels.UpdateNot
 	}
 
 	// update communities
+	if len(noteVM.AddCommunities) > 0 {
+		err = this.noteRepository.AddCommunities(note.Id, noteVM.AddCommunities)
+		if err != nil {
+			log.Println("[NoteService] Error on add communities:", err)
+			return err
+		}
+	}
+	if len(noteVM.RemoveCommunities) > 0 {
+		err = this.noteRepository.RemoveCommunities(note.Id, noteVM.RemoveCommunities)
+		if err != nil {
+			log.Println("[NoteService] Error on remove communities:", err)
+			return err
+		}
+	}
 	return nil
 }
 
@@ -242,41 +320,29 @@ func (this NoteService) Delete(id string) *errors.AppError {
 	return nil
 }
 
-func (this NoteService) GetAll() ([]domain.FullNoteList, *errors.AppError) {
+func (this NoteService) GetAll() ([]domain.FullNote, *errors.AppError) {
 	notes, err := this.noteRepository.GetAll()
 	if err != nil {
 		log.Println("[NoteService] Error on get note:", err)
 		return nil, err
 	}
 
-	var fnote []domain.FullNoteList
+	var fnote []domain.FullNote
 	for _, note := range notes {
 		tags, errTag := this.noteTagRepository.GetByNoteId(note.Id)
-		user, errUser := this.userRepository.GetByUsername(note.AuthorID)
 		if errTag != nil {
 			log.Println("[NoteService] Error on get note tags:", errTag)
 			return nil, errTag
-		} else if errUser != nil {
-			log.Println("[NoteService] Error on get user note:", errUser)
-			return nil, errUser
-		}
-	
-		var tagsDescription []string
-		for _, tag := range tags {
-			tagsDescription = append(tagsDescription, tag.Name)
 		}
 
-		fnote = append(fnote, domain.FullNoteList{
-			Id:        		note.Id,
-			Title:     		note.Title,
-			Content:   		note.Content,
-			AuthorID:  		note.AuthorID,
-			Author:				user.Email,
-			PublishedDate: 		note.CreatedAt,
-			UpdatedDate: 		note.UpdatedAt,
-			LikesCount: 		note.LikeCount,
-			CommentCount: note.CommentCount,
-			Tags:      		tagsDescription,
+		fnote = append(fnote, domain.FullNote{
+			Id:        note.Id,
+			Title:     note.Title,
+			Content:   note.Content,
+			AuthorID:  note.AuthorID,
+			CreatedAt: note.CreatedAt,
+			UpdatedAt: note.UpdatedAt,
+			Tags:      tags,
 			// TODO: Insert communities
 		})
 	}

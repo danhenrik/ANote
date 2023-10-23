@@ -32,16 +32,22 @@ func main() {
 
 	// notes endpoints
 	r.POST("/notes", httpAdapter.NewGinAdapter(routes.CreateNoteController, middlewares.AuthenticateUser))
-	r.GET("/notes/:id", httpAdapter.NewGinAdapter(routes.GetNoteByIDController))
 	r.GET("/notes", httpAdapter.NewGinAdapter(routes.SearchNoteController))
+	r.GET("/notes/:id", httpAdapter.NewGinAdapter(routes.GetNoteByIDController))
 	r.PATCH("/notes", httpAdapter.NewGinAdapter(routes.UpdateNoteController, middlewares.AuthenticateUser))
 	r.DELETE("/notes/:id", httpAdapter.NewGinAdapter(routes.DeleteNoteController, middlewares.AuthenticateUser))
-	r.GET("/notes", httpAdapter.NewGinAdapter(routes.GetAllNoteController))
 
 	// tags endpoints
 	r.POST("/tags", httpAdapter.NewGinAdapter(routes.CreateTagController, middlewares.AuthenticateUser))
-	r.GET("/tags", httpAdapter.NewGinAdapter(routes.GetTagsController))
-	r.DELETE("/tags/:id", httpAdapter.NewGinAdapter(routes.DeleteTagController))
+	r.GET("/tags", httpAdapter.NewGinAdapter(routes.GetAllTagsController))
+	r.DELETE("/tags/:id", httpAdapter.NewGinAdapter(routes.DeleteTagController, middlewares.AuthenticateUser))
+
+	// communities endpoints
+	r.POST("/communities", httpAdapter.NewGinAdapter(routes.CreateCommunityController, middlewares.AuthenticateUser))
+	r.POST("/communities/join/:id", httpAdapter.NewGinAdapter(routes.JoinCommunityController, middlewares.AuthenticateUser))
+	r.POST("/communities/leave/:id", httpAdapter.NewGinAdapter(routes.LeaveCommunityController, middlewares.AuthenticateUser))
+	r.GET("/communities", httpAdapter.NewGinAdapter(routes.GetAllCommunitiesController))
+	r.DELETE("/communities/:id", httpAdapter.NewGinAdapter(routes.DeleteCommunityController, middlewares.AuthenticateUser))
 
 	r.Run()
 }

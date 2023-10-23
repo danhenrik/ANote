@@ -33,7 +33,7 @@ func (this *CreateUserVM) ToDomainUser() domain.User {
 	var user domain.User
 	user.Id = this.Username
 	user.Email = this.Email
-	user.Password = this.Password
+	user.Password = &this.Password
 	return user
 }
 

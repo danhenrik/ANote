@@ -39,7 +39,7 @@ func (this AuthService) Login(login viewmodels.LoginVM) (string, *errors.AppErro
 		return "", errors.NewAppError(400, "User not found")
 	}
 
-	if passwordMatch := helpers.CheckHash(login.Password, userFromDB.Password); !passwordMatch {
+	if passwordMatch := helpers.CheckHash(login.Password, *userFromDB.Password); !passwordMatch {
 		return "", errors.NewAppError(400, "Invalid password")
 	}
 

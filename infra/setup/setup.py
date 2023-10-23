@@ -48,11 +48,11 @@ try:
         "properties": {
           "published_date": {
             "type": "date",
-            "format": "yyyy-MM-dd HH:mm:ss.SSSSSS"
+            "format": "yyyy-MM-dd"
           },
           "updated_date": {
             "type": "date",
-            "format": "yyyy-MM-dd HH:mm:ss.SSSSSS"
+            "format": "yyyy-MM-dd"
           }
         }
       })
@@ -81,8 +81,8 @@ pg_conn.SQLCmd("""CREATE TABLE notes (
                 title varchar NOT NULL, 
                 author_id varchar(30) NOT NULL,
                 content varchar NOT NULL,
-                created_at timestamp NOT NULL DEFAULT NOW(),
-                updated_at timestamp NOT NULL DEFAULT NOW(),
+                created_at date NOT NULL DEFAULT NOW(),
+                updated_at date NOT NULL DEFAULT NOW(),
                 like_count integer NOT NULL DEFAULT 0,
                 comment_count integer NOT NULL DEFAULT 0,
                 CONSTRAINT user_FK
