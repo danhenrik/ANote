@@ -24,13 +24,18 @@ func LoginController(request httpAdapter.Request) httpAdapter.Response {
 }
 
 func RequestPasswordResetController(request httpAdapter.Request) httpAdapter.Response {
-	// generate password reset token
+	var userVM viewmodels.RequestPasswordResetVM
+	if err := json.Unmarshal([]byte(request.Body), &userVM); err != nil {
+		log.Println("[UserController] Error on request password reset unmarshal:", err)
+		return httpAdapter.NewErrorResponse(400, "Invalid content-type")
+	}
 
-	// save token to database
-
-	// send password reset token to email via link
-
-	return httpAdapter.NewNoContentRespone()
+	token, err := container.AuthService.RequestPasswordReset(userVM.Email)
+	if err != nil {
+		log.Println("[UserController] Error on request password reset:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewSuccessResponse(200, token)
 }
 
 func ChangeUserPasswordController(request httpAdapter.Request) httpAdapter.Response {
@@ -40,7 +45,7 @@ func ChangeUserPasswordController(request httpAdapter.Request) httpAdapter.Respo
 		return httpAdapter.NewErrorResponse(400, "Invalid content-type")
 	}
 
-	if err := container.UserService.ChangePassword(userVM.Token, userVM.NewPassword); err != nil {
+	if err := container.AuthService.ChangePassword(userVM.Token, userVM.NewPassword); err != nil {
 		log.Println("[UserController] Error on change password:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}

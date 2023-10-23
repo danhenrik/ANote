@@ -41,9 +41,37 @@ func UpdateNoteController(request httpAdapter.Request) httpAdapter.Response {
 	return httpAdapter.NewNoContentRespone()
 }
 
-func GetNoteController(request httpAdapter.Request) httpAdapter.Response {
+func SearchNoteController(request httpAdapter.Request) httpAdapter.Response {
+	title, _ := request.GetSingleQuery("title")
+	content, _ := request.GetSingleQuery("content")
+	tags, _ := request.GetQuerySlice("tags")
+	author, _ := request.GetSingleQuery("author")
+	communities, _ := request.GetQuerySlice("communities")
+	published_date, _ := request.GetSingleQuery("date")
+	from_published_date, _ := request.GetSingleQuery("from_date")
+	to_published_date, _ := request.GetSingleQuery("to_date")
 
-	return httpAdapter.NewSuccessResponse(200, "Hello from get note")
+	createdAt := [2]string{"", ""}
+	if published_date != "" {
+		createdAt[0] = published_date
+	} else if from_published_date != "" && to_published_date != "" {
+		createdAt[0] = from_published_date
+		createdAt[1] = to_published_date
+	}
+
+	notes, err := container.NoteService.Search(
+		title,
+		content,
+		author,
+		tags,
+		communities,
+		createdAt,
+	)
+	if err != nil {
+		log.Println("[NoteController] Error on search note:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewSuccessResponse(200, notes)
 }
 
 func GetNoteByIDController(request httpAdapter.Request) httpAdapter.Response {

@@ -17,6 +17,8 @@ type UpdatePasswordVM struct {
 	NewPassword string `json:"new_password"`
 }
 
+type RequestPasswordResetVM = UpdateEmailVM
+
 type ChangePasswordVM struct {
 	Token       string `json:"token"`
 	NewPassword string `json:"new_password"`

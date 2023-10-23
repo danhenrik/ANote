@@ -97,7 +97,7 @@ func (this UserRepository) GetUserWithPassword(key string) (*domain.User, *error
 
 func (this UserRepository) UpdateEmail(username string, email string) *errors.AppError {
 	err := this.DBConn.Exec(
-		"UPDATE users SET email = $1 WHERE id = $3",
+		"UPDATE users SET email = $1 WHERE id = $2",
 		email,
 		username,
 	)
@@ -110,7 +110,7 @@ func (this UserRepository) UpdateEmail(username string, email string) *errors.Ap
 
 func (this UserRepository) UpdatePassword(username string, password string) *errors.AppError {
 	err := this.DBConn.Exec(
-		"UPDATE users SET password = $1 WHERE id = $3",
+		"UPDATE users SET password = $1 WHERE id = $2",
 		password,
 		username,
 	)

@@ -85,17 +85,6 @@ func (this UserService) UpdatePassword(
 	return nil
 }
 
-// Not implemented as token mechanism is not implemented because of emailing limitations
-func (_ UserService) ChangePassword(
-	token string,
-	newPassword string,
-) *errors.AppError {
-	// get user by token
-	// if user not found return error
-	// update password
-	return nil
-}
-
 func (this UserService) Delete(username string) *errors.AppError {
 	err := this.userRepository.Delete(username)
 	if err != nil {
