@@ -30,7 +30,7 @@ const NoteCard = ({ note }) => {
 
   const handleExpandedNote = (event) => {
     if (event.target.closest("a")) return;
-    if (event.target.closest("#note-actions")) return;
+    if (event.target.closest("#like-button")) return;
     modal.openModal(
       <ExpandedCard
         note={note}
@@ -70,7 +70,9 @@ const NoteCard = ({ note }) => {
           id='note-actions'
           style={{ float: "right", marginBottom: "10px", marginTop: "10px" }}
         >
-          <LikeButton note={note}></LikeButton>
+          <span id='like-button'>
+            <LikeButton note={note}></LikeButton>
+          </span>
           <CommentIcon style={{ marginLeft: "10px", color: "blue" }} />
         </div>
       </CardContent>

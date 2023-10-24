@@ -14,22 +14,12 @@ import {
   Title,
 } from "../NoteCard.styled";
 import Tags from "../../../Tags/TagsList";
-import { useAuth } from "../../../../../store/auth-context";
-import { CreateButton, GridWrapper } from "../../../TimelineList.styled";
+import { CreateButton } from "../../../TimelineList.styled";
+import comments from "./comments.json";
+import CommentCard from "./CommentCard";
+import { Grid } from "@mui/material";
 
 const ExpandedCard = ({ note, randomColorElement }) => {
-  const auth = useAuth();
-
-  const likeNote = () => {
-    if (auth.isAuthenticated) console.log("authenticated");
-    else console.log("not authenticated");
-  };
-
-  const shareNote = () => {
-    if (auth.isAuthenticated) console.log("authenticated");
-    else console.log("not authenticated");
-  };
-
   return (
     <>
       <NotesCardContainer>
@@ -58,26 +48,6 @@ const ExpandedCard = ({ note, randomColorElement }) => {
           </Typography>
         </CardContent>
       </NotesCardContainer>
-      <GridWrapper
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <CreateButton
-          onClick={likeNote}
-          sx={{ marginLeft: "15px", marginTop: "20px" }}
-        >
-          Curtir
-        </CreateButton>
-        <CreateButton
-          onClick={shareNote}
-          sx={{ marginRight: "15px", marginTop: "20px" }}
-        >
-          Compartilhar
-        </CreateButton>
-      </GridWrapper>
       <TextField
         label='Comentar'
         variant='standard'
@@ -88,6 +58,26 @@ const ExpandedCard = ({ note, randomColorElement }) => {
           width: "90%",
         }}
       />
+      <CreateButton
+        sx={{
+          marginTop: "10px",
+          display: "block",
+          marginRight: "15px",
+          marginLeft: "auto",
+        }}
+      >
+        Comentar
+      </CreateButton>
+      <ContentContainer sx={{ marginTop: "10px", float: "left" }}>
+        <Typography variant='h5' color='textPrimary'>
+          Comentários
+        </Typography>
+        {comments.map((comment) => (
+          <Grid item key={comment.Id} sx={{ marginBottom: "100px" }}>
+            <CommentCard comment={comment} />
+          </Grid>
+        ))}
+      </ContentContainer>
     </>
   );
 };
