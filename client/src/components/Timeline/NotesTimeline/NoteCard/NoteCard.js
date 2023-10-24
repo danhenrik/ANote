@@ -70,7 +70,7 @@ const NoteCard = ({ note }) => {
           id='note-actions'
           style={{ float: "right", marginBottom: "10px", marginTop: "10px" }}
         >
-          <LikeButton countLikes={note.LikesCount}></LikeButton>
+          <LikeButton note={note}></LikeButton>
           <CommentIcon style={{ marginLeft: "10px", color: "blue" }} />
         </div>
       </CardContent>

@@ -3,6 +3,7 @@
     "Id": "1",
     "Title": "Note 1",
     "Author": "john_doe",
+    "AuthorId": "1",
     "Content": "Content for Note 1",
     "PublishedDate": "2023-10-01T10:00:00Z",
     "UpdatedDate": "2023-10-01T15:30:00Z",
@@ -21,6 +22,7 @@
     "PublishedDate": "2023-10-02T09:45:00Z",
     "UpdatedDate": "2023-10-02T14:15:00Z",
     "Author": "jane_smith",
+    "AuthorId": "1",
     "Tags": ["tag2", "tag3", "tag4"],
     "CommentCount": 7,
     "Commenters": ["user1", "user3", "user5", "user6", "user8"]
@@ -34,6 +36,7 @@
     "PublishedDate": "2023-10-03T11:20:00Z",
     "UpdatedDate": "2023-10-03T16:45:00Z",
     "Author": "bob_jones",
+    "AuthorId": "2",
     "Tags": ["tag1", "tag5"],
     "CommentCount": 3,
     "Commenters": ["user2", "user4", "user"]
@@ -47,6 +50,7 @@
     "PublishedDate": "2023-10-03T11:20:00Z",
     "UpdatedDate": "2023-10-03T16:45:00Z",
     "Author": "bob_jones",
+    "AuthorId": "3",
     "Tags": ["tag1", "tag5"],
     "CommentCount": 3,
     "Commenters": ["user2", "user4", "user"]
@@ -60,6 +64,7 @@
     "PublishedDate": "2023-10-03T11:20:00Z",
     "UpdatedDate": "2023-10-03T16:45:00Z",
     "Author": "bob_jones",
+    "AuthorId": "4",
     "Tags": ["tag1", "tag5"],
     "CommentCount": 3,
     "Commenters": ["user2", "user4", "user"]

@@ -1,26 +1,51 @@
 import React, { useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import axios from "axios";
 
-const LikeButton = (countLikes) => {
-  const [likes, setLikes] = useState(countLikes.countLikes);
+const LikeButton = (note) => {
+  const [likes, setLikes] = useState(note.note.LikesCount);
   const [isClicked, setIsClicked] = useState(false);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (isClicked) {
-      setLikes(likes - 1);
+      try {
+        await axios.delete("/likes/" + note.note.AuthorId + "/" + note.note.Id);
+        setLikes(likes - 1);
+      } catch (error) {
+        console.error("Like failed:", error);
+      }
     } else {
-      setLikes(likes + 1);
+      try {
+        const likeData = {
+          user_id: note.note.AuthorId,
+          note_id: note.note.Id,
+        };
+
+        axios.post("/likes", likeData);
+        setLikes(likes + 1);
+      } catch (error) {
+        console.error("Like failed:", error);
+      }
     }
     setIsClicked(!isClicked);
   };
 
   return (
     <span>
-      <FavoriteIcon
-        className={`like-button ${isClicked && "liked"}`}
-        onClick={handleClick}
-        style={{ marginTop: "10px", color: "red" }}
-      />
+      {isClicked ? (
+        <FavoriteIcon
+          className={`like-button ${isClicked && "liked"}`}
+          onClick={handleClick}
+          style={{ marginTop: "10px", color: "red" }}
+        />
+      ) : (
+        <FavoriteBorderIcon
+          className={`like-button ${isClicked && "liked"}`}
+          onClick={handleClick}
+          style={{ marginTop: "10px", color: "red" }}
+        />
+      )}
       <span
         style={{
           color: "red",
