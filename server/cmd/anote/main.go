@@ -49,5 +49,9 @@ func main() {
 	r.GET("/communities", httpAdapter.NewGinAdapter(routes.GetAllCommunitiesController))
 	r.DELETE("/communities/:id", httpAdapter.NewGinAdapter(routes.DeleteCommunityController, middlewares.AuthenticateUser))
 
+	// likes endpoints
+	r.POST("/likes", httpAdapter.NewGinAdapter(routes.CreateLikeController))
+	r.DELETE("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.DeleteLikeController))
+
 	r.Run()
 }

@@ -22,12 +22,14 @@ func Config() {
 	NoteRepository = repositories.NewNoteRepository(DBConn)
 	NoteTagRepository = repositories.NewNoteTagRepository(DBConn)
 	UserRepository = repositories.NewUserRepository(DBConn)
+	LikeRepository = repositories.NewLikeRepository(DBConn)
 
 	AuthService = services.NewAuthService(AuthRepository, UserRepository, JwtProvider)
 	CommunityService = services.NewCommunityService(CommunityRepository)
 	NoteService = services.NewNoteService(UserRepository, CommunityRepository, NoteRepository, NoteTagRepository)
 	NoteTagService = services.NewNoteTagService(NoteTagRepository)
 	UserService = services.NewUserService(UserRepository)
+	LikeService = services.NewLikeService(LikeRepository)
 }
 
 var DBConn interfaces.DBConnection
@@ -38,9 +40,11 @@ var CommunityRepository IRepo.CommunityRepository
 var NoteRepository IRepo.NoteRepository
 var NoteTagRepository IRepo.NoteTagRepository
 var UserRepository IRepo.UserRepository
+var LikeRepository IRepo.LikeRepository
 
 var AuthService services.AuthService
 var CommunityService services.CommunityService
 var NoteService services.NoteService
 var NoteTagService services.NoteTagService
 var UserService services.UserService
+var LikeService services.LikeService
