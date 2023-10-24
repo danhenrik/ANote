@@ -40,7 +40,7 @@ type UpdateRow struct {
 }
 
 func GetUpdateFromPG() (updatesList []types.Update) {
-	updates, err := db.Query("SELECT * FROM pg_logical_slot_peek_changes('es_replication_slot', NULL, NULL);")
+	updates, err := db.Query("SELECT * FROM pg_logical_slot_get_changes('es_replication_slot', NULL, NULL);")
 	if err != nil {
 		log.Println("Error on query:", err)
 	}

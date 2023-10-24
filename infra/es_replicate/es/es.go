@@ -299,7 +299,6 @@ func ESIndex(updates []appTypes.Update) {
 			switch change.Table {
 			case "notes":
 				idIdx := strArr(change.ColumnNames).indexOf("id")
-				// TODO DEBUG HOW IT GOT HERE IN A DELETE
 				noteId := change.ColumnValues[idIdx]
 
 				// get note info
