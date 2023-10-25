@@ -17,6 +17,7 @@ type NoteService struct {
 	communityRepository IRepo.CommunityRepository
 	noteRepository      IRepo.NoteRepository
 	noteTagRepository   IRepo.NoteTagRepository
+	qb                  *es.NoteQueryBuilder
 }
 
 func NewNoteService(
@@ -24,12 +25,14 @@ func NewNoteService(
 	communityRepo IRepo.CommunityRepository,
 	noteRepo IRepo.NoteRepository,
 	tagRepo IRepo.NoteTagRepository,
+	queryBuilder *es.NoteQueryBuilder,
 ) NoteService {
 	return NoteService{
 		userRepository:      userRepo,
 		noteRepository:      noteRepo,
 		noteTagRepository:   tagRepo,
 		communityRepository: communityRepo,
+		qb:                  queryBuilder,
 	}
 }
 
@@ -231,30 +234,29 @@ func (this NoteService) Search(
 	sortOrder string,
 	sortField string,
 ) ([]domain.FilteredNote, *errors.AppError) {
-	qb := es.NewNoteQueryBuilder()
 	if page <= 0 || size <= 0 {
 		return nil, errors.NewAppError(400, "Invalid pagination parameters")
 	}
-	qb.AddPagination(page, size)
+	this.qb.AddPagination(page, size)
 
 	if sortField != "" && sortOrder != "" {
-		qb.AddSort(convertMap[sortField], sortOrder)
+		this.qb.AddSort(convertMap[sortField], sortOrder)
 	}
 
 	if len(tags) > 0 {
-		qb.AddTagsQuery(tags)
+		this.qb.AddTagsQuery(tags)
 	}
 
 	if authorID != "" {
-		qb.AddAuthorQuery(authorID)
+		this.qb.AddAuthorQuery(authorID)
 	}
 
 	if title != "" {
-		qb.AddTitleQuery(title)
+		this.qb.AddTitleQuery(title)
 	}
 
 	if content != "" {
-		qb.AddContentQuery(content)
+		this.qb.AddContentQuery(content)
 	}
 
 	if createdAt[0] != "" && createdAt[1] == "" {
@@ -262,7 +264,7 @@ func (this NoteService) Search(
 		if !ok {
 			return nil, errors.NewAppError(400, "Invalid time format")
 		}
-		qb.AddCreatedAtMatchQuery(createdAt[0])
+		this.qb.AddCreatedAtMatchQuery(createdAt[0])
 	} else if createdAt[0] != "" && createdAt[1] != "" {
 		ok := helpers.ValidateDate(createdAt[0])
 		if !ok {
@@ -272,14 +274,14 @@ func (this NoteService) Search(
 		if !ok {
 			return nil, errors.NewAppError(400, "Invalid upper limit time format")
 		}
-		qb.AddCreatedAtRangeQuery(createdAt[0], createdAt[1])
+		this.qb.AddCreatedAtRangeQuery(createdAt[0], createdAt[1])
 	}
 
 	if len(communities) > 0 {
-		qb.AddCommunitiesQuery(communities)
+		this.qb.AddCommunitiesQuery(communities)
 	}
 
-	notes, err := qb.Query()
+	notes, err := this.qb.Query()
 	if err != nil {
 		log.Println("[NoteService] Error on query notes:", err)
 		return nil, err
@@ -295,26 +297,25 @@ func (this NoteService) GetFeed(
 	sortOrder string,
 	sortField string,
 ) ([]domain.FilteredNote, *errors.AppError) {
-	qb := es.NewNoteQueryBuilder()
 	if page <= 0 || size <= 0 {
 		return nil, errors.NewAppError(400, "Invalid pagination parameters")
 	}
-	qb.AddPagination(page, size)
+	this.qb.AddPagination(page, size)
 
 	if sortField != "" && sortOrder != "" {
-		qb.AddSort(convertMap[sortField], sortOrder)
+		this.qb.AddSort(convertMap[sortField], sortOrder)
 	}
 
 	// notes in communities
 	if len(communityIds) > 0 {
-		qb.AddCommunityIdsQuery(communityIds)
+		this.qb.AddCommunityIdsQuery(communityIds)
 	}
 
 	// or private (created by author)
-	qb.FinishShould().
+	this.qb.FinishShould().
 		AddAuthorQuery(authorID)
 
-	notes, err := qb.Query()
+	notes, err := this.qb.Query()
 	if err != nil {
 		log.Println("[NoteService] Error on query notes:", err)
 		return nil, err
