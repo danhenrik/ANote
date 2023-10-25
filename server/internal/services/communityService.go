@@ -32,6 +32,14 @@ func (this CommunityService) GetAll() ([]domain.Community, *errors.AppError) {
 	return communities, nil
 }
 
+func (this CommunityService) GetByUserId(id string) ([]domain.Community, *errors.AppError) {
+	communities, err := this.communityRepo.GetByUserId(id)
+	if err != nil {
+		return nil, err
+	}
+	return communities, nil
+}
+
 func (this CommunityService) Join(id string, userID string) *errors.AppError {
 	err := this.communityRepo.AddMember(id, userID)
 	if err != nil {

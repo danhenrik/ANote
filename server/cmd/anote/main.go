@@ -32,8 +32,11 @@ func main() {
 
 	// notes endpoints
 	r.POST("/notes", httpAdapter.NewGinAdapter(routes.CreateNoteController, middlewares.AuthenticateUser))
+	r.GET("/notes/feed", httpAdapter.NewGinAdapter(routes.GetNoteFeedController, middlewares.AuthenticateUser))
 	r.GET("/notes", httpAdapter.NewGinAdapter(routes.SearchNoteController))
 	r.GET("/notes/:id", httpAdapter.NewGinAdapter(routes.GetNoteByIDController))
+	r.GET("/notes/community/:id", httpAdapter.NewGinAdapter(routes.GetNoteByCommunityIDController))
+	r.GET("/notes/author/:id", httpAdapter.NewGinAdapter(routes.GetNoteByAuthorIDController))
 	r.PATCH("/notes", httpAdapter.NewGinAdapter(routes.UpdateNoteController, middlewares.AuthenticateUser))
 	r.DELETE("/notes/:id", httpAdapter.NewGinAdapter(routes.DeleteNoteController, middlewares.AuthenticateUser))
 

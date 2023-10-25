@@ -39,6 +39,11 @@ func (qb *NoteQueryBuilder) AddTagsQuery(tags []string) *NoteQueryBuilder {
 	return qb
 }
 
+func (qb *NoteQueryBuilder) AddCommunityIdsQuery(communitiesIds []string) *NoteQueryBuilder {
+	qb.QueryBuilder.AddIncludeQuery("communities.id.keyword", communitiesIds)
+	return qb
+}
+
 func (qb *NoteQueryBuilder) AddCommunitiesQuery(communities []string) *NoteQueryBuilder {
 	qb.QueryBuilder.AddIncludeQuery("communities.name.keyword", communities)
 	return qb
@@ -64,7 +69,24 @@ func (qb *NoteQueryBuilder) AddCommentersQuery(commenters []string) *NoteQueryBu
 	return qb
 }
 
+func (qb *NoteQueryBuilder) AddSort(field string, order string) *NoteQueryBuilder {
+	qb.QueryBuilder.AddSort(field, order)
+	return qb
+}
+
+func (qb *NoteQueryBuilder) AddPagination(page int, size int) *NoteQueryBuilder {
+	qb.QueryBuilder.AddSize(size)
+	qb.QueryBuilder.SetPage(page)
+	return qb
+}
+
+func (qb *NoteQueryBuilder) FinishShould() *NoteQueryBuilder {
+	qb.QueryBuilder.Should()
+	return qb
+}
+
 func (qb *NoteQueryBuilder) Query() ([]domain.FilteredNote, *errors.AppError) {
+	qb.QueryBuilder.AddSort("published_date", "desc")
 	noteArr, err := qb.QueryBuilder.Query()
 	if err != nil {
 		return nil, err

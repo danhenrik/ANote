@@ -16,7 +16,11 @@ type QueryBuilder struct {
 	index      string
 	client     *elasticsearch.TypedClient
 	query      *strings.Builder
+	sort       *strings.Builder
 	queryCount int
+	sortCount  int
+	size       int
+	page       int
 }
 
 func NewQueryBuilder(indexName string) *QueryBuilder {
@@ -31,13 +35,19 @@ func NewQueryBuilder(indexName string) *QueryBuilder {
 	log.Println("[NewQueryBuilder] Connected to Elasticsearch")
 
 	query := strings.Builder{}
+	sort := strings.Builder{}
 
-	query.WriteString(`{"query":{"bool":{"must":[`)
+	query.WriteString(`{"query":{"bool":{"should": [{"bool":{"must":[`)
+	sort.WriteString(`"sort":[`)
 	return &QueryBuilder{
 		index:      indexName,
 		client:     client,
 		query:      &query,
+		sort:       &sort,
 		queryCount: 0,
+		sortCount:  0,
+		size:       0,
+		page:       0,
 	}
 }
 
@@ -78,10 +88,40 @@ func (qb *QueryBuilder) AddRangeQuery(field string, lower string, upper string) 
 	return qb
 }
 
-func (qb *QueryBuilder) Query() ([]types.Hit, *errors.AppError) {
-	qb.query.WriteString(`]}}}`)
-	log.Println("[Query] Query:", qb.query.String())
+func (qb *QueryBuilder) Should() *QueryBuilder {
+	qb.query.WriteString(`]}},{"bool":{"must":[`)
+	qb.queryCount = 0
+	return qb
+}
 
+func (qb *QueryBuilder) AddSort(field string, order string) *QueryBuilder {
+	if qb.sortCount > 0 {
+		qb.sort.WriteString(",")
+	}
+	qb.sort.WriteString(fmt.Sprintf(`{"%s":{"order":"%s"}}`, field, order))
+	qb.sortCount++
+	return qb
+}
+
+func (qb *QueryBuilder) AddSize(size int) *QueryBuilder {
+	qb.size = size
+	return qb
+}
+
+func (qb *QueryBuilder) SetPage(page int) *QueryBuilder {
+	qb.page = page
+	return qb
+}
+
+func (qb *QueryBuilder) Query() ([]types.Hit, *errors.AppError) {
+	offset := (qb.page - 1) * qb.size
+	qb.sort.WriteString(`]`)
+	qb.query.WriteString(fmt.Sprintf(`]}}]}},"size":"%d","from":"%d",%s}`,
+		qb.size,
+		offset,
+		qb.sort.String(),
+	))
+	log.Println("[Query] Query:", qb.query.String())
 	res, err := qb.client.
 		Search().
 		Index(qb.index).

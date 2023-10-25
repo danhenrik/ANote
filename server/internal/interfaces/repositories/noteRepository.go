@@ -13,6 +13,8 @@ type NoteRepository interface {
 	RemoveCommunities(noteId string, communityIds []string) *errors.AppError
 	GetAll() ([]domain.Note, *errors.AppError)
 	GetByID(id string) (*domain.Note, *errors.AppError)
+	GetByAuthorID(userID string) ([]domain.Note, *errors.AppError)
+	GetByCommunityID(communityID string) ([]domain.Note, *errors.AppError)
 	Update(note *domain.Note) *errors.AppError
 	Delete(id string) *errors.AppError
 }
