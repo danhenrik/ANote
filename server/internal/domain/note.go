@@ -37,8 +37,18 @@ type Like struct {
 }
 
 type Comment struct {
-	Id     string `json:"id"`
-	UserId string `json:"user_id"`
+	Id        string `json:"id"`
+	UserId    string `json:"user_id"`
+	NoteId    string `json:"note_id"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
+}
+
+type NoteComment struct {
+	Id        string `json:"id"`
+	Author    string `json:"author"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
 }
 
 type FilteredNote struct {

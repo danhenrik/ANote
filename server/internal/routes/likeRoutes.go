@@ -28,11 +28,11 @@ func DeleteLikeController(request httpAdapter.Request) httpAdapter.Response {
 	idNote, okIdNote := request.GetSingleParam("idNote")
 
 	if !okIdUser || !okIdNote {
-		log.Println("[CommunityController] Error on delete tag: id not found")
+		log.Println("[LikeController] Error on delete like: id not found")
 		return httpAdapter.NewErrorResponse(400, "id not found")
 	}
 	if err := container.LikeService.Delete(idUser, idNote); err != nil {
-		log.Println("[likeController] Error on delete like:", err)
+		log.Println("[LikeController] Error on delete like:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
 	return httpAdapter.NewNoContentRespone()

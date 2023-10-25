@@ -53,5 +53,10 @@ func main() {
 	r.POST("/likes", httpAdapter.NewGinAdapter(routes.CreateLikeController))
 	r.DELETE("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.DeleteLikeController))
 
+	// comment endpoints
+	r.GET("/comments/:idNote", httpAdapter.NewGinAdapter(routes.GetNoteCommentsController))
+	r.POST("/comments", httpAdapter.NewGinAdapter(routes.CreateCommentController))
+	r.DELETE("/comments/:id", httpAdapter.NewGinAdapter(routes.DeleteCommentController))
+
 	r.Run()
 }
