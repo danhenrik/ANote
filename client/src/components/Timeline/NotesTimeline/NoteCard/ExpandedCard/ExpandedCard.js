@@ -98,7 +98,7 @@ const noteShape = PropTypes.shape({
 
 ExpandedCard.propTypes = {
   note: noteShape.isRequired,
-  randomColorElement: PropTypes.func.isRequired,
+  randomColorElement: PropTypes.string.isRequired,
 };
 
 export default ExpandedCard;

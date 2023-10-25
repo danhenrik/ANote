@@ -1,6 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { Avatar, Card, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import CommentIcon from "@mui/icons-material/Comment";
 
 const AvatarBackground = styled("div")(({ randomColor }) => ({
   backgroundColor: randomColor,
@@ -73,6 +74,14 @@ const ModalStyling = {
   },
 };
 
+const CommentButton = styled(CommentIcon)(() => ({
+  marginLeft: "10px",
+  color: "blue",
+  "&:hover": {
+    transform: "scale(1.2)",
+  },
+}));
+
 export {
   AvatarBackground,
   Title,
@@ -84,4 +93,5 @@ export {
   ContentContainer,
   NotesCardContainer,
   ModalStyling,
+  CommentButton,
 };

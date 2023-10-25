@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import myData from "./notes.json";
 import NoteList from "./NoteList/NoteList";
+import useNotes from "../../../api/useNotes";
 
 const Timeline = () => {
-  const [notes, setNotes] = useState(myData);
+  const notesApi = useNotes();
+  const [notes, setNotes] = useState([]);
 
   useEffect(() => {
-    setNotes(myData);
-  }, [myData]);
+    const fetchAndSetNotes = async () => {
+      const fetchedNotes = await notesApi.fetchNotes(1);
+      setNotes(fetchedNotes);
+    };
+
+    fetchAndSetNotes();
+  }, []);
 
   return <NoteList notes={notes}></NoteList>;
 };

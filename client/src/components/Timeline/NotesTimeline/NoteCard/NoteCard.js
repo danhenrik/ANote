@@ -6,6 +6,7 @@ import {
   AvatarBackground,
   AvatarContainer,
   AvatarUsernames,
+  CommentButton,
   ContentContainer,
   CustomAvatar,
   ModalStyling,
@@ -18,7 +19,6 @@ import { useState } from "react";
 import { useModal } from "../../../../store/modal-context";
 import ExpandedCard from "./ExpandedCard/ExpandedCard";
 import LikeButton from "./LikeButton";
-import CommentIcon from "@mui/icons-material/Comment";
 
 const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
@@ -68,12 +68,14 @@ const NoteCard = ({ note }) => {
         <Typography color='textSecondary'>{note.PublishedDate}</Typography>
         <div
           id='note-actions'
-          style={{ float: "right", marginBottom: "10px", marginTop: "10px" }}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "10px",
+          }}
         >
-          <span id='like-button'>
-            <LikeButton note={note}></LikeButton>
-          </span>
-          <CommentIcon style={{ marginLeft: "10px", color: "blue" }} />
+          <LikeButton note={note}></LikeButton>
+          <CommentButton />
         </div>
       </CardContent>
     </NotesCardContainer>

@@ -6,7 +6,7 @@ import axios from "axios";
 const LikeButton = (note) => {
   const [likes, setLikes] = useState(note.note.LikesCount);
   const [isClicked, setIsClicked] = useState(false);
-
+  const [isHovered, setIsHovered] = useState(false);
   const handleClick = async () => {
     if (isClicked) {
       try {
@@ -31,33 +31,39 @@ const LikeButton = (note) => {
     setIsClicked(!isClicked);
   };
 
+  const favoriteIconStyling = {
+    color: "red",
+    ...(isHovered && { transform: "scale(1.2)" }),
+  };
+
   return (
-    <span>
-      {isClicked ? (
-        <FavoriteIcon
-          className={`like-button ${isClicked && "liked"}`}
-          onClick={handleClick}
-          style={{ marginTop: "10px", color: "red" }}
-        />
-      ) : (
-        <FavoriteBorderIcon
-          className={`like-button ${isClicked && "liked"}`}
-          onClick={handleClick}
-          style={{ marginTop: "10px", color: "red" }}
-        />
-      )}
+    <>
+      <span
+        onClick={handleClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {isClicked || isHovered ? (
+          <FavoriteIcon
+            className={`like-button ${isClicked && "liked"}`}
+            style={favoriteIconStyling}
+          />
+        ) : (
+          <FavoriteBorderIcon
+            className={`like-button ${isClicked && "liked"}`}
+            style={{ marginRight: "2px", color: "red" }}
+          />
+        )}
+      </span>
       <span
         style={{
           color: "red",
-          position: "relative",
-          bottom: "7px",
-          left: "2px",
+          marginTop: "4px",
         }}
-        className='likes-counter'
       >
-        {`${likes}`}
+        {likes}
       </span>
-    </span>
+    </>
   );
 };
 
