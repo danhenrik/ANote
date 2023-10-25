@@ -94,6 +94,13 @@ const ExpandedCard = ({ note, randomColorElement }) => {
           </Typography>
         </CardContent>
       </NotesCardContainer>
+      <Typography
+        variant='h5'
+        color='textPrimary'
+        sx={{ marginTop: "20px", textAlign: "center" }}
+      >
+        Comentários
+      </Typography>
       <form onSubmit={formik.handleSubmit} style={{ width: "90%" }}>
         <TextField
           label='Comentário'
@@ -116,7 +123,6 @@ const ExpandedCard = ({ note, randomColorElement }) => {
           sx={{
             marginTop: "10px",
             display: "block",
-            marginRight: "15px",
             marginLeft: "auto",
           }}
           type='submit'
@@ -125,13 +131,6 @@ const ExpandedCard = ({ note, randomColorElement }) => {
         </CreateButton>
       </form>
       <ContentContainer sx={{ marginTop: "15px", float: "left" }}>
-        <Typography
-          variant='h5'
-          color='textPrimary'
-          sx={{ marginBottom: "10px", textAlign: "center" }}
-        >
-          Comentários
-        </Typography>
         {comments ? (
           comments.map((comment) => (
             <Grid item key={comment.Id} sx={{ marginBottom: "100px" }}>
