@@ -1,5 +1,6 @@
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 import {
   AvatarAuthor,
@@ -26,6 +27,15 @@ const CommentCard = ({ comment }) => {
               <AvatarAuthor>{comment.Author}</AvatarAuthor>
             </AvatarUsernames>
           </StyledLink>
+          <DeleteIcon
+            style={{
+              cursor: "pointer",
+              color: "red",
+              display: "block",
+              marginRight: "15px",
+              marginLeft: "auto",
+            }}
+          />
         </AvatarBackground>
         <ContentContainer sx={{ marginTop: "10px" }}>
           <Typography color='textSecondary'>{comment.Content}</Typography>

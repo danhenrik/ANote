@@ -45,10 +45,10 @@ type Comment struct {
 }
 
 type NoteComment struct {
-	Id        string `json:"id"`
-	Author    string `json:"author"`
-	Content   string `json:"content"`
-	CreatedAt string `json:"created_at"`
+	Id        string `json:"Id"`
+	Author    string `json:"Author"`
+	Content   string `json:"Content"`
+	CreatedAt string `json:"CreatedAt"`
 }
 
 type FilteredNote struct {
