@@ -85,6 +85,7 @@ func ESIndex(updates []appTypes.Update) {
 	log.Println("Indexing to Elasticsearch...")
 	for _, update := range updates {
 		for _, change := range update.Change {
+			deleted := false
 			if change.Kind == "delete" {
 				switch change.Table {
 				case "notes":
@@ -97,7 +98,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully deleted note")
-					db.SetLastItemReplicated(update.WalId)
 					break
 				case "likes":
 					idIdx := strArr(change.OldKeys.KeyNames).indexOf("id")
@@ -146,7 +146,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully deleted like")
-					db.SetLastItemReplicated(update.WalId)
 					break
 				case "comments":
 					idIdx := strArr(change.OldKeys.KeyNames).indexOf("id")
@@ -195,7 +194,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully deleted like")
-					db.SetLastItemReplicated(update.WalId)
 					break
 				case "note_tags":
 					idIdx := strArr(change.OldKeys.KeyNames).indexOf("id")
@@ -243,7 +241,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully deleted tag")
-					db.SetLastItemReplicated(update.WalId)
 					break
 				case "community_notes":
 					idIdx := strArr(change.OldKeys.KeyNames).indexOf("id")
@@ -291,9 +288,13 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully deleted tag")
-					db.SetLastItemReplicated(update.WalId)
 					break
 				}
+				deleted = true
+			}
+
+			if deleted {
+				continue
 			}
 
 			switch change.Table {
@@ -338,7 +339,6 @@ func ESIndex(updates []appTypes.Update) {
 					return
 				}
 				log.Println("Successfully indexed note w/ id", note.Id)
-				db.SetLastItemReplicated(update.WalId)
 				break
 			case "likes":
 				// Likes can only be inserted and deleted
@@ -362,7 +362,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully indexed likes from note w/ id", note.Id)
-					db.SetLastItemReplicated(update.WalId)
 					break
 				}
 				log.Println("Likes can't be updated")
@@ -388,7 +387,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully indexed comments from note w/ id", note.Id)
-					db.SetLastItemReplicated(update.WalId)
 					break
 				}
 				log.Println("Comments can't be updated")
@@ -416,7 +414,6 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully indexed tags from note w/ id", note.Id)
-					db.SetLastItemReplicated(update.WalId)
 					break
 				}
 				log.Println("Tags can't be updated")
@@ -443,13 +440,11 @@ func ESIndex(updates []appTypes.Update) {
 						return
 					}
 					log.Println("Successfully indexed community notes from note w/ id", note.Id)
-					db.SetLastItemReplicated(update.WalId)
 					break
 				}
 				log.Println("Community notes can't be updated")
 			default:
 				log.Println("Table", change.Table, "not supported")
-				db.SetLastItemReplicated(update.WalId)
 			}
 		}
 	}
