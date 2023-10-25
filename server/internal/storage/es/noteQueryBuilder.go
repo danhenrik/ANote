@@ -3,6 +3,7 @@ package es
 import (
 	"anote/internal/domain"
 	"anote/internal/errors"
+	"anote/internal/interfaces"
 	"encoding/json"
 	"fmt"
 )
@@ -11,9 +12,9 @@ type NoteQueryBuilder struct {
 	QueryBuilder *QueryBuilder
 }
 
-func NewNoteQueryBuilder() *NoteQueryBuilder {
+func NewNoteQueryBuilder(esClient interfaces.ESClient) *NoteQueryBuilder {
 	return &NoteQueryBuilder{
-		QueryBuilder: NewQueryBuilder("notes"),
+		QueryBuilder: NewQueryBuilder("notes", esClient),
 	}
 }
 
@@ -36,6 +37,11 @@ func (qb *NoteQueryBuilder) AddContentQuery(content string) *NoteQueryBuilder {
 
 func (qb *NoteQueryBuilder) AddTagsQuery(tags []string) *NoteQueryBuilder {
 	qb.QueryBuilder.AddIncludeQuery("tags.name.keyword", tags)
+	return qb
+}
+
+func (qb *NoteQueryBuilder) AddCommunityIdsQuery(communitiesIds []string) *NoteQueryBuilder {
+	qb.QueryBuilder.AddIncludeQuery("communities.id.keyword", communitiesIds)
 	return qb
 }
 
@@ -64,7 +70,24 @@ func (qb *NoteQueryBuilder) AddCommentersQuery(commenters []string) *NoteQueryBu
 	return qb
 }
 
+func (qb *NoteQueryBuilder) AddSort(field string, order string) *NoteQueryBuilder {
+	qb.QueryBuilder.AddSort(field, order)
+	return qb
+}
+
+func (qb *NoteQueryBuilder) AddPagination(page int, size int) *NoteQueryBuilder {
+	qb.QueryBuilder.AddSize(size)
+	qb.QueryBuilder.SetPage(page)
+	return qb
+}
+
+func (qb *NoteQueryBuilder) FinishShould() *NoteQueryBuilder {
+	qb.QueryBuilder.Should()
+	return qb
+}
+
 func (qb *NoteQueryBuilder) Query() ([]domain.FilteredNote, *errors.AppError) {
+	qb.QueryBuilder.AddSort("published_date", "desc")
 	noteArr, err := qb.QueryBuilder.Query()
 	if err != nil {
 		return nil, err
@@ -75,7 +98,7 @@ func (qb *NoteQueryBuilder) Query() ([]domain.FilteredNote, *errors.AppError) {
 	notes := []domain.FilteredNote{}
 	for _, n := range noteArr {
 		note := domain.FilteredNote{}
-		err := json.Unmarshal(n.Source_, &note)
+		err := json.Unmarshal(n.([]byte), &note)
 		if err != nil {
 			return nil, errors.NewAppError(500, "Could not parse query result")
 		}

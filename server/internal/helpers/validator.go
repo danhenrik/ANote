@@ -21,7 +21,7 @@ func ValidatePassword(password string) bool {
 }
 
 func ValidateDate(date string) bool {
-	pattern := `^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{6}$`
+	pattern := `^\d{4}-\d{2}-\d{2}$`
 	regex := regexp.MustCompile(pattern)
 	return regex.MatchString(date)
 }

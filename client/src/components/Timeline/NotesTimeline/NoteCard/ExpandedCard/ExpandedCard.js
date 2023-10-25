@@ -15,11 +15,57 @@ import {
 } from "../NoteCard.styled";
 import Tags from "../../../Tags/TagsList";
 import { CreateButton } from "../../../TimelineList.styled";
-import comments from "./comments.json";
 import CommentCard from "./CommentCard";
 import { Grid } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import axios from "axios";
+
+const validationSchema = yup.object({
+  comment: yup.string("Insira um comentário").required("Insira um comentário"),
+});
 
 const ExpandedCard = ({ note, randomColorElement }) => {
+  let [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    const returnNoteComments = async () => {
+      try {
+        const noteComments = await axios.get("/comments/" + note.Id);
+
+        setComments(noteComments.data.data);
+      } catch (error) {
+        console.log("Comments retrieving failed: ", error);
+      }
+    };
+
+    returnNoteComments();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      comment: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const commentData = {
+          user_id: "1",
+          note_id: note.Id,
+          content: values.comment,
+        };
+
+        console.log(commentData);
+        await axios.post("/comments", commentData);
+
+        console.log("Comment successful");
+      } catch (error) {
+        console.error("Comment failed: ", error);
+      }
+    },
+  });
+
   return (
     <>
       <NotesCardContainer>
@@ -48,35 +94,58 @@ const ExpandedCard = ({ note, randomColorElement }) => {
           </Typography>
         </CardContent>
       </NotesCardContainer>
-      <TextField
-        label='Comentar'
-        variant='standard'
-        sx={{
-          display: "flex",
-          margin: "auto",
-          marginTop: "20px",
-          width: "90%",
-        }}
-      />
-      <CreateButton
-        sx={{
-          marginTop: "10px",
-          display: "block",
-          marginRight: "15px",
-          marginLeft: "auto",
-        }}
+      <Typography
+        variant='h5'
+        color='textPrimary'
+        sx={{ marginTop: "20px", textAlign: "center" }}
       >
-        Comentar
-      </CreateButton>
-      <ContentContainer sx={{ marginTop: "10px", float: "left" }}>
-        <Typography variant='h5' color='textPrimary'>
-          Comentários
-        </Typography>
-        {comments.map((comment) => (
-          <Grid item key={comment.Id} sx={{ marginBottom: "100px" }}>
-            <CommentCard comment={comment} />
-          </Grid>
-        ))}
+        Comentários
+      </Typography>
+      <form onSubmit={formik.handleSubmit} style={{ width: "90%" }}>
+        <TextField
+          label='Comentário'
+          variant='standard'
+          sx={{
+            display: "flex",
+            margin: "auto",
+            marginTop: "20px",
+          }}
+          id='comment'
+          name='comment'
+          value={formik.values.comment}
+          onChange={formik.handleChange}
+          placeholder='Digite um comentário'
+          onBlur={formik.handleBlur}
+          error={formik.touched.comment && Boolean(formik.errors.comment)}
+          helperText={formik.touched.comment && formik.errors.comment}
+        />
+        <CreateButton
+          sx={{
+            marginTop: "10px",
+            display: "block",
+            marginLeft: "auto",
+          }}
+          type='submit'
+        >
+          Comentar
+        </CreateButton>
+      </form>
+      <ContentContainer sx={{ marginTop: "15px", float: "left" }}>
+        {comments ? (
+          comments.map((comment) => (
+            <Grid item key={comment.Id} sx={{ marginBottom: "100px" }}>
+              <CommentCard comment={comment} />
+            </Grid>
+          ))
+        ) : (
+          <Typography
+            variant='h7'
+            color='textPrimary'
+            sx={{ marginBottom: "10px" }}
+          >
+            Nenhum comentário nessa nota
+          </Typography>
+        )}
       </ContentContainer>
     </>
   );

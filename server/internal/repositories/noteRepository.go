@@ -125,6 +125,42 @@ func (this NoteRepository) GetByID(id string) (*domain.Note, *errors.AppError) {
 	return nil, nil
 }
 
+func (this NoteRepository) GetByAuthorID(authorId string) ([]domain.Note, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Note{})
+	res, err := this.DBConn.QueryMultiple(
+		objType,
+		"SELECT * FROM notes WHERE author_id = $1",
+		authorId,
+	)
+	if err != nil {
+		log.Println("[NoteRepo] Error on get note by author id:", authorId, "err:", err)
+		return []domain.Note{}, err
+	}
+
+	if notes, ok := res.([]domain.Note); ok {
+		return notes, nil
+	}
+	return []domain.Note{}, nil
+}
+
+func (this NoteRepository) GetByCommunityID(communityId string) ([]domain.Note, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Note{})
+	res, err := this.DBConn.QueryMultiple(
+		objType,
+		"SELECT * FROM notes WHERE id IN (SELECT note_id FROM community_notes WHERE community_id = $1)",
+		communityId,
+	)
+	if err != nil {
+		log.Println("[NoteRepo] Error on get note by community id:", communityId, "err:", err)
+		return []domain.Note{}, err
+	}
+
+	if notes, ok := res.([]domain.Note); ok {
+		return notes, nil
+	}
+	return []domain.Note{}, nil
+}
+
 func (this NoteRepository) Update(note *domain.Note) *errors.AppError {
 	err := this.DBConn.Exec(
 		"UPDATE notes SET title = $1, content = $2 WHERE id = $3",

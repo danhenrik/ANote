@@ -32,8 +32,11 @@ func main() {
 
 	// notes endpoints
 	r.POST("/notes", httpAdapter.NewGinAdapter(routes.CreateNoteController, middlewares.AuthenticateUser))
+	r.GET("/notes/feed", httpAdapter.NewGinAdapter(routes.GetNoteFeedController, middlewares.AuthenticateUser))
 	r.GET("/notes", httpAdapter.NewGinAdapter(routes.SearchNoteController))
 	r.GET("/notes/:id", httpAdapter.NewGinAdapter(routes.GetNoteByIDController))
+	r.GET("/notes/community/:id", httpAdapter.NewGinAdapter(routes.GetNoteByCommunityIDController))
+	r.GET("/notes/author/:id", httpAdapter.NewGinAdapter(routes.GetNoteByAuthorIDController))
 	r.PATCH("/notes", httpAdapter.NewGinAdapter(routes.UpdateNoteController, middlewares.AuthenticateUser))
 	r.DELETE("/notes/:id", httpAdapter.NewGinAdapter(routes.DeleteNoteController, middlewares.AuthenticateUser))
 
@@ -52,6 +55,11 @@ func main() {
 	// likes endpoints
 	r.POST("/likes", httpAdapter.NewGinAdapter(routes.CreateLikeController))
 	r.DELETE("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.DeleteLikeController))
+
+	// comment endpoints
+	r.GET("/comments/:idNote", httpAdapter.NewGinAdapter(routes.GetNoteCommentsController))
+	r.POST("/comments", httpAdapter.NewGinAdapter(routes.CreateCommentController))
+	r.DELETE("/comments/:id", httpAdapter.NewGinAdapter(routes.DeleteCommentController))
 
 	r.Run()
 }

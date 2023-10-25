@@ -8,27 +8,22 @@ const LikeButton = (note) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const handleClick = async () => {
-    if (isClicked) {
-      try {
-        await axios.delete("/likes/" + note.note.AuthorId + "/" + note.note.Id);
+    try {
+      if (isClicked) {
+        axios.delete("/likes/" + note.note.AuthorId + "/" + note.note.Id);
         setLikes(likes - 1);
-      } catch (error) {
-        console.error("Like failed:", error);
-      }
-    } else {
-      try {
+      } else {
         const likeData = {
           user_id: note.note.AuthorId,
           note_id: note.note.Id,
         };
-
         axios.post("/likes", likeData);
         setLikes(likes + 1);
-      } catch (error) {
-        console.error("Like failed:", error);
       }
+      setIsClicked(!isClicked);
+    } catch (error) {
+      console.log("Like failed:", error);
     }
-    setIsClicked(!isClicked);
   };
 
   const favoriteIconStyling = {

@@ -44,6 +44,20 @@ Uma forma mais fácil de visualizar essa interação pode ser vista a seguir:
 4. "es_replicate" busca as mudanças no WAL 
 5. "es_replicate" interpreta as mudanças de acordo com a tabela onde foi feita a mudança e replica essa mudança nos documentos
 
+### Hexagonal Architecture
+
+A arquitetura que norteou o desenvolvimento da aplicação foi a arquitetura hexagonal. Um diagrama simplificado desta arquitetura pode ser visto a seguir:
+
+![image](https://github.com/danhenrik/ANote/assets/42657692/da6c7eac-b58d-4270-a9a5-005bdac173b2)
+
+1. Por que o sistema está adotando essa arquitetura?
+
+Essa arquitetura foi adotada com o objetivo de aumentar a manutenibilidade do sistema, ao enfatizar o desacoplamento do sistema de dependências externas.
+
+2. Quais são as portas e adaptadores? Qual o objetivo deles?
+
+As portas são [Elasticsearch](https://github.com/danhenrik/ANote/blob/main/server/internal/interfaces/es.go), [PostgreSQL](https://github.com/danhenrik/ANote/blob/main/server/internal/interfaces/database.go) e [bibliteca JWT](https://github.com/danhenrik/ANote/blob/main/server/internal/interfaces/jwt.go). E os adapters são [Elasticsearch](https://github.com/danhenrik/ANote/blob/main/server/internal/storage/es/es.go), [PostgreSQL](https://github.com/danhenrik/ANote/blob/main/server/internal/storage/database/database.go) e [biblioteca JWT](https://github.com/danhenrik/ANote/blob/main/server/internal/helpers/jwt.go). O objetivo dessas abstrações é tornar o domínio da aplicação disvinculado do mundo externo.
+
 ## Product Backlog
 
 1. Como usuário, quero me cadastrar no sistema

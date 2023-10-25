@@ -17,6 +17,7 @@ type NoteService struct {
 	communityRepository IRepo.CommunityRepository
 	noteRepository      IRepo.NoteRepository
 	noteTagRepository   IRepo.NoteTagRepository
+	qb                  *es.NoteQueryBuilder
 }
 
 func NewNoteService(
@@ -24,12 +25,14 @@ func NewNoteService(
 	communityRepo IRepo.CommunityRepository,
 	noteRepo IRepo.NoteRepository,
 	tagRepo IRepo.NoteTagRepository,
+	queryBuilder *es.NoteQueryBuilder,
 ) NoteService {
 	return NoteService{
 		userRepository:      userRepo,
 		noteRepository:      noteRepo,
 		noteTagRepository:   tagRepo,
 		communityRepository: communityRepo,
+		qb:                  queryBuilder,
 	}
 }
 
@@ -109,46 +112,159 @@ func (this NoteService) GetById(id string) (*domain.FullNote, *errors.AppError) 
 		return nil, err
 	}
 
+	communities, err := this.communityRepository.GetByNoteId(note.Id)
+	if err != nil {
+		log.Println("[NoteService] Error on get note communities:", err)
+		return nil, err
+	}
+
 	fnote := domain.FullNote{
-		Id:        note.Id,
-		Title:     note.Title,
-		Content:   note.Content,
-		AuthorID:  note.AuthorID,
-		CreatedAt: note.CreatedAt,
-		UpdatedAt: note.UpdatedAt,
-		Tags:      tags,
-		// TODO: Insert communities
+		Id:          note.Id,
+		Title:       note.Title,
+		Content:     note.Content,
+		AuthorID:    note.AuthorID,
+		CreatedAt:   note.CreatedAt,
+		UpdatedAt:   note.UpdatedAt,
+		Tags:        tags,
+		Communities: communities,
 	}
 	return &fnote, nil
 }
 
+func (this NoteService) GetByCommunityId(id string) ([]domain.FullNote, *errors.AppError) {
+	notes, err := this.noteRepository.GetByCommunityID(id)
+	if notes == nil {
+		return nil, errors.NewAppError(404, "Note not found")
+	}
+	if err != nil {
+		log.Println("[NoteService] Error on get note:", err)
+		return nil, err
+	}
+
+	fnotes := []domain.FullNote{}
+	for _, note := range notes {
+		tags, err := this.noteTagRepository.GetByNoteId(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note tags:", err)
+			return nil, err
+		}
+
+		communities, err := this.communityRepository.GetByNoteId(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note communities:", err)
+			return nil, err
+		}
+
+		fnote := domain.FullNote{
+			Id:          note.Id,
+			Title:       note.Title,
+			Content:     note.Content,
+			AuthorID:    note.AuthorID,
+			CreatedAt:   note.CreatedAt,
+			UpdatedAt:   note.UpdatedAt,
+			Tags:        tags,
+			Communities: communities,
+		}
+		fnotes = append(fnotes, fnote)
+	}
+	return fnotes, nil
+}
+
+func (this NoteService) GetByAuthorId(id string) ([]domain.FullNote, *errors.AppError) {
+	notes, err := this.noteRepository.GetByAuthorID(id)
+	if notes == nil {
+		return nil, errors.NewAppError(404, "Note not found")
+	}
+	if err != nil {
+		log.Println("[NoteService] Error on get note:", err)
+		return nil, err
+	}
+
+	fnotes := []domain.FullNote{}
+	for _, note := range notes {
+		tags, err := this.noteTagRepository.GetByNoteId(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note tags:", err)
+			return nil, err
+		}
+
+		communities, err := this.communityRepository.GetByNoteId(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note communities:", err)
+			return nil, err
+		}
+
+		fnote := domain.FullNote{
+			Id:          note.Id,
+			Title:       note.Title,
+			Content:     note.Content,
+			AuthorID:    note.AuthorID,
+			CreatedAt:   note.CreatedAt,
+			UpdatedAt:   note.UpdatedAt,
+			Tags:        tags,
+			Communities: communities,
+		}
+		fnotes = append(fnotes, fnote)
+	}
+	return fnotes, nil
+}
+
+var convertMap = map[string]string{
+	"id":             "id.keyword",
+	"title":          "title.keyword",
+	"content":        "content.keyword",
+	"published_date": "published_date",
+	"updated_date":   "updated_date",
+	"author":         "author.keyword",
+	"communities":    "communities.name.keyword",
+	"tags":           "tags.name.keyword",
+	"likes":          "likes_count",
+	"comment":        "comments_count",
+}
+
 func (this NoteService) Search(
+	page int,
+	size int,
 	title string,
 	content string,
 	authorID string,
 	tags []string,
 	communities []string,
 	createdAt [2]string,
+	sortOrder string,
+	sortField string,
 ) ([]domain.FilteredNote, *errors.AppError) {
-	qb := es.NewNoteQueryBuilder()
+	if page <= 0 || size <= 0 {
+		return nil, errors.NewAppError(400, "Invalid pagination parameters")
+	}
+	this.qb.AddPagination(page, size)
+
+	if sortField != "" && sortOrder != "" {
+		this.qb.AddSort(convertMap[sortField], sortOrder)
+	}
+
 	if len(tags) > 0 {
-		qb.AddTagsQuery(tags)
+		this.qb.AddTagsQuery(tags)
 	}
+
 	if authorID != "" {
-		qb.AddAuthorQuery(authorID)
+		this.qb.AddAuthorQuery(authorID)
 	}
+
 	if title != "" {
-		qb.AddTitleQuery(title)
+		this.qb.AddTitleQuery(title)
 	}
+
 	if content != "" {
-		qb.AddContentQuery(content)
+		this.qb.AddContentQuery(content)
 	}
+
 	if createdAt[0] != "" && createdAt[1] == "" {
 		ok := helpers.ValidateDate(createdAt[0])
 		if !ok {
 			return nil, errors.NewAppError(400, "Invalid time format")
 		}
-		qb.AddCreatedAtMatchQuery(createdAt[0])
+		this.qb.AddCreatedAtMatchQuery(createdAt[0])
 	} else if createdAt[0] != "" && createdAt[1] != "" {
 		ok := helpers.ValidateDate(createdAt[0])
 		if !ok {
@@ -158,13 +274,48 @@ func (this NoteService) Search(
 		if !ok {
 			return nil, errors.NewAppError(400, "Invalid upper limit time format")
 		}
-		qb.AddCreatedAtRangeQuery(createdAt[0], createdAt[1])
-	}
-	if len(communities) > 0 {
-		qb.AddCommunitiesQuery(communities)
+		this.qb.AddCreatedAtRangeQuery(createdAt[0], createdAt[1])
 	}
 
-	notes, err := qb.Query()
+	if len(communities) > 0 {
+		this.qb.AddCommunitiesQuery(communities)
+	}
+
+	notes, err := this.qb.Query()
+	if err != nil {
+		log.Println("[NoteService] Error on query notes:", err)
+		return nil, err
+	}
+	return notes, nil
+}
+
+func (this NoteService) GetFeed(
+	page int,
+	size int,
+	authorID string,
+	communityIds []string,
+	sortOrder string,
+	sortField string,
+) ([]domain.FilteredNote, *errors.AppError) {
+	if page <= 0 || size <= 0 {
+		return nil, errors.NewAppError(400, "Invalid pagination parameters")
+	}
+	this.qb.AddPagination(page, size)
+
+	if sortField != "" && sortOrder != "" {
+		this.qb.AddSort(convertMap[sortField], sortOrder)
+	}
+
+	// notes in communities
+	if len(communityIds) > 0 {
+		this.qb.AddCommunityIdsQuery(communityIds)
+	}
+
+	// or private (created by author)
+	this.qb.FinishShould().
+		AddAuthorQuery(authorID)
+
+	notes, err := this.qb.Query()
 	if err != nil {
 		log.Println("[NoteService] Error on query notes:", err)
 		return nil, err
@@ -335,15 +486,21 @@ func (this NoteService) GetAll() ([]domain.FullNote, *errors.AppError) {
 			return nil, errTag
 		}
 
+		communities, errComm := this.communityRepository.GetByNoteId(note.Id)
+		if errComm != nil {
+			log.Println("[NoteService] Error on get note communities:", errComm)
+			return nil, errComm
+		}
+
 		fnote = append(fnote, domain.FullNote{
-			Id:        note.Id,
-			Title:     note.Title,
-			Content:   note.Content,
-			AuthorID:  note.AuthorID,
-			CreatedAt: note.CreatedAt,
-			UpdatedAt: note.UpdatedAt,
-			Tags:      tags,
-			// TODO: Insert communities
+			Id:          note.Id,
+			Title:       note.Title,
+			Content:     note.Content,
+			AuthorID:    note.AuthorID,
+			CreatedAt:   note.CreatedAt,
+			UpdatedAt:   note.UpdatedAt,
+			Tags:        tags,
+			Communities: communities,
 		})
 	}
 
