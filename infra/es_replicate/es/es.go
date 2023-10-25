@@ -85,7 +85,6 @@ func ESIndex(updates []appTypes.Update) {
 	log.Println("Indexing to Elasticsearch...")
 	for _, update := range updates {
 		for _, change := range update.Change {
-			deleted := false
 			if change.Kind == "delete" {
 				switch change.Table {
 				case "notes":
@@ -290,161 +289,156 @@ func ESIndex(updates []appTypes.Update) {
 					log.Println("Successfully deleted tag")
 					break
 				}
-				deleted = true
-			}
-
-			if deleted {
-				continue
-			}
-
-			switch change.Table {
-			case "notes":
-				idIdx := strArr(change.ColumnNames).indexOf("id")
-				noteId := change.ColumnValues[idIdx]
-
-				// get note info
-				res, err := es.Get(indexName, noteId).Do(context.Background())
-				if err != nil {
-					log.Println("Error on GET ES request:", err)
-					return
-				}
-
-				note := appTypes.Note{}
-				if res.Found {
-					if err = json.Unmarshal(res.Source_, &note); err != nil {
-						log.Println("Error on JSON decoding:", err)
-						return
-					}
-					log.Println("Note w/ id", noteId, "found in Elasticsearch, updating...")
-				} else {
-					log.Println("Note w/ id", noteId, "not found in Elasticsearch, inserting...")
-				}
-
-				// insert or update note info
-				note.Id = noteId
-				titleIdx := strArr(change.ColumnNames).indexOf("title")
-				note.Title = change.ColumnValues[titleIdx]
-				contentIdx := strArr(change.ColumnNames).indexOf("content")
-				note.Content = change.ColumnValues[contentIdx]
-				publishedDateIdx := strArr(change.ColumnNames).indexOf("created_at")
-				note.PublishedDate = change.ColumnValues[publishedDateIdx]
-				updatedDateIdx := strArr(change.ColumnNames).indexOf("updated_at")
-				note.UpdatedDate = change.ColumnValues[updatedDateIdx]
-				authorIdx := strArr(change.ColumnNames).indexOf("author_id")
-				note.Author = change.ColumnValues[authorIdx]
-
-				indexed := IndexNote(&note)
-				if !indexed {
-					log.Println("Unable to index note w/ id", note.Id)
-					return
-				}
-				log.Println("Successfully indexed note w/ id", note.Id)
-				break
-			case "likes":
-				// Likes can only be inserted and deleted
-				if change.Kind == "insert" {
-					note := GetNote(&change)
-					if note == nil {
-						log.Println("Note not found, can't insert like")
-						return
-					}
-
-					// insert likes
+			} else {
+				switch change.Table {
+				case "notes":
 					idIdx := strArr(change.ColumnNames).indexOf("id")
-					userIdIdx := strArr(change.ColumnNames).indexOf("user_id")
-					like := appTypes.Like{Id: change.ColumnValues[idIdx], UserId: change.ColumnValues[userIdIdx]}
-					note.Likes = append(note.Likes, like)
-					note.LikesCount = len(note.Likes)
+					noteId := change.ColumnValues[idIdx]
 
-					indexed := IndexNote(note)
+					// get note info
+					res, err := es.Get(indexName, noteId).Do(context.Background())
+					if err != nil {
+						log.Println("Error on GET ES request:", err)
+						return
+					}
+
+					note := appTypes.Note{}
+					if res.Found {
+						if err = json.Unmarshal(res.Source_, &note); err != nil {
+							log.Println("Error on JSON decoding:", err)
+							return
+						}
+						log.Println("Note w/ id", noteId, "found in Elasticsearch, updating...")
+					} else {
+						log.Println("Note w/ id", noteId, "not found in Elasticsearch, inserting...")
+					}
+
+					// insert or update note info
+					note.Id = noteId
+					titleIdx := strArr(change.ColumnNames).indexOf("title")
+					note.Title = change.ColumnValues[titleIdx]
+					contentIdx := strArr(change.ColumnNames).indexOf("content")
+					note.Content = change.ColumnValues[contentIdx]
+					publishedDateIdx := strArr(change.ColumnNames).indexOf("created_at")
+					note.PublishedDate = change.ColumnValues[publishedDateIdx]
+					updatedDateIdx := strArr(change.ColumnNames).indexOf("updated_at")
+					note.UpdatedDate = change.ColumnValues[updatedDateIdx]
+					authorIdx := strArr(change.ColumnNames).indexOf("author_id")
+					note.Author = change.ColumnValues[authorIdx]
+
+					indexed := IndexNote(&note)
 					if !indexed {
-						log.Println("Unable to index like", like, "for note w/ id", note.Id)
+						log.Println("Unable to index note w/ id", note.Id)
 						return
 					}
-					log.Println("Successfully indexed likes from note w/ id", note.Id)
+					log.Println("Successfully indexed note w/ id", note.Id)
 					break
+				case "likes":
+					// Likes can only be inserted and deleted
+					if change.Kind == "insert" {
+						note := GetNote(&change)
+						if note == nil {
+							log.Println("Note not found, can't insert like")
+							return
+						}
+
+						// insert likes
+						idIdx := strArr(change.ColumnNames).indexOf("id")
+						userIdIdx := strArr(change.ColumnNames).indexOf("user_id")
+						like := appTypes.Like{Id: change.ColumnValues[idIdx], UserId: change.ColumnValues[userIdIdx]}
+						note.Likes = append(note.Likes, like)
+						note.LikesCount = len(note.Likes)
+
+						indexed := IndexNote(note)
+						if !indexed {
+							log.Println("Unable to index like", like, "for note w/ id", note.Id)
+							return
+						}
+						log.Println("Successfully indexed likes from note w/ id", note.Id)
+						break
+					}
+					log.Println("Likes can't be updated")
+				case "comments":
+					// comments can only be inserted and deleted
+					if change.Kind == "insert" {
+						note := GetNote(&change)
+						if note == nil {
+							log.Println("Note not found, can't insert comment")
+							return
+						}
+
+						// insert comment
+						idIdx := strArr(change.ColumnNames).indexOf("id")
+						userIdIdx := strArr(change.ColumnNames).indexOf("user_id")
+						comment := appTypes.Comment{Id: change.ColumnValues[idIdx], UserId: change.ColumnValues[userIdIdx]}
+						note.Commenters = append(note.Commenters, comment)
+						note.CommentCount = len(note.Commenters)
+
+						indexed := IndexNote(note)
+						if !indexed {
+							log.Println("Unable to index comment", comment, "for note w/ id", note.Id)
+							return
+						}
+						log.Println("Successfully indexed comments from note w/ id", note.Id)
+						break
+					}
+					log.Println("Comments can't be updated")
+				case "note_tags":
+					// tags can only be inserted and deleted
+					if change.Kind == "insert" {
+						note := GetNote(&change)
+						if note == nil {
+							log.Println("Note not found, can't insert tag")
+							return
+						}
+
+						// insert tag
+						tagIdIdx := strArr(change.ColumnNames).indexOf("tag_id")
+						tagId := change.ColumnValues[tagIdIdx]
+						log.Println("tagId:", tagId)
+						tag := db.GetTagById(tagId)
+						idIndex := strArr(change.ColumnNames).indexOf("id")
+						tag.RId = change.ColumnValues[idIndex]
+						note.Tags = append(note.Tags, *tag)
+
+						indexed := IndexNote(note)
+						if !indexed {
+							log.Println("Unable to index tag", tag, "for note w/ id", note.Id)
+							return
+						}
+						log.Println("Successfully indexed tags from note w/ id", note.Id)
+						break
+					}
+					log.Println("Tags can't be updated")
+				case "community_notes":
+					// community_notes can only be inserted and deleted
+					if change.Kind == "insert" {
+						note := GetNote(&change)
+						if note == nil {
+							log.Println("Note not found, can't insert community note")
+							return
+						}
+
+						// insert community
+						communityIdIdx := strArr(change.ColumnNames).indexOf("community_id")
+						community := db.GetCommunityById(change.ColumnValues[communityIdIdx])
+
+						idIdx := strArr(change.ColumnNames).indexOf("id")
+						community.RId = change.ColumnValues[idIdx]
+						note.Communities = append(note.Communities, *community)
+
+						indexed := IndexNote(note)
+						if !indexed {
+							log.Println("Unable to index community", community, "for note w/ id", note.Id)
+							return
+						}
+						log.Println("Successfully indexed community notes from note w/ id", note.Id)
+						break
+					}
+					log.Println("Community notes can't be updated")
+				default:
+					log.Println("Table", change.Table, "not supported")
 				}
-				log.Println("Likes can't be updated")
-			case "comments":
-				// comments can only be inserted and deleted
-				if change.Kind == "insert" {
-					note := GetNote(&change)
-					if note == nil {
-						log.Println("Note not found, can't insert comment")
-						return
-					}
-
-					// insert comment
-					idIdx := strArr(change.ColumnNames).indexOf("id")
-					userIdIdx := strArr(change.ColumnNames).indexOf("user_id")
-					comment := appTypes.Comment{Id: change.ColumnValues[idIdx], UserId: change.ColumnValues[userIdIdx]}
-					note.Commenters = append(note.Commenters, comment)
-					note.CommentCount = len(note.Commenters)
-
-					indexed := IndexNote(note)
-					if !indexed {
-						log.Println("Unable to index comment", comment, "for note w/ id", note.Id)
-						return
-					}
-					log.Println("Successfully indexed comments from note w/ id", note.Id)
-					break
-				}
-				log.Println("Comments can't be updated")
-			case "note_tags":
-				// tags can only be inserted and deleted
-				if change.Kind == "insert" {
-					note := GetNote(&change)
-					if note == nil {
-						log.Println("Note not found, can't insert tag")
-						return
-					}
-
-					// insert tag
-					tagIdIdx := strArr(change.ColumnNames).indexOf("tag_id")
-					tagId := change.ColumnValues[tagIdIdx]
-					log.Println("tagId:", tagId)
-					tag := db.GetTagById(tagId)
-					idIndex := strArr(change.ColumnNames).indexOf("id")
-					tag.RId = change.ColumnValues[idIndex]
-					note.Tags = append(note.Tags, *tag)
-
-					indexed := IndexNote(note)
-					if !indexed {
-						log.Println("Unable to index tag", tag, "for note w/ id", note.Id)
-						return
-					}
-					log.Println("Successfully indexed tags from note w/ id", note.Id)
-					break
-				}
-				log.Println("Tags can't be updated")
-			case "community_notes":
-				// community_notes can only be inserted and deleted
-				if change.Kind == "insert" {
-					note := GetNote(&change)
-					if note == nil {
-						log.Println("Note not found, can't insert community note")
-						return
-					}
-
-					// insert community
-					communityIdIdx := strArr(change.ColumnNames).indexOf("community_id")
-					community := db.GetCommunityById(change.ColumnValues[communityIdIdx])
-
-					idIdx := strArr(change.ColumnNames).indexOf("id")
-					community.RId = change.ColumnValues[idIdx]
-					note.Communities = append(note.Communities, *community)
-
-					indexed := IndexNote(note)
-					if !indexed {
-						log.Println("Unable to index community", community, "for note w/ id", note.Id)
-						return
-					}
-					log.Println("Successfully indexed community notes from note w/ id", note.Id)
-					break
-				}
-				log.Println("Community notes can't be updated")
-			default:
-				log.Println("Table", change.Table, "not supported")
 			}
 		}
 	}
