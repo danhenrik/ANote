@@ -19,6 +19,7 @@ import { useState } from "react";
 import { useModal } from "../../../../store/modal-context";
 import ExpandedCard from "./ExpandedCard/ExpandedCard";
 import LikeButton from "./LikeButton";
+import formatDate from "../../../../util/formatDate";
 
 const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
@@ -27,6 +28,7 @@ const NoteCard = ({ note }) => {
   const [randomColorElement] = useState(
     randomColor({ luminosity: "light", format: "rgb" })
   );
+  const formatedDate = formatDate(note.PublishedDate);
 
   const handleExpandedNote = (event) => {
     if (event.target.closest("a")) return;
@@ -65,7 +67,7 @@ const NoteCard = ({ note }) => {
         <ContentContainer sx={{ marginTop: "10px" }}>
           <Tags tags={note.Tags}></Tags>
         </ContentContainer>
-        <Typography color='textSecondary'>{note.PublishedDate}</Typography>
+
         <div
           id='note-actions'
           style={{
@@ -74,9 +76,12 @@ const NoteCard = ({ note }) => {
             marginTop: "10px",
           }}
         >
-          <LikeButton note={note}></LikeButton>
+          <LikeButton sx={{ marginLeft: "8px" }} note={note}></LikeButton>
           <CommentButton />
         </div>
+        <Typography color='textSecondary'>
+          {formatedDate.day} às {formatedDate.hour}
+        </Typography>
       </CardContent>
     </NotesCardContainer>
   );

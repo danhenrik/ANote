@@ -23,6 +23,10 @@ function Routes() {
       element: <Communities />,
     },
     {
+      path: "/community/:id",
+      element: <Timeline />,
+    },
+    {
       path: "/signup",
       element: <CompleteSignupForm />,
     },

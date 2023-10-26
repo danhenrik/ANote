@@ -2,17 +2,25 @@ import { useEffect, useState } from "react";
 import NoteList from "./NoteList/NoteList";
 import useNotes from "../../../api/useNotes";
 import { useAuth } from "../../../store/auth-context";
+import { useParams } from "react-router-dom";
 
 const Timeline = () => {
   const notesApi = useNotes();
   const [notes, setNotes] = useState([]);
-  const user = useAuth();
+  const userAuth = useAuth();
+  const params = useParams();
 
   useEffect(() => {
     let fetchedNotes = [];
     const fetchAndSetNotes = async () => {
-      if (user.isAuthenticated) {
-        fetchedNotes = await notesApi.fetchNotesByAuthor(user.user.username);
+      if (userAuth.isAuthenticated) {
+        if (params.id) {
+          fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+        } else {
+          fetchedNotes = await notesApi.fetchNotesByAuthor(
+            userAuth.user.username
+          );
+        }
       } else {
         fetchedNotes = await notesApi.fetchNotes(1);
       }

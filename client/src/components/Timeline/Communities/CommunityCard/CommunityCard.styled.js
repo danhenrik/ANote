@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Card, Typography } from "@mui/material";
+import { Button, Card, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const Title = styled(Typography)(() => ({
@@ -7,12 +7,9 @@ const Title = styled(Typography)(() => ({
   fontWeight: "bold",
 }));
 
-const StyledLink = styled(Link)(() => ({
+const StyledLink = styled("div")(() => ({
   textDecoration: "none",
   color: "inherit",
-  "&:hover": {
-    textDecoration: "underline",
-  },
 }));
 
 const ContentContainer = styled("div")({

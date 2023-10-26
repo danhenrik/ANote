@@ -47,6 +47,16 @@ const fetchNotesByAuthorRequest = async (api, id) => {
   }
 };
 
+const fetchNotesByCommunityRequest = async (api, id) => {
+  try {
+    const response = await api.get(`/notes/community/${id}`);
+    return mapApiNotesData(response.data.data);
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    throw error;
+  }
+};
+
 const createNoteRequest = async (api, note) => {
   try {
     const response = await api.post("notes", note);
@@ -68,6 +78,10 @@ const useNotes = () => {
     return fetchNotesByAuthorRequest(api, id);
   };
 
+  const fetchNotesByCommunity = (id) => {
+    return fetchNotesByCommunityRequest(api, id);
+  };
+
   const createNote = (note) => {
     return createNoteRequest(api, note);
   };
@@ -76,6 +90,7 @@ const useNotes = () => {
     fetchNotes,
     createNote,
     fetchNotesByAuthor,
+    fetchNotesByCommunity,
   };
 };
 

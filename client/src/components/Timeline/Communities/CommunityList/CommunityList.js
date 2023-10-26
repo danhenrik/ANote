@@ -45,7 +45,6 @@ const communityShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Name: PropTypes.string.isRequired,
   Tags: PropTypes.arrayOf(PropTypes.string),
-  Privacy: PropTypes.string.isRequired,
 });
 
 CommunityList.propTypes = {

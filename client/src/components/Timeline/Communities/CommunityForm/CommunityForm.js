@@ -11,26 +11,37 @@ import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
 import { CustomSelect } from "../../TimelineForms.styled";
 import AddIcon from "@mui/icons-material/Add";
+import useCommunities from "../../../../api/useCommunities";
 
 const validationSchema = yup.object({
   name: yup.string("Insira o nome").required("Nome é obrigatório"),
   tags: yup.string("Insira as tags"),
-  privacy: yup
-    .string("Selecione a privacidade")
-    .required("Privacidade é obrigatória"),
 });
 
 const CommunityForm = ({ communities }) => {
+  const communitiesApi = useCommunities();
   const modal = useModal();
   const formik = useFormik({
     initialValues: {
       name: "",
       tags: "",
-      privacy: "private",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
+      const community = {
+        name: values.name,
+        tags: values.tags,
+      };
+      const createCommunity = async () => {
+        const createdCommunity =
+          await communitiesApi.createCommunity(community);
+        if (createdCommunity) {
+          console.log("criado");
+        }
+      };
+
+      createCommunity();
+
       modal.closeModal();
     },
   });
@@ -67,19 +78,6 @@ const CommunityForm = ({ communities }) => {
             <AddIcon />
           </IconButton>
         </div>
-        <InputLabel htmlFor='privacy'>Privacidade</InputLabel>
-        <CustomSelect
-          fullWidth
-          id='privacy'
-          name='privacy'
-          value={formik.values.privacy}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.privacy && Boolean(formik.errors.privacy)}
-        >
-          <MenuItem value='public'>Público</MenuItem>
-          <MenuItem value='private'>Privado</MenuItem>
-        </CustomSelect>
         <Button variant='contained' fullWidth type='submit'>
           Criar Comunidade
         </Button>
