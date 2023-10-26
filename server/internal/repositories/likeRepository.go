@@ -5,6 +5,7 @@ import (
 	"anote/internal/errors"
 	"anote/internal/interfaces"
 	"log"
+	"reflect"
 )
 
 type LikeRepository struct {
@@ -38,4 +39,25 @@ func (this LikeRepository) Delete(idUser string, idNote string) *errors.AppError
 		return err
 	}
 	return nil
+}
+
+func (this LikeRepository) GetByIdUserAndIdNote(idUser string, idNote string) (*domain.Like, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Like{})
+
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM likes WHERE user_id = $1 AND note_id = $2", idUser, idNote)
+
+	if err != nil {
+		log.Println("[LikeRepo] Error on get like:", err)
+		return nil, err
+	}
+	if res == nil {
+		return nil, nil
+	}
+
+	if like, ok := res.(domain.Like); ok {
+		return &like, nil
+	}
+	log.Println("[LikeRepo] Like not found")
+	return nil, nil
+
 }

@@ -83,8 +83,6 @@ pg_conn.SQLCmd("""CREATE TABLE notes (
                 content varchar NOT NULL,
                 created_at date NOT NULL DEFAULT NOW(),
                 updated_at date NOT NULL DEFAULT NOW(),
-                like_count integer NOT NULL DEFAULT 0,
-                comment_count integer NOT NULL DEFAULT 0,
                 CONSTRAINT user_FK
                  FOREIGN KEY(author_id)
                   REFERENCES users(id) ON DELETE SET NULL

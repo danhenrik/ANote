@@ -38,3 +38,14 @@ func (this LikeService) Delete(idUser string, idNote string) *errors.AppError {
 
 	return nil
 }
+
+func (this LikeService) GetByIdUserAndIdNote(idUser string, idNote string) (*domain.Like, *errors.AppError) {
+	like, err := this.likeRepository.GetByIdUserAndIdNote(idUser, idNote)
+
+	if err != nil {
+		log.Println("[LikeService] Error on get like:", err)
+		return nil, err
+	}
+
+	return like, nil
+}

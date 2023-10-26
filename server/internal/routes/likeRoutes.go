@@ -6,6 +6,7 @@ import (
 	"anote/internal/viewmodels"
 	"encoding/json"
 	"log"
+	"net/http"
 )
 
 func CreateLikeController(request httpAdapter.Request) httpAdapter.Response {
@@ -36,4 +37,24 @@ func DeleteLikeController(request httpAdapter.Request) httpAdapter.Response {
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
 	return httpAdapter.NewNoContentRespone()
+}
+
+func GetLikeController(request httpAdapter.Request) httpAdapter.Response {
+	idUser, okIdUser := request.GetSingleParam("idUser")
+	idNote, okIdNote := request.GetSingleParam("idNote")
+
+	if !okIdUser || !okIdNote {
+		log.Println("[LikeController] Error on get like: id not found")
+		return httpAdapter.NewErrorResponse(400, "id not found")
+	}
+
+	like, err := container.LikeService.GetByIdUserAndIdNote(idUser, idNote)
+
+	if err != nil {
+		log.Println("[LikeController] Error on get like:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+
+	return httpAdapter.NewSuccessResponse(http.StatusOK, like)
+
 }

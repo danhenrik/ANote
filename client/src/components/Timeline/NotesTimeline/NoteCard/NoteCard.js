@@ -20,10 +20,12 @@ import { useModal } from "../../../../store/modal-context";
 import ExpandedCard from "./ExpandedCard/ExpandedCard";
 import LikeButton from "./LikeButton";
 import formatDate from "../../../../util/formatDate";
+import { useAuth } from "../../../../store/auth-context";
 
 const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
   const modal = useModal();
+  const userAuth = useAuth();
 
   const [randomColorElement] = useState(
     randomColor({ luminosity: "light", format: "rgb" })
@@ -68,17 +70,30 @@ const NoteCard = ({ note }) => {
           <Tags tags={note.Tags}></Tags>
         </ContentContainer>
 
-        <div
-          id='note-actions'
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "10px",
-          }}
-        >
-          <LikeButton sx={{ marginLeft: "8px" }} note={note}></LikeButton>
-          <CommentButton />
-        </div>
+        {userAuth.isAuthenticated ? (
+          <div
+            id='note-actions'
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "10px",
+            }}
+          >
+            <LikeButton sx={{ marginLeft: "8px" }} note={note}></LikeButton>
+            <CommentButton />
+            {/* <span
+              style={{
+                color: "blue",
+                marginTop: "4px",
+                marginLeft: "5px",
+              }}
+            >
+              {note.CommentCount}
+            </span> */}
+          </div>
+        ) : (
+          <></>
+        )}
         <Typography color='textSecondary'>
           {formatedDate.day} às {formatedDate.hour}
         </Typography>
@@ -91,13 +106,12 @@ const noteShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Title: PropTypes.string.isRequired,
   Content: PropTypes.string.isRequired,
-  //LikesCount: PropTypes.number.isRequired,
+  // LikesCount: PropTypes.number.isRequired,
   PublishedDate: PropTypes.string.isRequired,
   UpdatedDate: PropTypes.string.isRequired,
   Author: PropTypes.string.isRequired,
   Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  //CommentCount: PropTypes.number.isRequired,
-  //Commenters: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // CommentCount: PropTypes.number.isRequired,
 });
 
 NoteCard.propTypes = {

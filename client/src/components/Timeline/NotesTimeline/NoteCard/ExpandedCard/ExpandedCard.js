@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
+import { useAuth } from "../../../../../store/auth-context";
 
 const validationSchema = yup.object({
   comment: yup.string("Insira um comentário").required("Insira um comentário"),
@@ -28,6 +29,7 @@ const validationSchema = yup.object({
 
 const ExpandedCard = ({ note, randomColorElement }) => {
   let [comments, setComments] = useState([]);
+  const userAuth = useAuth();
 
   useEffect(() => {
     const returnNoteComments = async () => {
@@ -56,7 +58,6 @@ const ExpandedCard = ({ note, randomColorElement }) => {
           content: values.comment,
         };
 
-        console.log(commentData);
         await axios.post("/comments", commentData);
 
         console.log("Comment successful");
@@ -101,35 +102,39 @@ const ExpandedCard = ({ note, randomColorElement }) => {
       >
         Comentários
       </Typography>
-      <form onSubmit={formik.handleSubmit} style={{ width: "90%" }}>
-        <TextField
-          label='Comentário'
-          variant='standard'
-          sx={{
-            display: "flex",
-            margin: "auto",
-            marginTop: "20px",
-          }}
-          id='comment'
-          name='comment'
-          value={formik.values.comment}
-          onChange={formik.handleChange}
-          placeholder='Digite um comentário'
-          onBlur={formik.handleBlur}
-          error={formik.touched.comment && Boolean(formik.errors.comment)}
-          helperText={formik.touched.comment && formik.errors.comment}
-        />
-        <CreateButton
-          sx={{
-            marginTop: "10px",
-            display: "block",
-            marginLeft: "auto",
-          }}
-          type='submit'
-        >
-          Comentar
-        </CreateButton>
-      </form>
+      {userAuth.isAuthenticated ? (
+        <form onSubmit={formik.handleSubmit} style={{ width: "90%" }}>
+          <TextField
+            label='Comentário'
+            variant='standard'
+            sx={{
+              display: "flex",
+              margin: "auto",
+              marginTop: "20px",
+            }}
+            id='comment'
+            name='comment'
+            value={formik.values.comment}
+            onChange={formik.handleChange}
+            placeholder='Digite um comentário'
+            onBlur={formik.handleBlur}
+            error={formik.touched.comment && Boolean(formik.errors.comment)}
+            helperText={formik.touched.comment && formik.errors.comment}
+          />
+          <CreateButton
+            sx={{
+              marginTop: "10px",
+              display: "block",
+              marginLeft: "auto",
+            }}
+            type='submit'
+          >
+            Comentar
+          </CreateButton>
+        </form>
+      ) : (
+        <></>
+      )}
       <ContentContainer sx={{ marginTop: "15px", float: "left" }}>
         {comments ? (
           comments.map((comment) => (

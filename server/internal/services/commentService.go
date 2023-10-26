@@ -57,20 +57,12 @@ func (this CommentService) GetNoteComments(idNote string) ([]domain.NoteComment,
 	var noteComments []domain.NoteComment
 
 	for _, comment := range comments {
-		user, errUser := this.userRepository.GetByUsername(comment.UserId)
-
-		if errUser != nil {
-			log.Println("[CommentService] Error on get user comment:", errUser)
-			return nil, errUser
-		}
-
 		noteComments = append(noteComments, domain.NoteComment{
 			Id:        comment.Id,
-			Author:    user.Email,
+			Author:    comment.UserId,
 			Content:   comment.Content,
 			CreatedAt: comment.CreatedAt,
 		})
-
 	}
 
 	return noteComments, nil

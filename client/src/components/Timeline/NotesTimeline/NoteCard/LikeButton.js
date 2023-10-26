@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import axios from "axios";
@@ -25,6 +25,22 @@ const LikeButton = (note) => {
       console.log("Like failed:", error);
     }
   };
+
+  useEffect(() => {
+    const getLike = async () => {
+      try {
+        const response = await axios.get(
+          "/likes/" + note.note.AuthorId + "/" + note.note.Id
+        );
+
+        if (response.data.data) setIsClicked(true);
+      } catch (error) {
+        console.log("Comments retrieving failed: ", error);
+      }
+    };
+
+    getLike();
+  }, false);
 
   const favoriteIconStyling = {
     color: "red",
