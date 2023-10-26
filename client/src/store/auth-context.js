@@ -4,7 +4,6 @@ import axios from "axios";
 import { authReducer, SET_USER, LOGOUT } from "./authReducer";
 
 const AuthContext = createContext();
-
 export function useAuth() {
   return useContext(AuthContext);
 }
