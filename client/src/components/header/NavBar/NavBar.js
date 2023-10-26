@@ -73,9 +73,11 @@ const NavBar = ({ open, setOpen }) => {
           <IconButton onClick={handleOpenSearch} sx={{ color: "white" }}>
             <FilterAltRoundedIcon />
           </IconButton>
-          <StyledIconButton>
-            <Groups2RoundedIcon />
-          </StyledIconButton>
+          <Link to='/communities' style={{ textDecoration: "none" }}>
+            <StyledIconButton>
+              <Groups2RoundedIcon />
+            </StyledIconButton>
+          </Link>
           {!auth.isAuthenticated && (
             <ButtonStack direction='row' spacing={3}>
               <NavButtons

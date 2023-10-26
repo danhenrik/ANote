@@ -11,9 +11,11 @@ export function useAuth() {
 
 export const AuthProvider = ({ children }) => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
-
   const initialState = {
-    user: storedUser ? storedUser.user : null,
+    user: {
+      username: storedUser ? storedUser.username : null,
+      email: storedUser ? storedUser.email : null,
+    },
     isAuthenticated: Boolean(storedUser),
     isLoading: false,
     token: storedUser ? storedUser.token : null,

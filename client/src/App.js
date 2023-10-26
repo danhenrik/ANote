@@ -10,6 +10,8 @@ import config from "./configs.json";
 import { AuthProvider } from "./store/auth-context";
 import Routes from "./Routes/Routes";
 import { ModalProvider } from "./store/modal-context";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -20,10 +22,12 @@ function App() {
         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
           <ThemeProvider theme={defaultTheme}>
             <ModalProvider>
-              <NavBar open={open} setOpen={setOpen} />
-              <MainContent open={open}>
-                <Routes />
-              </MainContent>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <NavBar open={open} setOpen={setOpen} />
+                <MainContent open={open}>
+                  <Routes />
+                </MainContent>
+              </LocalizationProvider>
             </ModalProvider>
           </ThemeProvider>
         </GoogleOAuthProvider>

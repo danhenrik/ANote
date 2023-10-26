@@ -10,6 +10,7 @@ import {
 } from "../../../common/FormStyling.styled";
 import CloseIcon from "@mui/icons-material/Close";
 import { PropTypes } from "prop-types";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export const validationSchema = yup
   .object()
@@ -135,8 +136,19 @@ const SearchForm = ({ closeModal }) => {
             helperText={formik.touched.community && formik.errors.community}
           />
           <InputLabel htmlFor='creationDate'>Data de Criação</InputLabel>
-          <TextField
-            fullWidth
+          <DatePicker
+            format='dd/MM/yyyy'
+            slotProps={{
+              textField: {
+                placeholder: "dd/MM/yyyy",
+                sx: {
+                  "& .MuiInputBase-input": {
+                    height: "12px",
+                  },
+                  width: "100%",
+                },
+              },
+            }}
             name='creationDate'
             id='creationDate'
             variant='outlined'
@@ -149,6 +161,7 @@ const SearchForm = ({ closeModal }) => {
               formik.touched.creationDate && formik.errors.creationDate
             }
           />
+
           {formik.errors.atleastone ? (
             <Typography color='error'>{formik.errors.atleastone}</Typography>
           ) : null}
