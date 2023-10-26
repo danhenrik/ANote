@@ -54,11 +54,13 @@ func main() {
 
 	// likes endpoints
 	r.GET("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.GetLikeController))
+	r.GET("/likes/count/:idNote", httpAdapter.NewGinAdapter(routes.CountLikeByIdNoteController))
 	r.POST("/likes", httpAdapter.NewGinAdapter(routes.CreateLikeController))
 	r.DELETE("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.DeleteLikeController))
 
 	// comment endpoints
 	r.GET("/comments/:idNote", httpAdapter.NewGinAdapter(routes.GetNoteCommentsController))
+	r.GET("/comments/count/:idNote", httpAdapter.NewGinAdapter(routes.CountCommentByIdNoteController))
 	r.POST("/comments", httpAdapter.NewGinAdapter(routes.CreateCommentController))
 	r.DELETE("/comments/:id", httpAdapter.NewGinAdapter(routes.DeleteCommentController))
 

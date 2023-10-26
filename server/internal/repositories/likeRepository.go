@@ -61,3 +61,23 @@ func (this LikeRepository) GetByIdUserAndIdNote(idUser string, idNote string) (*
 	return nil, nil
 
 }
+func (this LikeRepository) GetByIdNote(idNote string) ([]domain.Like, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Like{})
+
+	res, err := this.DBConn.QueryMultiple(objType, "SELECT * FROM likes WHERE note_id = $1", idNote)
+
+	if err != nil {
+		log.Println("[LikeRepo] Error on get like:", err)
+		return []domain.Like{}, err
+	}
+	if res == nil {
+		return []domain.Like{}, nil
+	}
+
+	if likes, ok := res.([]domain.Like); ok {
+		return likes, nil
+	}
+	log.Println("[LikeRepo] Like not found")
+	return []domain.Like{}, nil
+
+}

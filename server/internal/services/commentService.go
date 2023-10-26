@@ -67,3 +67,20 @@ func (this CommentService) GetNoteComments(idNote string) ([]domain.NoteComment,
 
 	return noteComments, nil
 }
+
+func (this CommentService) CountCommentByIdNoteController(idNote string) (int, *errors.AppError) {
+	comments, err := this.commentRepository.GetNoteComments(idNote)
+
+	if err != nil {
+		log.Println("[CommentService] Error on count comment:", err)
+		return 0, err
+	}
+
+	var numberComments int = 0
+
+	for range comments {
+		numberComments++
+	}
+
+	return numberComments, nil
+}

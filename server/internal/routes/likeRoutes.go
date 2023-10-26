@@ -58,3 +58,21 @@ func GetLikeController(request httpAdapter.Request) httpAdapter.Response {
 	return httpAdapter.NewSuccessResponse(http.StatusOK, like)
 
 }
+
+func CountLikeByIdNoteController(request httpAdapter.Request) httpAdapter.Response {
+	idNote, okIdNote := request.GetSingleParam("idNote")
+
+	if !okIdNote {
+		log.Println("[LikeController] Error on count like: id not found")
+		return httpAdapter.NewErrorResponse(400, "id not found")
+	}
+
+	numberLikes, err := container.LikeService.CountLikeByIdNoteController(idNote)
+
+	if err != nil {
+		log.Println("[LikeController] Error on count like:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+
+	return httpAdapter.NewSuccessResponse(http.StatusOK, numberLikes)
+}

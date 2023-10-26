@@ -55,3 +55,21 @@ func GetNoteCommentsController(request httpAdapter.Request) httpAdapter.Response
 
 	return httpAdapter.NewSuccessResponse(http.StatusOK, comments)
 }
+
+func CountCommentByIdNoteController(request httpAdapter.Request) httpAdapter.Response {
+	idNote, okIdNote := request.GetSingleParam("idNote")
+
+	if !okIdNote {
+		log.Println("[CommentController] Error on count comment: id not found")
+		return httpAdapter.NewErrorResponse(400, "id not found")
+	}
+
+	numberComments, err := container.CommentService.CountCommentByIdNoteController(idNote)
+
+	if err != nil {
+		log.Println("[CommentController] Error on count note comments:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+
+	return httpAdapter.NewSuccessResponse(http.StatusOK, numberComments)
+}

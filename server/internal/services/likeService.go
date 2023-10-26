@@ -49,3 +49,20 @@ func (this LikeService) GetByIdUserAndIdNote(idUser string, idNote string) (*dom
 
 	return like, nil
 }
+
+func (this LikeService) CountLikeByIdNoteController(idNote string) (int, *errors.AppError) {
+	likes, err := this.likeRepository.GetByIdNote(idNote)
+
+	if err != nil {
+		log.Println("[LikeService] Error on count like:", err)
+		return 0, err
+	}
+
+	var numberLikes int = 0
+
+	for range likes {
+		numberLikes++
+	}
+
+	return numberLikes, nil
+}
