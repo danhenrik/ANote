@@ -29,26 +29,26 @@ func NewAuthService(
 	}
 }
 
-func (this AuthService) Login(login viewmodels.LoginVM) (string, *errors.AppError) {
+func (this AuthService) Login(login viewmodels.LoginVM) (string, string, *errors.AppError) {
 	userFromDB, err := this.userRepository.GetUserWithPassword(login.Login)
 	if err != nil {
 		log.Println("[Login] Error on get user:", err)
-		return "", err
+		return "", "", err
 	}
 	if userFromDB == nil {
-		return "", errors.NewAppError(400, "User not found")
+		return "", "", errors.NewAppError(400, "User not found")
 	}
 
 	if passwordMatch := helpers.CheckHash(login.Password, *userFromDB.Password); !passwordMatch {
-		return "", errors.NewAppError(400, "Invalid password")
+		return "", "", errors.NewAppError(400, "Invalid password")
 	}
 
 	jwt, e := this.jwtProvider.CreateToken(userFromDB)
 	if e != nil {
 		log.Println("[Login] Error on JWT creation:", e)
-		return "", errors.NewAppError(500, "Error on JWT creation")
+		return "", "", errors.NewAppError(500, "Error on JWT creation")
 	}
-	return jwt, nil
+	return jwt, userFromDB.Id, nil
 }
 
 func (this AuthService) RequestPasswordReset(email string) (string, *errors.AppError) {

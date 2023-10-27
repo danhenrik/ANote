@@ -45,8 +45,8 @@ export const AuthProvider = ({ children }) => {
 
       const userData = {
         email: email,
-        username: email,
-        token: response.data.data,
+        username: response.data.data.UserId,
+        token: response.data.data.Jwt,
       };
 
       localStorage.setItem("user", JSON.stringify(userData));

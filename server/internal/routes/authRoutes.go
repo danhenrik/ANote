@@ -15,12 +15,18 @@ func LoginController(request httpAdapter.Request) httpAdapter.Response {
 		return httpAdapter.NewErrorResponse(400, "Invalid content-type")
 	}
 
-	jwt, err := container.AuthService.Login(loginVM)
+	jwt, userId, err := container.AuthService.Login(loginVM)
 	if err != nil {
 		log.Println("[AuthController] Error on login:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewSuccessResponse(200, jwt)
+
+	type response struct {
+		Jwt string
+		UserId string
+	}
+
+	return httpAdapter.NewSuccessResponse(200, response{jwt, userId})
 }
 
 func RequestPasswordResetController(request httpAdapter.Request) httpAdapter.Response {
