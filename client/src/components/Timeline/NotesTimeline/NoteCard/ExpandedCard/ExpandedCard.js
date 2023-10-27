@@ -31,18 +31,17 @@ const ExpandedCard = ({ note, randomColorElement }) => {
   let [comments, setComments] = useState([]);
   const userAuth = useAuth();
 
+  const updateNoteComments = async () => {
+    try {
+      const noteComments = await axios.get("/comments/" + note.Id);
+      setComments(noteComments.data.data);
+    } catch (error) {
+      console.log("Comments retrieving failed: ", error);
+    }
+  };
+
   useEffect(() => {
-    const returnNoteComments = async () => {
-      try {
-        const noteComments = await axios.get("/comments/" + note.Id);
-
-        setComments(noteComments.data.data);
-      } catch (error) {
-        console.log("Comments retrieving failed: ", error);
-      }
-    };
-
-    returnNoteComments();
+    updateNoteComments();
   }, []);
 
   const formik = useFormik({
@@ -50,17 +49,17 @@ const ExpandedCard = ({ note, randomColorElement }) => {
       comment: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
         const commentData = {
-          user_id: "1",
+          user_id: userAuth.user.username,
           note_id: note.Id,
           content: values.comment,
         };
 
+        resetForm({ values: "" });
         await axios.post("/comments", commentData);
-
-        console.log("Comment successful");
+        updateNoteComments();
       } catch (error) {
         console.error("Comment failed: ", error);
       }

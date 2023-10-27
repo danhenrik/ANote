@@ -35,12 +35,12 @@ const LikeButton = (note) => {
 
         if (response.data.data) setIsClicked(true);
       } catch (error) {
-        console.log("Comments retrieving failed: ", error);
+        console.log("Likes retrieving failed: ", error);
       }
     };
 
     getLike();
-  }, false);
+  }, []);
 
   const favoriteIconStyling = {
     color: "red",
