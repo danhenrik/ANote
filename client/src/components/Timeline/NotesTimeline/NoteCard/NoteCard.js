@@ -15,12 +15,13 @@ import {
   Title,
 } from "./NoteCard.styled";
 import Tags from "../../Tags/TagsList";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useModal } from "../../../../store/modal-context";
 import ExpandedCard from "./ExpandedCard/ExpandedCard";
 import LikeButton from "./LikeButton";
 import formatDate from "../../../../util/formatDate";
 import { useAuth } from "../../../../store/auth-context";
+import axios from "axios";
 
 const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
@@ -43,6 +44,21 @@ const NoteCard = ({ note }) => {
     );
     modal.setModalStyling(ModalStyling);
   };
+
+  const [numberComments, setComments] = useState(0);
+  useEffect(() => {
+    const initComments = async () => {
+      try {
+        const comments = await axios.get("/comments/count/" + note.Id);
+
+        setComments(comments.data.data);
+      } catch (error) {
+        console.log("Comment number retrieving failed: ", error);
+      }
+    };
+
+    initComments();
+  }, []);
 
   return (
     <NotesCardContainer
@@ -81,15 +97,17 @@ const NoteCard = ({ note }) => {
           >
             <LikeButton sx={{ marginLeft: "8px" }} note={note}></LikeButton>
             <CommentButton />
-            {/* <span
-              style={{
-                color: "blue",
-                marginTop: "4px",
-                marginLeft: "5px",
-              }}
-            >
-              {note.CommentCount}
-            </span> */}
+            {
+              <span
+                style={{
+                  color: "blue",
+                  marginTop: "4px",
+                  marginLeft: "5px",
+                }}
+              >
+                {numberComments}
+              </span>
+            }
           </div>
         ) : (
           <></>
@@ -106,12 +124,10 @@ const noteShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Title: PropTypes.string.isRequired,
   Content: PropTypes.string.isRequired,
-  // LikesCount: PropTypes.number.isRequired,
   PublishedDate: PropTypes.string.isRequired,
   UpdatedDate: PropTypes.string.isRequired,
   Author: PropTypes.string.isRequired,
   Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // CommentCount: PropTypes.number.isRequired,
 });
 
 NoteCard.propTypes = {

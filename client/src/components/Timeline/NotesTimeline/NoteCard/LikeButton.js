@@ -4,7 +4,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import axios from "axios";
 
 const LikeButton = (note) => {
-  const [likes, setLikes] = useState(note.note.LikesCount);
+  const [likes, setLikes] = useState(0);
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const handleClick = async () => {
@@ -27,19 +27,22 @@ const LikeButton = (note) => {
   };
 
   useEffect(() => {
-    const getLike = async () => {
+    const initLikes = async () => {
       try {
         const response = await axios.get(
           "/likes/" + note.note.AuthorId + "/" + note.note.Id
         );
 
+        const numberLikes = await axios.get("/likes/count/" + note.note.Id);
+
         if (response.data.data) setIsClicked(true);
+        setLikes(numberLikes.data.data);
       } catch (error) {
         console.log("Likes retrieving failed: ", error);
       }
     };
 
-    getLike();
+    initLikes();
   }, []);
 
   const favoriteIconStyling = {
