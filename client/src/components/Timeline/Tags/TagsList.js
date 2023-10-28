@@ -3,7 +3,7 @@ import { TagBlock, TagLink, TagList } from "./TagsList.styled";
 import { IconButton } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
-const Tags = ({ tags, hasLink, hasDelete, deletionHandler }) => {
+const Tags = ({ tags, hasLink = true, hasDelete, deletionHandler }) => {
   return (
     <TagList>
       {tags.map((tag, index) =>

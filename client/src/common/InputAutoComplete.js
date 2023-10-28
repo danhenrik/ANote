@@ -14,6 +14,8 @@ const InputAutocomplete = ({ name, options, addToList, ...props }) => {
   const [field, meta] = useField(name);
   return (
     <Autocomplete
+      freeSolo
+      style={{ width: "100%" }}
       filterOptions={filterOptions}
       {...field}
       options={options}

@@ -4,8 +4,6 @@ const mapApiCommunitiesData = (data) => {
   return data.map((item) => ({
     Id: item.id,
     Name: item.name,
-    //Tags: item.tags.map((tag) => tag.name),
-    Tags: ["abc"],
   }));
 };
 
@@ -19,10 +17,20 @@ const fetchCommunitiesRequest = async (api) => {
   }
 };
 
+const fetchCommunitiesByUserRequest = async (api) => {
+  try {
+    const response = await api.get("/communities/my");
+    return mapApiCommunitiesData(response.data.data);
+  } catch (error) {
+    console.error("Error fetching communities:", error);
+    throw error;
+  }
+};
+
 const createCommunityRequest = async (api, community) => {
   try {
     const response = await api.post("communities", community);
-    return mapApiCommunitiesData(response.data);
+    return response.data;
   } catch (error) {
     console.error("Error creating community:", error);
     throw error;
@@ -31,7 +39,7 @@ const createCommunityRequest = async (api, community) => {
 
 const followCommunityRequest = async (api, community) => {
   try {
-    const response = await api.post(`communities/join/, ${community}`);
+    const response = await api.post(`communities/join/${community}`);
     return response.data;
   } catch (error) {
     console.error("Error creating community:", error);
@@ -41,7 +49,7 @@ const followCommunityRequest = async (api, community) => {
 
 const unfollowCommunityRequest = async (api, community) => {
   try {
-    const response = await api.post(`communities/leave/, ${community}`);
+    const response = await api.post(`communities/leave/${community}`);
     return response.data;
   } catch (error) {
     console.error("Error creating community:", error);
@@ -54,6 +62,10 @@ const useCommunities = () => {
 
   const fetchCommunities = () => {
     return fetchCommunitiesRequest(api);
+  };
+
+  const fetchCommunitiesByUser = () => {
+    return fetchCommunitiesByUserRequest(api);
   };
 
   const createCommunity = (community) => {
@@ -73,6 +85,7 @@ const useCommunities = () => {
     createCommunity,
     followCommunity,
     unfollowCommunity,
+    fetchCommunitiesByUser,
   };
 };
 

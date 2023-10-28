@@ -13,15 +13,26 @@ import { useAuth } from "../../../store/auth-context";
 import { useModal } from "../../../store/modal-context";
 
 const validationSchema = yup.object({
-  email: yup
-    .string("Insira seu email")
-    .email("Insira um e-mail válido")
-    .required("Insira seu e-mail"),
-  password: yup
-    .string("Insira sua senha")
-    .min(8, "A senha deve conter pelo menos 8 caracteres, com uma letra")
-    .required("Insira sua senha"),
+  login: yup
+    .mixed()
+    .test(
+      "is-email-or-username",
+      "Insira um e-mail válido ou nome de usuário",
+      (value) => {
+        if (!value) return false; // No value provided, fail the test
+        return isValidEmail(value) || isValidUsername(value);
+      }
+    )
+    .required("Insira seu e-mail ou nome de usuário"),
 });
+
+function isValidEmail(value) {
+  return /\S+@\S+\.\S+/.test(value);
+}
+
+function isValidUsername(value) {
+  return /^[a-zA-Z0-9_]+$/.test(value);
+}
 
 const LoginForm = () => {
   const auth = useAuth();
@@ -29,12 +40,17 @@ const LoginForm = () => {
   const modal = useModal();
   const formik = useFormik({
     initialValues: {
-      email: "",
+      login: "",
       password: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      auth.login(values, "EMAIL");
+      const user = {
+        login: values.login,
+        password: values.password,
+      };
+      alert(user);
+      auth.login(user, "EMAIL");
       modal.closeModal();
       navigate("/");
     },
@@ -46,17 +62,17 @@ const LoginForm = () => {
         Faça Login
       </Typography>
       <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-        <InputLabel htmlFor='email'>E-Mail ou Usuário</InputLabel>
+        <InputLabel htmlFor='login'>E-Mail ou Usuário</InputLabel>
         <TextField
           fullWidth
-          id='email'
-          name='email'
-          placeholder='Digite seu email'
-          value={formik.values.email}
+          id='login'
+          name='login'
+          placeholder='Digite seu login'
+          value={formik.values.login}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.email && Boolean(formik.errors.email)}
-          helperText={formik.touched.email && formik.errors.email}
+          error={formik.touched.login && Boolean(formik.errors.login)}
+          helperText={formik.touched.login && formik.errors.login}
         />
         <InputLabel htmlFor='password'>Senha</InputLabel>
         <TextField

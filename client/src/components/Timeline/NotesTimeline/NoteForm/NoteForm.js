@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, IconButton } from "@mui/material";
-import { useFormik } from "formik";
+import { FormikProvider, useFormik } from "formik";
 import * as yup from "yup";
 import {
   InputLabel,
@@ -24,7 +24,7 @@ const validationSchema = yup.object({
     .required("Descrição é obrigatória"),
 });
 
-const NoteForm = ({ notes }) => {
+const NoteForm = ({ notes, communityId }) => {
   const notesApi = useNotes();
   const modal = useModal();
   const [tagList, setTagList] = useState([]);
@@ -41,7 +41,6 @@ const NoteForm = ({ notes }) => {
     fetchTags();
   }, []);
 
-  //const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -49,11 +48,19 @@ const NoteForm = ({ notes }) => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      let communities;
+      if (communityId) {
+        communities = [communityId];
+      } else {
+        communities = [];
+      }
       const note = {
         title: values.title,
         description: values.description,
         tags: tagList,
+        communities: communities,
       };
+      alert(JSON.stringify(note));
       const postNotes = async () => {
         const fetchedNotes = await notesApi.createNote(note);
         if (fetchedNotes) {
@@ -67,64 +74,67 @@ const NoteForm = ({ notes }) => {
 
   return (
     <>
-      <Typography variant='h6' style={{ fontWeight: "bold" }}>
-        Criar uma Nota
-      </Typography>
-      <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-        <InputLabel htmlFor='title'>Título</InputLabel>
-        <TextField
-          fullWidth
-          id='title'
-          name='title'
-          placeholder='Insira o título'
-          value={formik.values.title}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.title && Boolean(formik.errors.title)}
-          helperText={formik.touched.title && formik.errors.title}
-        />
-        <InputLabel htmlFor='description'>Descrição</InputLabel>
-        <CustomTextArea
-          id='description'
-          name='description'
-          placeholder='Insira a descrição'
-          value={formik.values.description}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          {...(formik.touched.description && formik.errors.description
-            ? { error: "true" }
-            : {})}
-          minRows={4}
-        />
-        <InputLabel htmlFor='tags'>Tags</InputLabel>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <InputAutocomplete
-            addToList={addToList}
-            name='tag'
-            id='tag'
-            options={tags}
-            list={tagList}
+      <FormikProvider value={formik}>
+        <Typography variant='h6' style={{ fontWeight: "bold" }}>
+          Criar uma Nota
+        </Typography>
+        <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
+          <InputLabel htmlFor='title'>Título</InputLabel>
+          <TextField
+            fullWidth
+            id='title'
+            name='title'
+            placeholder='Insira o título'
+            value={formik.values.title}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.title && Boolean(formik.errors.title)}
+            helperText={formik.touched.title && formik.errors.title}
           />
-          <IconButton style={{ marginLeft: "5px" }}>
-            <AddIcon />
-          </IconButton>
-        </div>
-        <Tags
-          tags={tagList}
-          hasLink={false}
-          hasDelete={true}
-          deletionHandler={removeFromList}
-        ></Tags>
-        <Button variant='contained' fullWidth type='submit'>
-          Criar Nota
-        </Button>
-      </form>
+          <InputLabel htmlFor='description'>Descrição</InputLabel>
+          <CustomTextArea
+            id='description'
+            name='description'
+            placeholder='Insira a descrição'
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            {...(formik.touched.description && formik.errors.description
+              ? { error: "true" }
+              : {})}
+            minRows={4}
+          />
+          <InputLabel htmlFor='tags'>Tags</InputLabel>
+          <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+            <InputAutocomplete
+              addToList={addToList}
+              name='tag'
+              id='tag'
+              options={tags}
+              list={tagList}
+            />
+            <IconButton style={{ marginLeft: "5px" }}>
+              <AddIcon />
+            </IconButton>
+          </div>
+          <Tags
+            tags={tagList}
+            hasLink={false}
+            hasDelete={true}
+            deletionHandler={removeFromList}
+          ></Tags>
+          <Button variant='contained' fullWidth type='submit'>
+            Criar Nota
+          </Button>
+        </form>
+      </FormikProvider>
     </>
   );
 };
 
 NoteForm.propTypes = {
   notes: PropTypes.array.isRequired,
+  communityId: PropTypes.number,
 };
 
 export default NoteForm;

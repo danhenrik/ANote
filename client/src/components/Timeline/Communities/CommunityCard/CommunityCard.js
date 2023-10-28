@@ -24,7 +24,7 @@ const CommunityCard = ({ community }) => {
   const navigationHandler = (event) => {
     if (event.target.closest("a")) return;
     if (event.target.closest("#community-follow")) return;
-    navigate(`/community/${community.Id}`);
+    navigate(`/communities/${community.Id}`);
   };
   const navigate = useNavigate();
   return (
@@ -36,14 +36,9 @@ const CommunityCard = ({ community }) => {
         follow
       </Link>
       <CardContent>
-        <Title variant='h7' component='div'>
+        <Title style={{ textAlign: "center" }} variant='h7' component='div'>
           {community.Name}
         </Title>
-        <Typography color='textSecondary'>{community.Name}</Typography>
-        <ContentContainer>abc</ContentContainer>
-        <ContentContainer sx={{ marginTop: "10px" }}>
-          {community.Tags && <Tags tags={community.Tags} />}
-        </ContentContainer>
       </CardContent>
     </CommunityCardContainer>
   );
@@ -52,7 +47,6 @@ const CommunityCard = ({ community }) => {
 const communityShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Name: PropTypes.string.isRequired,
-  Tags: PropTypes.arrayOf(PropTypes.string),
 });
 
 CommunityCard.propTypes = {

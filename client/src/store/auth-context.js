@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
   const initialState = {
     user: {
       username: storedUser ? storedUser.username : null,
-      email: storedUser ? storedUser.email : null,
     },
     isAuthenticated: Boolean(storedUser),
     isLoading: false,
@@ -33,10 +32,10 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
-  const loginWithEmail = async (email, password) => {
+  const loginWithEmail = async (login, password) => {
     try {
       const userLoginData = {
-        login: email,
+        login: login,
         password: password,
       };
       const response = await axios.post("/auth/login", userLoginData);
@@ -44,7 +43,6 @@ export const AuthProvider = ({ children }) => {
       console.log("Login successful:", response.data);
 
       const userData = {
-        email: email,
         username: response.data.data.UserId,
         token: response.data.data.Jwt,
       };
@@ -60,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     if (authMethod === "GOOGLE") {
       loginWithGoogle(userData);
     } else if (authMethod === "EMAIL") {
-      loginWithEmail(userData.email, userData.password);
+      loginWithEmail(userData.login, userData.password);
     }
   };
 

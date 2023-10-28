@@ -13,7 +13,7 @@ const ModalComponent = ({ handleClose, open, content, style }) => {
       aria-labelledby='modal-modal-auth'
       aria-describedby='modal-modal-signup-login'
     >
-      <Container maxWidth='xs'>
+      <Container maxWidth='sm'>
         <Paper
           elevation={3}
           sx={{

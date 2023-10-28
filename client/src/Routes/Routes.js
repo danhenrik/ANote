@@ -23,7 +23,7 @@ function Routes() {
       element: <Communities />,
     },
     {
-      path: "/community/:id",
+      path: "/communities/:id",
       element: <Timeline />,
     },
     {

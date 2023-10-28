@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, IconButton } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -9,12 +9,10 @@ import {
 } from "../../../../common/FormStyling.styled";
 import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
-import AddIcon from "@mui/icons-material/Add";
 import useCommunities from "../../../../api/useCommunities";
 
 const validationSchema = yup.object({
   name: yup.string("Insira o nome").required("Nome é obrigatório"),
-  tags: yup.string("Insira as tags"),
 });
 
 const CommunityForm = ({ communities }) => {
@@ -23,19 +21,17 @@ const CommunityForm = ({ communities }) => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      tags: "",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       const community = {
         name: values.name,
-        tags: values.tags,
       };
       const createCommunity = async () => {
         const createdCommunity =
           await communitiesApi.createCommunity(community);
         if (createdCommunity) {
-          console.log("criado");
+          communities.push(community);
         }
       };
 
@@ -63,20 +59,6 @@ const CommunityForm = ({ communities }) => {
           error={formik.touched.name && Boolean(formik.errors.name)}
           helperText={formik.touched.name && formik.errors.name}
         />
-        <InputLabel htmlFor='tags'>Tags</InputLabel>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <TextField
-            fullWidth
-            id='tags'
-            name='tags'
-            placeholder='Insira as tags'
-            value={formik.values.tags}
-            onChange={formik.handleChange}
-          />
-          <IconButton style={{ marginLeft: "5px" }}>
-            <AddIcon />
-          </IconButton>
-        </div>
         <Button variant='contained' fullWidth type='submit'>
           Criar Comunidade
         </Button>

@@ -48,8 +48,7 @@ export const validationSchema = (tagList) => {
     })
     .test("back", "Invalid input", dynamicValidation(tagList))
     .test("valid-date", "Invalid date format", (value) => {
-      if (!value.creationDate) return true; // Allow empty input
-      // Use a regular expression to match "dd/mm/yyyy" format
+      if (!value.creationDate) return true;
       const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
       if (!dateRegex.test(value.creationDate))
         return new yup.ValidationError(
@@ -101,6 +100,8 @@ const SearchForm = ({ closeModal }) => {
 
       alert(JSON.stringify(search, null, 2));
     },
+    validateOnChange: false,
+    validateOnBlur: true,
   });
 
   const { addToList, removeFromList } = listHandler(setTagList);
@@ -129,8 +130,6 @@ const SearchForm = ({ closeModal }) => {
               id='title'
               value={formik.values.title}
               onChange={formik.handleChange}
-              error={formik.touched.title && Boolean(formik.errors.title)}
-              helperText={formik.touched.title && formik.errors.title}
             />
             <InputLabel htmlFor='content'>Conteúdo</InputLabel>
             <TextArea
@@ -142,8 +141,6 @@ const SearchForm = ({ closeModal }) => {
               onChange={formik.handleChange}
               multiline
               rows={4}
-              error={formik.touched.content && Boolean(formik.errors.content)}
-              helperText={formik.touched.content && formik.errors.content}
             />
             <InputLabel htmlFor='user'>Usuário</InputLabel>
             <TextField
@@ -153,8 +150,6 @@ const SearchForm = ({ closeModal }) => {
               variant='outlined'
               value={formik.values.user}
               onChange={formik.handleChange}
-              error={formik.touched.user && Boolean(formik.errors.user)}
-              helperText={formik.touched.user && formik.errors.user}
             />
             <InputLabel htmlFor='community'>Comunidade</InputLabel>
             <TextField
@@ -164,10 +159,6 @@ const SearchForm = ({ closeModal }) => {
               variant='outlined'
               value={formik.values.community}
               onChange={formik.handleChange}
-              error={
-                formik.touched.community && Boolean(formik.errors.community)
-              }
-              helperText={formik.touched.community && formik.errors.community}
             />
             <InputLabel htmlFor='tag'>Tag</InputLabel>
             <InputAutocomplete
@@ -200,6 +191,9 @@ const SearchForm = ({ closeModal }) => {
             >
               {(inputProps) => <input {...inputProps} />}
             </ReactInputMask>
+            {formik.errors.date ? (
+              <Typography color='error'>{formik.errors.date}</Typography>
+            ) : null}
             {formik.errors.atleastone ? (
               <Typography color='error'>{formik.errors.atleastone}</Typography>
             ) : null}

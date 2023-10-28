@@ -2,22 +2,23 @@ import { useEffect, useState } from "react";
 import CommunityList from "./CommunityList/CommunityList";
 import { useAuth } from "../../../store/auth-context";
 import useCommunities from "../../../api/useCommunities";
+import { useSearchParams } from "react-router-dom";
 
 const Communities = () => {
   const [communities, setCommunities] = useState([]);
   const userAuth = useAuth();
   const communitiesApi = useCommunities();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     let fetchedCommunities = [];
     const fetchAndSetCommunities = async () => {
       if (userAuth.isAuthenticated) {
-        fetchedCommunities = await communitiesApi.fetchCommunities();
-        /*
-        fetchedCommunities = await communitiesApi.fetchCommunitiesByAuthor(
-          userAuth.user.username
-        );
-        */
+        if (!searchParams.get("world") || searchParams.get("world") === false) {
+          fetchedCommunities = await communitiesApi.fetchCommunitiesByUser();
+        } else {
+          fetchedCommunities = await communitiesApi.fetchCommunities();
+        }
       } else {
         fetchedCommunities = await communitiesApi.fetchCommunities();
       }
@@ -26,7 +27,7 @@ const Communities = () => {
     };
 
     fetchAndSetCommunities();
-  }, []);
+  }, [searchParams.get("world")]);
 
   return <CommunityList communities={communities}></CommunityList>;
 };

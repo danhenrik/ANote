@@ -2,36 +2,42 @@ import { useEffect, useState } from "react";
 import NoteList from "./NoteList/NoteList";
 import useNotes from "../../../api/useNotes";
 import { useAuth } from "../../../store/auth-context";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const Timeline = () => {
   const notesApi = useNotes();
   const [notes, setNotes] = useState([]);
   const userAuth = useAuth();
   const params = useParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     let fetchedNotes = [];
     const fetchAndSetNotes = async () => {
       if (userAuth.isAuthenticated) {
-        if (params.id) {
-          fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+        if (searchParams.get("world") && searchParams.get("world") === true) {
+          fetchedNotes = await notesApi.fetchNotesFeed();
         } else {
-          fetchedNotes = await notesApi.fetchNotesByAuthor(
-            userAuth.user.username
-          );
+          if (params.id) {
+            fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+          } else {
+            fetchedNotes = await notesApi.fetchNotesByAuthor(
+              userAuth.user.username
+            );
+          }
         }
       } else {
-        fetchedNotes = await notesApi.fetchNotes(1);
+        setNotes([]);
+        fetchedNotes = await notesApi.fetchNotes();
       }
 
       setNotes(fetchedNotes);
     };
 
     fetchAndSetNotes();
-  }, []);
+  }, [userAuth.isAuthenticated]);
 
-  return <NoteList notes={notes}></NoteList>;
+  return <NoteList communityId={params.id} notes={notes}></NoteList>;
 };
 
 export default Timeline;

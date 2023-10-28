@@ -21,9 +21,25 @@ const mapApiNotesData = (data) => {
   }));
 };
 
-const fetchNotesRequest = async (api, page) => {
+const fetchNotesFeedRequest = async (api, page) => {
   try {
     const response = await api.get("/notes/feed", {
+      params: {
+        page: 1,
+        size: 1,
+        sort_by: "title",
+      },
+    });
+    return mapApiNotesData(handlePagination(response.data, page, PAGE_SIZE));
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    throw error;
+  }
+};
+
+const fetchNotesRequest = async (api, page) => {
+  try {
+    const response = await api.get("/notes", {
       params: {
         page: 1,
         size: 1,
@@ -60,7 +76,7 @@ const fetchNotesByCommunityRequest = async (api, id) => {
 const createNoteRequest = async (api, note) => {
   try {
     const response = await api.post("notes", note);
-    return mapApiNotesData(response.data);
+    return response;
   } catch (error) {
     console.error("Error creating note:", error);
     throw error;
@@ -70,6 +86,9 @@ const createNoteRequest = async (api, note) => {
 const useNotes = () => {
   const api = useApi();
 
+  const fetchNotesFeed = (page) => {
+    return fetchNotesFeedRequest(api, page);
+  };
   const fetchNotes = (page) => {
     return fetchNotesRequest(api, page);
   };
@@ -87,6 +106,7 @@ const useNotes = () => {
   };
 
   return {
+    fetchNotesFeed,
     fetchNotes,
     createNote,
     fetchNotesByAuthor,

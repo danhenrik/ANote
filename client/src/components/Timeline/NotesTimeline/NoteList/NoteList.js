@@ -7,14 +7,18 @@ import NoteForm from "../NoteForm/NoteForm";
 import LoginForm from "../../../AccessControl/Login/LoginForm";
 import TimelineList from "../../TimelineList";
 
-const NoteList = ({ notes }) => {
+const NoteList = ({ notes, communityId }) => {
   const modal = useModal();
   const auth = useAuth();
 
   const handleAddNoteModal = () => {
     modal.openModal(
       auth.isAuthenticated ? (
-        <NoteForm notes={notes} closeModal={modal.closeModal}></NoteForm>
+        <NoteForm
+          notes={notes}
+          communityId={communityId}
+          closeModal={modal.closeModal}
+        ></NoteForm>
       ) : (
         <LoginForm closeModal={modal.closeModal}></LoginForm>
       )
@@ -55,6 +59,7 @@ const noteShape = PropTypes.shape({
 
 NoteList.propTypes = {
   notes: PropTypes.arrayOf(noteShape).isRequired,
+  communityId: PropTypes.number,
 };
 
 export default NoteList;
