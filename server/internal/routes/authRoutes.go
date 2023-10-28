@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"anote/internal/domain"
 	httpAdapter "anote/cmd/interfaces"
 	"anote/internal/container"
 	"anote/internal/viewmodels"
@@ -15,7 +16,7 @@ func LoginController(request httpAdapter.Request) httpAdapter.Response {
 		return httpAdapter.NewErrorResponse(400, "Invalid content-type")
 	}
 
-	jwt, userId, err := container.AuthService.Login(loginVM)
+	jwt, user, err := container.AuthService.Login(loginVM)
 	if err != nil {
 		log.Println("[AuthController] Error on login:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
@@ -23,10 +24,10 @@ func LoginController(request httpAdapter.Request) httpAdapter.Response {
 
 	type response struct {
 		Jwt string
-		UserId string
+		User *domain.User
 	}
 
-	return httpAdapter.NewSuccessResponse(200, response{jwt, userId})
+	return httpAdapter.NewSuccessResponse(200, response{jwt, user})
 }
 
 func RequestPasswordResetController(request httpAdapter.Request) httpAdapter.Response {

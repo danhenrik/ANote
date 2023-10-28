@@ -1,6 +1,7 @@
 package services
 
 import (
+	"anote/internal/domain"
 	"anote/internal/errors"
 	"anote/internal/helpers"
 	"anote/internal/interfaces"
@@ -29,26 +30,26 @@ func NewAuthService(
 	}
 }
 
-func (this AuthService) Login(login viewmodels.LoginVM) (string, string, *errors.AppError) {
+func (this AuthService) Login(login viewmodels.LoginVM) (string, *domain.User, *errors.AppError) {
 	userFromDB, err := this.userRepository.GetUserWithPassword(login.Login)
 	if err != nil {
 		log.Println("[Login] Error on get user:", err)
-		return "", "", err
+		return "", nil, err
 	}
 	if userFromDB == nil {
-		return "", "", errors.NewAppError(400, "User not found")
+		return "", nil, errors.NewAppError(400, "User not found")
 	}
 
 	if passwordMatch := helpers.CheckHash(login.Password, *userFromDB.Password); !passwordMatch {
-		return "", "", errors.NewAppError(400, "Invalid password")
+		return "", nil, errors.NewAppError(400, "Invalid password")
 	}
 
 	jwt, e := this.jwtProvider.CreateToken(userFromDB)
 	if e != nil {
 		log.Println("[Login] Error on JWT creation:", e)
-		return "", "", errors.NewAppError(500, "Error on JWT creation")
+		return "", nil, errors.NewAppError(500, "Error on JWT creation")
 	}
-	return jwt, userFromDB.Id, nil
+	return jwt, userFromDB, nil
 }
 
 func (this AuthService) RequestPasswordReset(email string) (string, *errors.AppError) {
