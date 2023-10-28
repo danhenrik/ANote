@@ -20,7 +20,7 @@ const NavList = ({ handleLoginModal, handleSignupModal, handleDrawer }) => {
     auth.logout();
   };
   let listOptions = [
-    { text: "Minhas Notas", route: { path: "/timeline" } },
+    { text: "Notas Populares", route: { path: "/timeline" } },
     {
       text: "Notas Públicas",
       route: { path: "/timeline", queryParams: "world=true" },

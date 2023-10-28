@@ -8,7 +8,7 @@ import {
 } from "./CommunityCard.styled"; // Adjust the import for your community card styles
 import Tags from "../../Tags/TagsList";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Link } from "@mui/material";
 import useCommunities from "../../../../api/useCommunities";
 
 const CommunityCard = ({ community }) => {
@@ -32,9 +32,9 @@ const CommunityCard = ({ community }) => {
       onClick={navigationHandler}
       sx={{ minWidth: "350px", maxWidth: "350px" }}
     >
-      <Button onClick={followCommunity} id='community-follow'>
+      <Link onClick={followCommunity} id='community-follow'>
         follow
-      </Button>
+      </Link>
       <CardContent>
         <Title variant='h7' component='div'>
           {community.Name}

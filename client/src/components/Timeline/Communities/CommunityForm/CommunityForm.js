@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, MenuItem, IconButton } from "@mui/material";
+import { Typography, IconButton } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -9,7 +9,6 @@ import {
 } from "../../../../common/FormStyling.styled";
 import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
-import { CustomSelect } from "../../TimelineForms.styled";
 import AddIcon from "@mui/icons-material/Add";
 import useCommunities from "../../../../api/useCommunities";
 

@@ -19,6 +19,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        ,
         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
           <ThemeProvider theme={defaultTheme}>
             <ModalProvider>
