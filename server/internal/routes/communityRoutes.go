@@ -32,6 +32,16 @@ func GetAllCommunitiesController(request httpAdapter.Request) httpAdapter.Respon
 	return httpAdapter.NewSuccessResponse(200, communities)
 }
 
+func GetCurrentUserCommunities(request httpAdapter.Request) httpAdapter.Response {
+	userId := request.User.ID
+	communities, err := container.CommunityService.GetByUserId(userId)
+	if err != nil {
+		log.Println("[CommunityController] Error on get all communities:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewSuccessResponse(200, communities)
+}
+
 func DeleteCommunityController(request httpAdapter.Request) httpAdapter.Response {
 	id, ok := request.GetSingleParam("id")
 	if !ok {

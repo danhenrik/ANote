@@ -50,6 +50,7 @@ func main() {
 	r.POST("/communities/join/:id", httpAdapter.NewGinAdapter(routes.JoinCommunityController, middlewares.AuthenticateUser))
 	r.POST("/communities/leave/:id", httpAdapter.NewGinAdapter(routes.LeaveCommunityController, middlewares.AuthenticateUser))
 	r.GET("/communities", httpAdapter.NewGinAdapter(routes.GetAllCommunitiesController))
+	r.GET("/communities/my", httpAdapter.NewGinAdapter(routes.GetCurrentUserCommunities, middlewares.AuthenticateUser))
 	r.DELETE("/communities/:id", httpAdapter.NewGinAdapter(routes.DeleteCommunityController, middlewares.AuthenticateUser))
 
 	// likes endpoints
