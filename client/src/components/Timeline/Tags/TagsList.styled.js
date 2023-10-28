@@ -21,4 +21,15 @@ const TagLink = styled(Link)(({ theme }) => ({
   },
 }));
 
-export { TagLink, TagList };
+const TagBlock = styled("div")(({ theme }) => ({
+  textDecoration: "none",
+  backgroundColor: theme.palette.primary.main,
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  margin: "4px",
+  padding: "8px 18px",
+  cursor: "pointer",
+}));
+
+export { TagLink, TagList, TagBlock };

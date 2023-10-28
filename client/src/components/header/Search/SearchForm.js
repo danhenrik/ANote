@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormikProvider, useFormik } from "formik";
 import { Container, IconButton, Paper, Typography } from "@mui/material";
 import * as yup from "yup";
@@ -13,85 +13,97 @@ import { PropTypes } from "prop-types";
 import ReactInputMask from "react-input-mask";
 import InputAutocomplete from "../../../common/InputAutoComplete";
 import Tags from "../../Timeline/Tags/TagsList";
+import useTags from "../../../api/useTags";
+import listHandler from "./SearchListHandler";
 
-export const validationSchema = yup
-  .object()
-  .shape({
-    title: yup.string(),
-    content: yup.string(),
-    user: yup.string(),
-    tag: yup.string(),
-    community: yup.string(),
-    creationDate: yup.string(),
-  })
-  .test("back", function _(value) {
-    const a = !!(
-      value.title ||
-      value.content ||
-      value.user ||
-      value.tag ||
-      value.community ||
-      value.creationDate
-    );
-    if (!a) {
-      let errorMsg = "";
-      errorMsg = "Preencha pelo menos um campo";
-      return new yup.ValidationError(
-        errorMsg,
-        "null",
-        "atleastone",
-        "required"
-      );
-    }
+const dynamicValidation = (tagList) => (value) => {
+  if (
+    value.title ||
+    value.content ||
+    value.user ||
+    tagList.length > 0 ||
+    value.community ||
+    value.creationDate
+  ) {
     return true;
-  })
-  .test("valid-date", "Invalid date format", (value) => {
-    if (!value.creationDate) return true; // Allow empty input
-    // Use a regular expression to match "dd/mm/yyyy" format
-    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-    if (!dateRegex.test(value.creationDate))
-      return new yup.ValidationError(
-        "A data deve estar no formato dd/mm/aaaa",
-        "null",
-        "atleastone",
-        "required"
-      );
-    const [, day, month, year] = dateRegex.exec(value.creationDate);
-    const parsedDate = new Date(`${year}-${month}-${day}`);
-    if (parsedDate.toString() == "Invalid Date")
-      return new yup.ValidationError(
-        "Insira uma data válida no formato dd/mm/aaaa",
-        "null",
-        "atleastone",
-        "required"
-      );
-  });
+  }
+
+  return new yup.ValidationError(
+    "Insira pelo menos um campo",
+    "null",
+    "atleastone",
+    "required"
+  );
+};
+
+export const validationSchema = (tagList) => {
+  return yup
+    .object()
+    .shape({
+      title: yup.string(),
+      content: yup.string(),
+      user: yup.string(),
+      community: yup.string(),
+      creationDate: yup.string(),
+    })
+    .test("back", "Invalid input", dynamicValidation(tagList))
+    .test("valid-date", "Invalid date format", (value) => {
+      if (!value.creationDate) return true; // Allow empty input
+      // Use a regular expression to match "dd/mm/yyyy" format
+      const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      if (!dateRegex.test(value.creationDate))
+        return new yup.ValidationError(
+          "A data deve estar no formato dd/mm/aaaa",
+          "null",
+          "date",
+          "required"
+        );
+      const [, day, month, year] = dateRegex.exec(value.creationDate);
+      const parsedDate = new Date(`${year}-${month}-${day}`);
+      if (parsedDate.toString() == "Invalid Date")
+        return new yup.ValidationError(
+          "Insira uma data válida no formato dd/mm/aaaa",
+          "null",
+          "date",
+          "required"
+        );
+    });
+};
 
 const SearchForm = ({ closeModal }) => {
-  const [tags, setTags] = useState([
-    { tag: "abc" },
-    { tag: "def" },
-    { tag: "ghi" },
-    { tag: "dabc" },
-    { tag: "lkef" },
-    { tag: "mnghi" },
-  ]);
-  const [tagList, setTagList] = useState(["abc", "def", "ghi"]);
+  const [tagList, setTagList] = useState([]);
+  const [tags, setTags] = useState([]);
+  const tagsApi = useTags();
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      let fetchedTags = await tagsApi.fetchTags();
+      fetchedTags = fetchedTags.map((item) => item.Tags);
+      setTags(fetchedTags);
+    };
+    fetchTags();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
       title: "",
       content: "",
       user: "",
-      tag: "",
       community: "",
       creationDate: "",
     },
-    validationSchema: validationSchema,
+    validationSchema: validationSchema(tagList),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      const search = {
+        ...values,
+        tags: tagList,
+      };
+
+      alert(JSON.stringify(search, null, 2));
     },
   });
+
+  const { addToList, removeFromList } = listHandler(setTagList);
 
   return (
     <FormikProvider value={formik}>
@@ -159,12 +171,18 @@ const SearchForm = ({ closeModal }) => {
             />
             <InputLabel htmlFor='tag'>Tag</InputLabel>
             <InputAutocomplete
+              addToList={addToList}
               name='tag'
-              fieldName='tag'
-              list={tagList}
+              id='tag'
               options={tags}
+              list={tagList}
             />
-            <Tags tags={tagList}></Tags>
+            <Tags
+              tags={tagList}
+              hasLink={false}
+              hasDelete={true}
+              deletionHandler={removeFromList}
+            ></Tags>
             <InputLabel htmlFor='creationDate'>Data de Criação</InputLabel>
             <ReactInputMask
               style={{

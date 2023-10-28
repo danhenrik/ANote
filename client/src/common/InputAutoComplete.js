@@ -1,4 +1,3 @@
-import React from "react";
 import TextField from "@mui/material/TextField";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -11,30 +10,33 @@ const filterOptions = (options, state) => {
   return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
 };
 
-const InputAutocomplete = ({ name, options, fieldName, ...props }) => {
+const InputAutocomplete = ({ name, options, addToList, ...props }) => {
   const [field, meta] = useField(name);
   return (
     <Autocomplete
       filterOptions={filterOptions}
       {...field}
       options={options}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
-      getOptionLabel={(option) =>
-        typeof option === "string" ? option : option[fieldName]
-      }
+      isOptionEqualToValue={(option, value) => {
+        return option === value;
+      }}
+      getOptionLabel={(option) => option}
       onChange={(_, value) => {
         field.onChange({
-          target: { name, value: value[fieldName] || "" },
+          target: { name, value: value },
         });
+        value && addToList(value);
       }}
       renderInput={(params) => (
         <TextField
+          value={null}
           {...params}
           {...props}
           error={Boolean(meta.touched && meta.error)}
           fullWidth
           helperText={meta.touched && meta.error}
           name={name}
+          id={name}
           variant='outlined'
         />
       )}
@@ -44,12 +46,9 @@ const InputAutocomplete = ({ name, options, fieldName, ...props }) => {
 
 InputAutocomplete.propTypes = {
   name: PropTypes.string.isRequired,
-  fieldName: PropTypes.string.isRequired,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      tag: PropTypes.string.isRequired, // Autocomplete option tag
-    })
-  ).isRequired,
+  addToList: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  value: PropTypes.string,
 };
 
 export default InputAutocomplete;
