@@ -38,7 +38,7 @@ const Timeline = () => {
 
   useEffect(() => {
     fetchAndSetNotes();
-  }, [userAuth.isAuthenticated, searchParams.get("world")]);
+  }, [userAuth.isAuthenticated, searchParams.get("world"), params.id]);
 
   return (
     <NoteList

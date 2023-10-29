@@ -27,6 +27,7 @@ const NoteCard = ({ note }) => {
   var randomColor = require("randomcolor");
   const modal = useModal();
   const userAuth = useAuth();
+  const isFollowing = useState(false);
 
   const [randomColorElement] = useState(
     randomColor({ luminosity: "light", format: "rgb" })
@@ -39,18 +40,20 @@ const NoteCard = ({ note }) => {
     modal.openModal(
       <ExpandedCard
         note={note}
+        numberComments={numberComments}
+        numberCommentsHandler={setNumberComments}
         randomColorElement={randomColorElement}
       ></ExpandedCard>
     );
     modal.setModalStyling(ModalStyling);
   };
 
-  const [numberComments, setComments] = useState(0);
+  const [numberComments, setNumberComments] = useState(0);
   useEffect(() => {
     const initComments = async () => {
       try {
         const comments = await axios.get("/comments/count/" + note.Id);
-        setComments(comments.data.data);
+        setNumberComments(comments.data.data);
       } catch (error) {
         console.log("Comment number retrieving failed: ", error);
       }

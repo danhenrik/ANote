@@ -6,10 +6,28 @@ import { useAuth } from "../../../../store/auth-context";
 import NoteForm from "../NoteForm/NoteForm";
 import LoginForm from "../../../AccessControl/Login/LoginForm";
 import TimelineList from "../../TimelineList";
+import useCommunities from "../../../../api/useCommunities";
+import { useEffect, useState } from "react";
 
 const NoteList = ({ notes, communityId, setNotesHandler }) => {
   const modal = useModal();
   const auth = useAuth();
+  const communitiesApi = useCommunities();
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      const userFollowedCommunities = async () => {
+        const communities = await communitiesApi.fetchCommunitiesByUser();
+        if (communities) {
+          if (communities.some((community) => community.Id === communityId)) {
+            setIsFollowing(true);
+          }
+        }
+      };
+      userFollowedCommunities();
+    }
+  }, []);
 
   const handleAddNoteModal = () => {
     modal.openModal(
@@ -25,7 +43,7 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
       )
     );
   };
-  const buttonText = "Adicionar Nota";
+  const buttonText = !isFollowing ? "Seguir Comunidade" : "Adicionar Nota";
 
   return (
     <TimelineList

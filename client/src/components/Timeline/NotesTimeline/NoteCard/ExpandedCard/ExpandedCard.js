@@ -1,6 +1,4 @@
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
 import {
   AvatarAuthor,
@@ -10,14 +8,12 @@ import {
   CommentContainer,
   ContentContainer,
   CustomAvatar,
-  NotesCardContainer,
-  StyledLink,
   Title,
 } from "../NoteCard.styled";
 import Tags from "../../../Tags/TagsList";
 import { CreateButton } from "../../../TimelineList.styled";
 import CommentCard from "./CommentCard";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -30,7 +26,7 @@ const validationSchema = yup.object({
   comment: yup.string("Insira um comentário").required("Insira um comentário"),
 });
 
-const ExpandedCard = ({ note, randomColorElement }) => {
+const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
   let [comments, setComments] = useState([]);
   const userAuth = useAuth();
   const formatedDate = formatDate(note.PublishedDate);
@@ -39,13 +35,13 @@ const ExpandedCard = ({ note, randomColorElement }) => {
     try {
       const noteComments = await axios.get("/comments/" + note.Id);
       setComments(noteComments.data.data);
+      numberCommentsHandler(noteComments.data.data.length);
     } catch (error) {
       console.log("Comments retrieving failed: ", error);
     }
   };
 
   useEffect(() => {
-    console.log("here");
     updateNoteComments();
   }, []);
 
@@ -136,16 +132,15 @@ const ExpandedCard = ({ note, randomColorElement }) => {
       <CommentContainer sx={{ marginTop: "15px" }}>
         {comments ? (
           comments.map((comment) => (
-            <Grid item key={comment.Id} sx={{ marginBottom: "20px" }}>
-              <CommentCard comment={comment} />
-            </Grid>
+            <Box key={comment.Id} sx={{ marginBottom: "15px" }}>
+              <CommentCard
+                numberCommentsHandler={numberCommentsHandler}
+                comment={comment}
+              />
+            </Box>
           ))
         ) : (
-          <Typography
-            variant='h7'
-            color='textPrimary'
-            sx={{ marginBottom: "10px" }}
-          >
+          <Typography variant='h7' color='textPrimary'>
             Nenhum comentário nessa nota
           </Typography>
         )}
@@ -171,6 +166,8 @@ const noteShape = PropTypes.shape({
 ExpandedCard.propTypes = {
   note: noteShape.isRequired,
   randomColorElement: PropTypes.string.isRequired,
+  numberComments: PropTypes.number,
+  numberCommentsHandler: PropTypes.func,
 };
 
 export default ExpandedCard;
