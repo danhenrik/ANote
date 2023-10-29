@@ -12,3 +12,44 @@ html,
 body {
   min-height: 100%;
 }
+
+/* Custom scrollbar styles */
+.comment-container-scrollbar {
+  max-height: 230px; /* Adjust the maximum height as needed */
+  overflow-y: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  /* For WebKit-based browsers (e.g., Chrome) */
+  &::-webkit-scrollbar {
+    width: 6px; /* Width of the entire scrollbar */
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #888; /* Color of the scrollbar handle on hover */
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the scrollbar track */
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar handle */
+  }
+
+  /* For Firefox */
+  & {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  }
+
+  /* For Microsoft Edge and Internet Explorer */
+  /* Note: Microsoft Edge and IE use a different syntax for scrollbar styling */
+  & {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  }
+}

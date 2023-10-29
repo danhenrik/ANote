@@ -20,8 +20,19 @@ const useTags = () => {
     }
   };
 
+  const createTag = async (tag) => {
+    try {
+      const response = await api.post("/tags", tag);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+      throw error;
+    }
+  };
+
   return {
     fetchTags,
+    createTag,
   };
 };
 

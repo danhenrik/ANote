@@ -12,6 +12,12 @@ const filterOptions = (options, state) => {
 
 const InputAutocomplete = ({ name, options, addToList, ...props }) => {
   const [field, meta] = useField(name);
+
+  const handleInputKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  };
   return (
     <Autocomplete
       freeSolo
@@ -31,6 +37,7 @@ const InputAutocomplete = ({ name, options, addToList, ...props }) => {
       }}
       renderInput={(params) => (
         <TextField
+          onKeyDown={handleInputKeyPress}
           value={null}
           {...params}
           {...props}

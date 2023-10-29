@@ -50,7 +50,6 @@ const NoteCard = ({ note }) => {
     const initComments = async () => {
       try {
         const comments = await axios.get("/comments/count/" + note.Id);
-
         setComments(comments.data.data);
       } catch (error) {
         console.log("Comment number retrieving failed: ", error);
@@ -73,11 +72,9 @@ const NoteCard = ({ note }) => {
           <AvatarContainer>
             <CustomAvatar variant='square'>N</CustomAvatar>
           </AvatarContainer>
-          <StyledLink to='/404'>
-            <AvatarUsernames>
-              <AvatarAuthor>{note.Author}</AvatarAuthor>
-            </AvatarUsernames>
-          </StyledLink>
+          <AvatarUsernames>
+            <AvatarAuthor>{note.Author}</AvatarAuthor>
+          </AvatarUsernames>
         </AvatarBackground>
         <ContentContainer>
           <Typography color='textSecondary'>{note.Content}</Typography>

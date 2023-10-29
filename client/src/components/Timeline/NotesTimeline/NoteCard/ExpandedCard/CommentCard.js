@@ -13,7 +13,7 @@ import {
   StyledLink,
 } from "../NoteCard.styled";
 import axios from "axios";
-import { Card } from "@mui/material";
+import { Card, Container } from "@mui/material";
 import { useAuth } from "../../../../../store/auth-context";
 
 const CommentCard = ({ comment }) => {
@@ -31,19 +31,27 @@ const CommentCard = ({ comment }) => {
 
   return (
     <>
-      {renderComment ? (
-        <Card sx={{ minWidth: "100%", backgroundColor: "#c0c0c0" }}>
+      {renderComment && (
+        <Card
+          sx={{
+            minWidth: "100%",
+            backgroundColor: "lightgray",
+          }}
+        >
           <CardContent>
-            <AvatarBackground>
-              <AvatarContainer>
-                <CustomAvatar variant='square'>N</CustomAvatar>
+            <AvatarBackground sx={{ height: "40px" }}>
+              <AvatarContainer style={{ height: "40px" }}>
+                <CustomAvatar
+                  style={{ height: "40px", width: "40px" }}
+                  variant='square'
+                >
+                  N
+                </CustomAvatar>
               </AvatarContainer>
-              <StyledLink to='/404'>
-                <AvatarUsernames>
-                  <AvatarAuthor>{comment.Author}</AvatarAuthor>
-                </AvatarUsernames>
-              </StyledLink>
-              {comment.Author == userAuth.user.username ? (
+              <AvatarUsernames>
+                <AvatarAuthor>{comment.Author}</AvatarAuthor>
+              </AvatarUsernames>
+              {comment.Author == userAuth.user.username && (
                 <DeleteIcon
                   onClick={deleteComment}
                   style={{
@@ -54,18 +62,14 @@ const CommentCard = ({ comment }) => {
                     marginLeft: "auto",
                   }}
                 />
-              ) : (
-                <></>
               )}
             </AvatarBackground>
-            <ContentContainer sx={{ marginTop: "10px" }}>
+            <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
               <Typography color='textSecondary'>{comment.Content}</Typography>
-            </ContentContainer>
+            </Container>
             <Typography color='textSecondary'>{comment.CreatedAt}</Typography>
           </CardContent>
         </Card>
-      ) : (
-        <></>
       )}
     </>
   );

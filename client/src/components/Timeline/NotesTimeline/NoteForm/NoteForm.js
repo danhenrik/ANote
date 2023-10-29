@@ -60,11 +60,33 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
         tags: tagList,
         communities: communities,
       };
+      const postTags = async (tags) => {
+        try {
+          const tagPromises = tags.map(async (tag) => {
+            const tagPost = {
+              name: tag,
+            };
+            return tagsApi.createTag(tagPost);
+          });
+
+          const postedTags = await Promise.all(tagPromises);
+          console.log("Successfully posted tags:", postedTags);
+          return postedTags;
+        } catch (error) {
+          console.error("Error posting tags:", error);
+          throw error;
+        }
+      };
+
       const postNotes = async () => {
-        const fetchedNotes = await notesApi.createNote(note);
-        if (fetchedNotes) {
-          notes.push(fetchedNotes);
-          setNotesHandler(notes);
+        const postedTags = await postTags(note.tags);
+        if (postedTags) {
+          alert(JSON.stringify(note));
+          const fetchedNotes = await notesApi.createNote(note);
+          if (fetchedNotes) {
+            notes.push(fetchedNotes);
+            setNotesHandler(notes);
+          }
         }
       };
       postNotes();

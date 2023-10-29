@@ -1,24 +1,26 @@
 import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import {
-  ContentContainer,
-  CommunityCardContainer,
-  Title,
-} from "./CommunityCard.styled"; // Adjust the import for your community card styles
-import Tags from "../../Tags/TagsList";
+import { CommunityCardContainer, Title } from "./CommunityCard.styled"; // Adjust the import for your community card styles
 import { useNavigate } from "react-router-dom";
 import { Link } from "@mui/material";
 import useCommunities from "../../../../api/useCommunities";
+import { useState } from "react";
 
-const CommunityCard = ({ community }) => {
+const CommunityCard = ({ community, isFollowing, communityFollowHandler }) => {
   const communitiesApi = useCommunities();
+  const [isFollowed, setIsFollowed] = useState(isFollowing);
 
   const followCommunity = () => {
-    communitiesApi.followCommunity(community.Id);
+    if (communitiesApi.followCommunity(community.Id)) {
+      setIsFollowed(true);
+      communityFollowHandler(community.Id);
+    }
   };
   const unfollowCommunity = () => {
-    communitiesApi.unfollowCommunity(community.Id);
+    if (communitiesApi.unfollowCommunity(community.Id)) {
+      setIsFollowed(false);
+      communityFollowHandler(community.Id);
+    }
   };
 
   const navigationHandler = (event) => {
@@ -30,11 +32,17 @@ const CommunityCard = ({ community }) => {
   return (
     <CommunityCardContainer
       onClick={navigationHandler}
-      sx={{ minWidth: "350px", maxWidth: "350px" }}
+      sx={{ minWidth: "350px", maxWidth: "350px", margin: "10px" }}
     >
-      <Link onClick={followCommunity} id='community-follow'>
-        follow
-      </Link>
+      {!isFollowed ? (
+        <Link onClick={followCommunity} id='community-follow'>
+          follow
+        </Link>
+      ) : (
+        <Link onClick={unfollowCommunity} id='community-follow'>
+          unfollow
+        </Link>
+      )}
       <CardContent>
         <Title style={{ textAlign: "center" }} variant='h7' component='div'>
           {community.Name}
@@ -51,6 +59,8 @@ const communityShape = PropTypes.shape({
 
 CommunityCard.propTypes = {
   community: communityShape.isRequired,
+  isFollowing: PropTypes.bool.isRequired,
+  communityFollowHandler: PropTypes.func,
 };
 
 export default CommunityCard;

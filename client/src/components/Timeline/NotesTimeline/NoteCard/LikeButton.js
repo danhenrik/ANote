@@ -7,18 +7,25 @@ const LikeButton = (note) => {
   const [likes, setLikes] = useState(0);
   const [isClicked, setIsClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
   const handleClick = async () => {
     try {
       if (isClicked) {
-        axios.delete("/likes/" + note.note.AuthorId + "/" + note.note.Id);
-        setLikes(likes - 1);
+        const deletedLike = await axios.delete(
+          "/likes/" + note.note.Author + "/" + note.note.Id
+        );
+        if (deletedLike) {
+          setLikes(likes - 1);
+        }
       } else {
         const likeData = {
-          user_id: note.note.AuthorId,
+          user_id: note.note.Author,
           note_id: note.note.Id,
         };
-        axios.post("/likes", likeData);
-        setLikes(likes + 1);
+        const postedLike = axios.post("/likes", likeData);
+        if (postedLike) {
+          setLikes(likes + 1);
+        }
       }
       setIsClicked(!isClicked);
     } catch (error) {
@@ -59,11 +66,13 @@ const LikeButton = (note) => {
       >
         {isClicked || isHovered ? (
           <FavoriteIcon
+            id='like-button'
             className={`like-button ${isClicked && "liked"}`}
             style={favoriteIconStyling}
           />
         ) : (
           <FavoriteBorderIcon
+            id='like-button'
             className={`like-button ${isClicked && "liked"}`}
             style={{ marginRight: "2px", color: "red" }}
           />

@@ -56,6 +56,24 @@ const ContentContainer = styled("div")({
   },
 });
 
+const CommentContainer = styled(Card)({
+  maxHeight: "230px", // Adjust the maximum height as needed
+  overflowY: "auto",
+  marginTop: "20px",
+  marginBottom: "20px",
+
+  "&::-webkit-scrollbar": {
+    width: "6px", // Width of the entire scrollbar
+  },
+  "&::-webkit-scrollbar-thumb": {
+    background: "#888", // Color of the scrollbar handle
+  },
+
+  "&::-webkit-scrollbar-track": {
+    background: "#f1f1f1", // Color of the scrollbar track
+  },
+});
+
 const NotesCardContainer = styled(Card)({
   "&:hover": {
     backgroundColor: "#f0f0f0",
@@ -91,6 +109,7 @@ export {
   CustomAvatar,
   StyledLink,
   ContentContainer,
+  CommentContainer,
   NotesCardContainer,
   ModalStyling,
   CommentButton,

@@ -7,6 +7,7 @@ import {
   AvatarBackground,
   AvatarContainer,
   AvatarUsernames,
+  CommentContainer,
   ContentContainer,
   CustomAvatar,
   NotesCardContainer,
@@ -22,6 +23,8 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { useAuth } from "../../../../../store/auth-context";
+import formatDate from "../../../../../util/formatDate";
+import { CustomTextArea } from "../../../TimelineForms.styled";
 
 const validationSchema = yup.object({
   comment: yup.string("Insira um comentário").required("Insira um comentário"),
@@ -30,6 +33,7 @@ const validationSchema = yup.object({
 const ExpandedCard = ({ note, randomColorElement }) => {
   let [comments, setComments] = useState([]);
   const userAuth = useAuth();
+  const formatedDate = formatDate(note.PublishedDate);
 
   const updateNoteComments = async () => {
     try {
@@ -67,49 +71,45 @@ const ExpandedCard = ({ note, randomColorElement }) => {
   });
 
   return (
-    <>
-      <NotesCardContainer>
-        <Title variant='h7' component='div' textAlign='center'>
-          {note.Title}
-        </Title>
-        <CardContent>
-          <AvatarBackground randomColor={randomColorElement}>
-            <AvatarContainer>
-              <CustomAvatar variant='square'>N</CustomAvatar>
-            </AvatarContainer>
-            <StyledLink to='/404'>
-              <AvatarUsernames>
-                <AvatarAuthor>{note.Author}</AvatarAuthor>
-              </AvatarUsernames>
-            </StyledLink>
-          </AvatarBackground>
-          <ContentContainer sx={{ marginTop: "10px" }}>
-            <Typography color='textSecondary'>{note.Content}</Typography>
-          </ContentContainer>
-          <ContentContainer sx={{ marginTop: "10px" }}>
-            <Tags tags={note.Tags}></Tags>
-          </ContentContainer>
-          <Typography color='textSecondary' textAlign='center'>
-            {note.PublishedDate}
-          </Typography>
-        </CardContent>
-      </NotesCardContainer>
+    <div style={{ width: "100%" }}>
+      <Title variant='h7' component='div' textAlign='center'>
+        {note.Title}
+      </Title>
+      <AvatarBackground randomColor={randomColorElement}>
+        <AvatarContainer>
+          <CustomAvatar variant='square'>N</CustomAvatar>
+        </AvatarContainer>
+        <AvatarUsernames>
+          <AvatarAuthor>{note.Author}</AvatarAuthor>
+        </AvatarUsernames>
+      </AvatarBackground>
+      <ContentContainer sx={{ marginTop: "10px" }}>
+        <Typography color='textSecondary'>{note.Content}</Typography>
+      </ContentContainer>
+
+      <Typography color='textSecondary' textAlign='center'>
+        {formatedDate.day} às {formatedDate.hour}
+      </Typography>
       <Typography
-        variant='h5'
+        variant='h7'
         color='textPrimary'
-        sx={{ marginTop: "20px", textAlign: "center" }}
+        sx={{
+          textAlign: "left",
+          width: "100%",
+          textDecoration: "underline",
+          fontWeight: "bold",
+        }}
       >
         Comentários
       </Typography>
       {userAuth.isAuthenticated ? (
-        <form onSubmit={formik.handleSubmit} style={{ width: "90%" }}>
-          <TextField
+        <form onSubmit={formik.handleSubmit}>
+          <CustomTextArea
             label='Comentário'
             variant='standard'
             sx={{
               display: "flex",
               margin: "auto",
-              marginTop: "20px",
             }}
             id='comment'
             name='comment'
@@ -119,6 +119,7 @@ const ExpandedCard = ({ note, randomColorElement }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.comment && Boolean(formik.errors.comment)}
             helperText={formik.touched.comment && formik.errors.comment}
+            minRows={2}
           />
           <CreateButton
             sx={{
@@ -134,10 +135,10 @@ const ExpandedCard = ({ note, randomColorElement }) => {
       ) : (
         <></>
       )}
-      <ContentContainer sx={{ marginTop: "15px", float: "left" }}>
+      <CommentContainer sx={{ marginTop: "15px" }}>
         {comments ? (
           comments.map((comment) => (
-            <Grid item key={comment.Id} sx={{ marginBottom: "100px" }}>
+            <Grid item key={comment.Id} sx={{ marginBottom: "20px" }}>
               <CommentCard comment={comment} />
             </Grid>
           ))
@@ -150,8 +151,8 @@ const ExpandedCard = ({ note, randomColorElement }) => {
             Nenhum comentário nessa nota
           </Typography>
         )}
-      </ContentContainer>
-    </>
+      </CommentContainer>
+    </div>
   );
 };
 
