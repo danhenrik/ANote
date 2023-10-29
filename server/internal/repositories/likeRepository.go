@@ -20,8 +20,7 @@ func NewLikeRepository(
 
 func (this LikeRepository) Create(like *domain.Like) *errors.AppError {
 	err := this.DBConn.Exec(
-		"INSERT INTO likes (id, user_id, note_id) VALUES ($1, $2, $3)",
-		like.Id,
+		"INSERT INTO likes (user_id, note_id) VALUES ($1, $2)",
 		like.UserId,
 		like.NoteId,
 	)

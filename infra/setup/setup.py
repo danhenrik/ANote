@@ -103,6 +103,14 @@ pg_conn.SQLCmd("""CREATE TABLE likes (
                   REFERENCES notes(id) ON DELETE CASCADE
               );""")
 
+pg_conn.SQLCmd("""ALTER TABLE likes
+                  DROP COLUMN id;
+              """)
+
+pg_conn.SQLCmd("""ALTER TABLE likes
+                  ADD PRIMARY KEY (user_id, note_id);
+              """)
+
 pg_conn.SQLCmd("""CREATE TABLE comments (
                 id uuid PRIMARY KEY,
                 user_id varchar(30),

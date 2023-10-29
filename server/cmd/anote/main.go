@@ -96,16 +96,16 @@ func main() {
 	r.DELETE("/communities/:id", httpAdapter.NewGinAdapter(routes.DeleteCommunityController, middlewares.AuthenticateUser))
 
 	// likes endpoints
-	r.GET("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.GetLikeController))
-	r.GET("/likes/count/:idNote", httpAdapter.NewGinAdapter(routes.CountLikeByIdNoteController))
-	r.POST("/likes", httpAdapter.NewGinAdapter(routes.CreateLikeController))
-	r.DELETE("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.DeleteLikeController))
+	r.GET("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.GetLikeController, middlewares.AuthenticateUser))
+	r.GET("/likes/count/:idNote", httpAdapter.NewGinAdapter(routes.CountLikeByIdNoteController, middlewares.AuthenticateUser))
+	r.POST("/likes", httpAdapter.NewGinAdapter(routes.CreateLikeController, middlewares.AuthenticateUser))
+	r.DELETE("/likes/:idUser/:idNote", httpAdapter.NewGinAdapter(routes.DeleteLikeController, middlewares.AuthenticateUser))
 
 	// comment endpoints
-	r.GET("/comments/:idNote", httpAdapter.NewGinAdapter(routes.GetNoteCommentsController))
-	r.GET("/comments/count/:idNote", httpAdapter.NewGinAdapter(routes.CountCommentByIdNoteController))
-	r.POST("/comments", httpAdapter.NewGinAdapter(routes.CreateCommentController))
-	r.DELETE("/comments/:id", httpAdapter.NewGinAdapter(routes.DeleteCommentController))
+	r.GET("/comments/:idNote", httpAdapter.NewGinAdapter(routes.GetNoteCommentsController, middlewares.AuthenticateUser))
+	r.GET("/comments/count/:idNote", httpAdapter.NewGinAdapter(routes.CountCommentByIdNoteController, middlewares.AuthenticateUser))
+	r.POST("/comments", httpAdapter.NewGinAdapter(routes.CreateCommentController, middlewares.AuthenticateUser))
+	r.DELETE("/comments/:id", httpAdapter.NewGinAdapter(routes.DeleteCommentController, middlewares.AuthenticateUser))
 
 	r.Run()
 }
