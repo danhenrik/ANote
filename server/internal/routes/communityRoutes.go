@@ -21,16 +21,29 @@ func CreateCommunityController(request httpAdapter.Request) httpAdapter.Response
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
 
+	disclaimer := ""
 	if len(request.Files) != 0 {
 		if err := container.CommunityService.SaveBackground(community.Id, request.Files[0]); err != nil {
 			log.Println("[CommunityController] Error on save community background:", err)
-			return httpAdapter.NewSuccessResponse(201, map[string]string{
-				"id":         community.Id,
-				"disclaimer": "Saved community but failed to save background",
-			})
+			disclaimer = "Saved community but failed to save background"
 		}
 	}
-	return httpAdapter.NewSuccessResponse(201, map[string]string{"id": community.Id})
+
+	err := container.CommunityService.Join(community.Id, request.User.ID)
+	if err != nil {
+		log.Println("[CommunityController] Error on join community")
+		if disclaimer != "" {
+			disclaimer = disclaimer + "; Also could not join community"
+		} else {
+			disclaimer = "Could not join community"
+		}
+	}
+
+	response := map[string]string{"id": community.Id}
+	if disclaimer != "" {
+		response["disclaimer"] = disclaimer
+	}
+	return httpAdapter.NewSuccessResponse(201, response)
 }
 
 func DeleteCommunityBackgroundController(request httpAdapter.Request) httpAdapter.Response {
