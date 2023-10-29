@@ -99,7 +99,7 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
       >
         Comentários
       </Typography>
-      {userAuth.isAuthenticated ? (
+      {userAuth.isAuthenticated && (
         <form onSubmit={formik.handleSubmit}>
           <CustomTextArea
             label='Comentário'
@@ -126,8 +126,6 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
             Comentar
           </CreateButton>
         </form>
-      ) : (
-        <></>
       )}
       <CommentContainer sx={{ marginTop: "15px" }}>
         {comments ? (

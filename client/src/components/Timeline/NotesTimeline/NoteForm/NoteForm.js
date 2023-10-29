@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Typography, IconButton } from "@mui/material";
 import { FormikProvider, useFormik } from "formik";
 import * as yup from "yup";
@@ -31,6 +31,7 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
   const [tags, setTags] = useState([]);
   const tagsApi = useTags();
   const { addToList, removeFromList } = listHandler(setTagList);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -40,6 +41,10 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
     };
     fetchTags();
   }, []);
+
+  const handleButtonClick = () => {
+    addToList(inputValue);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -134,8 +139,12 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
               id='tag'
               options={tags}
               list={tagList}
+              setInputValue={setInputValue}
             />
-            <IconButton style={{ marginLeft: "5px" }}>
+            <IconButton
+              onClick={handleButtonClick}
+              style={{ marginLeft: "5px" }}
+            >
               <AddIcon />
             </IconButton>
           </div>

@@ -29,20 +29,30 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
     }
   }, []);
 
-  const handleAddNoteModal = () => {
-    modal.openModal(
-      auth.isAuthenticated ? (
-        <NoteForm
-          notes={notes}
-          communityId={communityId}
-          closeModal={modal.closeModal}
-          setNotesHandler={setNotesHandler}
-        ></NoteForm>
-      ) : (
-        <LoginForm closeModal={modal.closeModal}></LoginForm>
-      )
-    );
+  const followCommunity = async () => {
+    const response = communitiesApi.followCommunity(communityId);
+    if (response) {
+      setIsFollowing(true);
+    }
   };
+
+  const handleAddNoteModal = () => {
+    auth.isAuthenticated || isFollowing
+      ? modal.openModal(
+          auth.isAuthenticated ? (
+            <NoteForm
+              notes={notes}
+              communityId={communityId}
+              closeModal={modal.closeModal}
+              setNotesHandler={setNotesHandler}
+            ></NoteForm>
+          ) : (
+            <LoginForm closeModal={modal.closeModal}></LoginForm>
+          )
+        )
+      : followCommunity(communityId);
+  };
+  //trocar botao para um de seguir e um de adicionar, deve aparecer adicionar para usuario deslogado
   const buttonText = !isFollowing ? "Seguir Comunidade" : "Adicionar Nota";
 
   return (

@@ -31,7 +31,7 @@ const Communities = () => {
 
   useEffect(() => {
     fetchAndSetCommunities();
-  }, [searchParams.get("world")]);
+  }, [searchParams.get("world"), userAuth.isAuthenticated]);
 
   return (
     <CommunityList

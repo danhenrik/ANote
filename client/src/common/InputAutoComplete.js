@@ -10,7 +10,13 @@ const filterOptions = (options, state) => {
   return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
 };
 
-const InputAutocomplete = ({ name, options, addToList, ...props }) => {
+const InputAutocomplete = ({
+  name,
+  options,
+  addToList,
+  setInputValue,
+  ...props
+}) => {
   const [field, meta] = useField(name);
 
   const handleInputKeyPress = (event) => {
@@ -47,6 +53,9 @@ const InputAutocomplete = ({ name, options, addToList, ...props }) => {
           name={name}
           id={name}
           variant='outlined'
+          onChange={(event) => {
+            setInputValue && setInputValue(event.target.value);
+          }}
         />
       )}
     />
@@ -58,6 +67,7 @@ InputAutocomplete.propTypes = {
   addToList: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
   value: PropTypes.string,
+  setInputValue: PropTypes.func,
 };
 
 export default InputAutocomplete;

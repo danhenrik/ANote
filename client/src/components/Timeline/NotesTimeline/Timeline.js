@@ -26,8 +26,11 @@ const Timeline = () => {
         }
       }
     } else {
-      setNotes([]);
-      fetchedNotes = await notesApi.fetchNotes();
+      if (params.id) {
+        fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+      } else {
+        fetchedNotes = await notesApi.fetchNotes();
+      }
     }
     setNotes(fetchedNotes);
   };
