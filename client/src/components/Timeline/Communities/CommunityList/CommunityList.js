@@ -7,7 +7,7 @@ import TimelineList from "../../TimelineList";
 import LoginForm from "../../../AccessControl/Login/LoginForm";
 import CommunityCard from "../CommunityCard/CommunityCard";
 
-const CommunityList = ({ communities }) => {
+const CommunityList = ({ communities, setCommunitiesHandler }) => {
   const modal = useModal();
   const auth = useAuth();
 
@@ -17,6 +17,7 @@ const CommunityList = ({ communities }) => {
         <CommunityForm
           communities={communities}
           closeModal={modal.closeModal}
+          setCommunitiesHandler={setCommunitiesHandler}
         />
       ) : (
         <LoginForm closeModal={modal.closeModal}></LoginForm>
@@ -48,6 +49,7 @@ const communityShape = PropTypes.shape({
 
 CommunityList.propTypes = {
   communities: PropTypes.arrayOf(communityShape).isRequired,
+  setCommunitiesHandler: PropTypes.func.isRequired,
 };
 
 export default CommunityList;

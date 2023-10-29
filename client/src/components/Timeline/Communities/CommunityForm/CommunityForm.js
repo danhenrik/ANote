@@ -15,7 +15,7 @@ const validationSchema = yup.object({
   name: yup.string("Insira o nome").required("Nome é obrigatório"),
 });
 
-const CommunityForm = ({ communities }) => {
+const CommunityForm = ({ communities, setCommunitiesHandler }) => {
   const communitiesApi = useCommunities();
   const modal = useModal();
   const formik = useFormik({
@@ -32,6 +32,7 @@ const CommunityForm = ({ communities }) => {
           await communitiesApi.createCommunity(community);
         if (createdCommunity) {
           communities.push(community);
+          setCommunitiesHandler(communities);
         }
       };
 
@@ -69,6 +70,7 @@ const CommunityForm = ({ communities }) => {
 
 CommunityForm.propTypes = {
   communities: PropTypes.array.isRequired,
+  setCommunitiesHandler: PropTypes.func.isRequired,
 };
 
 export default CommunityForm;

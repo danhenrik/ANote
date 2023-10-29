@@ -10,26 +10,35 @@ const Communities = () => {
   const communitiesApi = useCommunities();
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
+  const fetchAndSetCommunities = async () => {
     let fetchedCommunities = [];
-    const fetchAndSetCommunities = async () => {
-      if (userAuth.isAuthenticated) {
-        if (!searchParams.get("world") || searchParams.get("world") === false) {
-          fetchedCommunities = await communitiesApi.fetchCommunitiesByUser();
-        } else {
-          fetchedCommunities = await communitiesApi.fetchCommunities();
-        }
+    if (userAuth.isAuthenticated) {
+      if (!searchParams.get("world") || searchParams.get("world") === false) {
+        fetchedCommunities = await communitiesApi.fetchCommunitiesByUser();
       } else {
         fetchedCommunities = await communitiesApi.fetchCommunities();
       }
+    } else {
+      fetchedCommunities = await communitiesApi.fetchCommunities();
+    }
 
-      setCommunities(fetchedCommunities);
-    };
+    setCommunities(fetchedCommunities);
+  };
 
+  const setCommunitiesHandler = (communities) => {
+    fetchAndSetCommunities(communities);
+  };
+
+  useEffect(() => {
     fetchAndSetCommunities();
   }, [searchParams.get("world")]);
 
-  return <CommunityList communities={communities}></CommunityList>;
+  return (
+    <CommunityList
+      communities={communities}
+      setCommunitiesHandler={setCommunitiesHandler}
+    ></CommunityList>
+  );
 };
 
 export default Communities;
