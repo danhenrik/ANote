@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
       console.log("Login successful:", response.data);
 
       const userData = {
-        username: response.data.data.User.Id,
+        username: response.data.data.UserId,
         token: response.data.data.Jwt,
       };
 

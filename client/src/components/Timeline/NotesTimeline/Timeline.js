@@ -11,33 +11,42 @@ const Timeline = () => {
   const params = useParams();
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
+  const fetchAndSetNotes = async () => {
     let fetchedNotes = [];
-    const fetchAndSetNotes = async () => {
-      if (userAuth.isAuthenticated) {
-        if (searchParams.get("world") && searchParams.get("world") === true) {
-          fetchedNotes = await notesApi.fetchNotesFeed();
-        } else {
-          if (params.id) {
-            fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
-          } else {
-            fetchedNotes = await notesApi.fetchNotesByAuthor(
-              userAuth.user.username
-            );
-          }
-        }
+    if (userAuth.isAuthenticated) {
+      if (searchParams.get("world") && searchParams.get("world") === true) {
+        fetchedNotes = await notesApi.fetchNotesFeed();
       } else {
-        setNotes([]);
-        fetchedNotes = await notesApi.fetchNotes();
+        if (params.id) {
+          fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+        } else {
+          fetchedNotes = await notesApi.fetchNotesByAuthor(
+            userAuth.user.username
+          );
+        }
       }
+    } else {
+      setNotes([]);
+      fetchedNotes = await notesApi.fetchNotes();
+    }
+    setNotes(fetchedNotes);
+  };
 
-      setNotes(fetchedNotes);
-    };
+  const setNotesHandler = (notes) => {
+    fetchAndSetNotes(notes);
+  };
 
+  useEffect(() => {
     fetchAndSetNotes();
   }, [userAuth.isAuthenticated]);
 
-  return <NoteList communityId={params.id} notes={notes}></NoteList>;
+  return (
+    <NoteList
+      communityId={params.id}
+      setNotesHandler={setNotesHandler}
+      notes={notes}
+    ></NoteList>
+  );
 };
 
 export default Timeline;

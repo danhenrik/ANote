@@ -24,7 +24,7 @@ const validationSchema = yup.object({
     .required("Descrição é obrigatória"),
 });
 
-const NoteForm = ({ notes, communityId }) => {
+const NoteForm = ({ notes, communityId, setNotesHandler }) => {
   const notesApi = useNotes();
   const modal = useModal();
   const [tagList, setTagList] = useState([]);
@@ -60,11 +60,11 @@ const NoteForm = ({ notes, communityId }) => {
         tags: tagList,
         communities: communities,
       };
-      alert(JSON.stringify(note));
       const postNotes = async () => {
         const fetchedNotes = await notesApi.createNote(note);
         if (fetchedNotes) {
           notes.push(fetchedNotes);
+          setNotesHandler(notes);
         }
       };
       postNotes();
@@ -135,6 +135,7 @@ const NoteForm = ({ notes, communityId }) => {
 NoteForm.propTypes = {
   notes: PropTypes.array.isRequired,
   communityId: PropTypes.number,
+  setNotesHandler: PropTypes.func.isRequired,
 };
 
 export default NoteForm;
