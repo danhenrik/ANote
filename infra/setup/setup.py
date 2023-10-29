@@ -73,7 +73,9 @@ pg_conn.SQLCmd("""CREATE TABLE users (
                 id varchar(30) PRIMARY KEY, 
                 email varchar(255) NOT NULL UNIQUE, 
                 password varchar(72),
-                google_id varchar
+                google_id varchar,
+                created_at date NOT NULL DEFAULT NOW(),
+                avatar varchar(255)
                );""")
 
 pg_conn.SQLCmd("""CREATE TABLE notes (
@@ -134,7 +136,8 @@ pg_conn.SQLCmd("""CREATE TABLE note_tags (
 
 pg_conn.SQLCmd("""CREATE TABLE communities (
                 id uuid PRIMARY KEY,
-                name varchar(50) NOT NULL
+                name varchar(50) NOT NULL,
+                background varchar(255)
                 );""")
 
 pg_conn.SQLCmd("""CREATE TABLE community_members (
