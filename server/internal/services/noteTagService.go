@@ -16,8 +16,17 @@ func NewNoteTagService(repo IRepo.NoteTagRepository) NoteTagService {
 }
 
 func (this NoteTagService) Create(tag *domain.Tag) *errors.AppError {
+	existentTag, err := this.noteTagRepo.GetByName(tag.Name)
+	if err != nil {
+		return err
+	}
+	if existentTag != nil {
+		tag.Id = existentTag.Id
+		return nil
+	}
+
 	tag.Id = helpers.NewUUID()
-	err := this.noteTagRepo.Create(tag)
+	err = this.noteTagRepo.Create(tag)
 	if err != nil {
 		return err
 	}

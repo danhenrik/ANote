@@ -62,6 +62,23 @@ func (this NoteTagRepository) GetById(id string) (*domain.Tag, *errors.AppError)
 	return nil, nil
 }
 
+func (this NoteTagRepository) GetByName(tagName string) (*domain.Tag, *errors.AppError) {
+	objType := reflect.TypeOf(domain.Tag{})
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM tags WHERE name = $1", tagName)
+	if err != nil {
+		log.Println("[NoteTagRepo] Error on get tag by name:", err)
+		return nil, err
+	}
+	if res == nil {
+		return nil, nil
+	}
+
+	if tag, ok := res.(domain.Tag); ok {
+		return &tag, nil
+	}
+	return nil, nil
+}
+
 func (this NoteTagRepository) GetByNoteId(noteId string) ([]domain.Tag, *errors.AppError) {
 	objType := reflect.TypeOf(domain.Tag{})
 
