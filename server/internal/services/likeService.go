@@ -3,7 +3,6 @@ package services
 import (
 	"anote/internal/domain"
 	"anote/internal/errors"
-	"anote/internal/helpers"
 	IRepo "anote/internal/interfaces/repositories"
 	"log"
 )
@@ -17,7 +16,6 @@ func NewLikeService(likeRepository IRepo.LikeRepository) LikeService {
 }
 
 func (this LikeService) Create(like *domain.Like) *errors.AppError {
-	like.Id = helpers.NewUUID()
 	err := this.likeRepository.Create(like)
 
 	if err != nil {
