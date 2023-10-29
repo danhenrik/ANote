@@ -17,6 +17,8 @@ type NoteService struct {
 	communityRepository IRepo.CommunityRepository
 	noteRepository      IRepo.NoteRepository
 	noteTagRepository   IRepo.NoteTagRepository
+	commentRepository   IRepo.CommentRepository
+	likeRepository      IRepo.LikeRepository
 	qb                  *es.NoteQueryBuilder
 }
 
@@ -25,6 +27,8 @@ func NewNoteService(
 	communityRepo IRepo.CommunityRepository,
 	noteRepo IRepo.NoteRepository,
 	tagRepo IRepo.NoteTagRepository,
+	commentRepository IRepo.CommentRepository,
+	likeRepository IRepo.LikeRepository,
 	queryBuilder *es.NoteQueryBuilder,
 ) NoteService {
 	return NoteService{
@@ -32,6 +36,8 @@ func NewNoteService(
 		noteRepository:      noteRepo,
 		noteTagRepository:   tagRepo,
 		communityRepository: communityRepo,
+		commentRepository:   commentRepository,
+		likeRepository:      likeRepository,
 		qb:                  queryBuilder,
 	}
 }
@@ -88,6 +94,7 @@ func (this NoteService) Create(
 		log.Println("[NoteService] Error on add tags:", err)
 		return "", errors.NewAppError(200, "Note created but couldn't save tags")
 	}
+
 	err = this.noteRepository.AddCommunities(note.Id, communityIDs)
 	if err != nil {
 		log.Println("[NoteService] Error on add communities:", err)
@@ -118,6 +125,18 @@ func (this NoteService) GetById(id string) (*domain.FullNote, *errors.AppError) 
 		return nil, err
 	}
 
+	comments, err := this.commentRepository.GetNoteComments(note.Id)
+	if err != nil {
+		log.Println("[NoteService] Error on get note comments:", err)
+		return nil, err
+	}
+
+	likes, err := this.likeRepository.GetByIdNote(note.Id)
+	if err != nil {
+		log.Println("[NoteService] Error on get note likes:", err)
+		return nil, err
+	}
+
 	fnote := domain.FullNote{
 		Id:          note.Id,
 		Title:       note.Title,
@@ -127,6 +146,8 @@ func (this NoteService) GetById(id string) (*domain.FullNote, *errors.AppError) 
 		UpdatedAt:   note.UpdatedAt,
 		Tags:        tags,
 		Communities: communities,
+		Comments:    comments,
+		Likes:       likes,
 	}
 	return &fnote, nil
 }
@@ -155,6 +176,18 @@ func (this NoteService) GetByCommunityId(id string) ([]domain.FullNote, *errors.
 			return nil, err
 		}
 
+		comments, err := this.commentRepository.GetNoteComments(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note comments:", err)
+			return nil, err
+		}
+
+		likes, err := this.likeRepository.GetByIdNote(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note likes:", err)
+			return nil, err
+		}
+
 		fnote := domain.FullNote{
 			Id:          note.Id,
 			Title:       note.Title,
@@ -164,6 +197,8 @@ func (this NoteService) GetByCommunityId(id string) ([]domain.FullNote, *errors.
 			UpdatedAt:   note.UpdatedAt,
 			Tags:        tags,
 			Communities: communities,
+			Comments:    comments,
+			Likes:       likes,
 		}
 		fnotes = append(fnotes, fnote)
 	}
@@ -194,6 +229,18 @@ func (this NoteService) GetByAuthorId(id string) ([]domain.FullNote, *errors.App
 			return nil, err
 		}
 
+		comments, err := this.commentRepository.GetNoteComments(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note comments:", err)
+			return nil, err
+		}
+
+		likes, err := this.likeRepository.GetByIdNote(note.Id)
+		if err != nil {
+			log.Println("[NoteService] Error on get note likes:", err)
+			return nil, err
+		}
+
 		fnote := domain.FullNote{
 			Id:          note.Id,
 			Title:       note.Title,
@@ -203,6 +250,8 @@ func (this NoteService) GetByAuthorId(id string) ([]domain.FullNote, *errors.App
 			UpdatedAt:   note.UpdatedAt,
 			Tags:        tags,
 			Communities: communities,
+			Comments:    comments,
+			Likes:       likes,
 		}
 		fnotes = append(fnotes, fnote)
 	}

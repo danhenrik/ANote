@@ -10,8 +10,15 @@ type CreateCommentVM struct {
 
 func (this *CreateCommentVM) ToDomainComment() domain.Comment {
 	var comment domain.Comment
-	comment.UserId =  this.UserId
-	comment.NoteId =  this.NoteId
+	comment.UserId = this.UserId
+	comment.NoteId = this.NoteId
 	comment.Content = this.Content
 	return comment
+}
+
+type CommentVM struct {
+	UserId    string `json:"user_id"`
+	NoteId    string `json:"note_id"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
 }

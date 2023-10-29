@@ -30,7 +30,15 @@ func Config() {
 
 	AuthService = services.NewAuthService(AuthRepository, UserRepository, JwtProvider)
 	CommunityService = services.NewCommunityService(CommunityRepository)
-	NoteService = services.NewNoteService(UserRepository, CommunityRepository, NoteRepository, NoteTagRepository, QueryBuilder)
+	NoteService = services.NewNoteService(
+		UserRepository,
+		CommunityRepository,
+		NoteRepository,
+		NoteTagRepository,
+		CommentRepository,
+		LikeRepository,
+		QueryBuilder,
+	)
 	NoteTagService = services.NewNoteTagService(NoteTagRepository)
 	UserService = services.NewUserService(UserRepository)
 	LikeService = services.NewLikeService(LikeRepository)

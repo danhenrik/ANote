@@ -18,6 +18,8 @@ type FullNote struct {
 	UpdatedAt   string
 	Tags        []Tag
 	Communities []Community
+	Comments    []Comment
+	Likes       []Like
 }
 
 type Community struct {

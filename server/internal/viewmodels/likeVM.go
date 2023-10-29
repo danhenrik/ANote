@@ -13,3 +13,9 @@ func (this *CreateLikeVM) ToDomainLike() domain.Like {
 	like.NoteId = this.NoteId
 	return like
 }
+
+type LikeVM struct {
+	UserId    string `json:"user_id"`
+	NoteId    string `json:"note_id"`
+	CreatedAt string `json:"created_at"`
+}
