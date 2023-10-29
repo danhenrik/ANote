@@ -42,3 +42,4 @@ var DB_NAME string
 var DB_ADDR string
 var ES_ADDR string
 var JWT_SECRET string
+var MAX_MULTIPART_SIZE int64 = 10 << 20 // 10 MiB

@@ -21,8 +21,9 @@ type FullNote struct {
 }
 
 type Community struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id         string  `json:"id"`
+	Name       string  `json:"name"`
+	Background *string `json:"background,omitempty"`
 }
 
 type Tag struct {
@@ -31,9 +32,9 @@ type Tag struct {
 }
 
 type Like struct {
-	Id     string `json:"id"`
-	UserId string `json:"user_id"`
-	NoteId string `json:"note_id"`
+	Id        string `json:"id"`
+	UserId    string `json:"user_id"`
+	NoteId    string `json:"note_id"`
 	CreatedAt string `json:"created_at"`
 }
 

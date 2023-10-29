@@ -5,6 +5,9 @@ import (
 	"anote/internal/errors"
 	"anote/internal/helpers"
 	IRepo "anote/internal/interfaces/repositories"
+	"io"
+	"os"
+	"strings"
 )
 
 type CommunityService struct {
@@ -61,5 +64,51 @@ func (this CommunityService) Delete(id string) *errors.AppError {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (this CommunityService) DeleteBackground(communityId string) *errors.AppError {
+	community, err := this.communityRepo.GetById(communityId)
+	if err != nil {
+		return err
+	}
+
+	delErr := os.Remove("internal/assets/" + *community.Background)
+	if delErr != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+
+	err = this.communityRepo.SetBackground(communityId, "")
+
+	return nil
+}
+
+func (this CommunityService) SaveBackground(communityId string, filename string) *errors.AppError {
+	splitted := strings.Split(filename, ".")
+	ext := splitted[len(splitted)-1]
+	backgroundFilename := communityId + "." + ext
+
+	// create permanent file
+	file, err := os.OpenFile("internal/assets/"+backgroundFilename, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+	defer file.Close()
+
+	// open temporary file
+	tempFile, err := os.OpenFile("internal/tmp/"+filename, os.O_RDONLY, 0777)
+	if err != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+	defer tempFile.Close()
+
+	// move (copy + delete)
+	_, err = io.Copy(file, tempFile)
+	if err != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+	os.Remove("internal/tmp/" + filename)
+
+	this.communityRepo.SetBackground(communityId, backgroundFilename)
 	return nil
 }

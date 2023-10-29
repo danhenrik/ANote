@@ -20,7 +20,50 @@ func CreateCommunityController(request httpAdapter.Request) httpAdapter.Response
 		log.Println("[CommunityController] Error on create tag:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
+
+	if len(request.Files) != 0 {
+		if err := container.CommunityService.SaveBackground(community.Id, request.Files[0]); err != nil {
+			log.Println("[CommunityController] Error on save community background:", err)
+			return httpAdapter.NewSuccessResponse(201, map[string]string{
+				"id":         community.Id,
+				"disclaimer": "Saved community but failed to save background",
+			})
+		}
+	}
 	return httpAdapter.NewSuccessResponse(201, map[string]string{"id": community.Id})
+}
+
+func DeleteCommunityBackgroundController(request httpAdapter.Request) httpAdapter.Response {
+	id, ok := request.GetSingleParam("id")
+	if !ok {
+		log.Println("[CommunityController] Error on delete background: community id not found")
+		return httpAdapter.NewErrorResponse(400, "community id not found")
+	}
+
+	if err := container.CommunityService.DeleteBackground(id); err != nil {
+		log.Println("[CommunityController] Error on delete community background:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewNoContentRespone()
+}
+
+func UpdateCommunityBackgroundController(request httpAdapter.Request) httpAdapter.Response {
+	id, ok := request.GetSingleParam("id")
+	if !ok {
+		log.Println("[CommunityController] Error on delete background: community id not found")
+		return httpAdapter.NewErrorResponse(400, "community id not found")
+	}
+
+	if err := container.CommunityService.DeleteBackground(id); err != nil {
+		log.Println("[CommunityController] Error on delete to update community background:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+
+	if err := container.CommunityService.SaveBackground(id, request.Files[0]); err != nil {
+		log.Println("[CommunityController] Error on save community background:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewNoContentRespone()
 }
 
 func GetAllCommunitiesController(request httpAdapter.Request) httpAdapter.Response {

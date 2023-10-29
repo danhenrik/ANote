@@ -160,3 +160,17 @@ func (this CommunityRepository) Delete(id string) *errors.AppError {
 	}
 	return nil
 }
+
+func (this CommunityRepository) SetBackground(communityId string, filename string) *errors.AppError {
+	var fname *string = nil
+	if filename != "" {
+		fname = &filename
+	}
+
+	err := this.DBConn.Exec("UPDATE communities SET background = $1 WHERE id = $2", fname, communityId)
+	if err != nil {
+		log.Println("[CommunityRepo] Error on set background:", err)
+		return err
+	}
+	return nil
+}

@@ -5,6 +5,9 @@ import (
 	"anote/internal/errors"
 	"anote/internal/helpers"
 	IRepo "anote/internal/interfaces/repositories"
+	"io"
+	"os"
+	"strings"
 )
 
 type UserService struct {
@@ -28,6 +31,55 @@ func (this UserService) Create(user *domain.User) *errors.AppError {
 	user.Password = &hashedPassword
 
 	if err := this.userRepository.Create(user); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (this UserService) SaveAvatar(userId string, filename string) *errors.AppError {
+	splitted := strings.Split(filename, ".")
+	ext := splitted[len(splitted)-1]
+	avatarFilename := userId + "." + ext
+
+	// create permanent file
+	file, err := os.OpenFile("internal/assets/"+avatarFilename, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+	defer file.Close()
+
+	// open temporary file
+	tempFile, err := os.OpenFile("internal/tmp/"+filename, os.O_RDONLY, 0777)
+	if err != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+	defer tempFile.Close()
+
+	// move (copy + delete)
+	_, err = io.Copy(file, tempFile)
+	if err != nil {
+		return errors.NewAppError(500, "Internal server error")
+	}
+	os.Remove("internal/tmp/" + filename)
+
+	this.userRepository.SetAvatar(userId, avatarFilename)
+	return nil
+}
+
+func (this UserService) DeleteAvatar(userId string) *errors.AppError {
+	user, err := this.userRepository.GetByUsername(userId)
+	if err != nil {
+		return err
+	}
+
+	filename := *user.Avatar
+	osErr := os.Remove("internal/assets/" + filename)
+	if osErr != nil {
+		return errors.NewAppError(500, "Error deleting file")
+	}
+
+	err = this.userRepository.SetAvatar(userId, "")
+	if err != nil {
 		return err
 	}
 	return nil

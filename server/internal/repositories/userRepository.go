@@ -26,10 +26,24 @@ func (this UserRepository) Create(user *domain.User) *errors.AppError {
 	return nil
 }
 
+func (this UserRepository) SetAvatar(userId string, filename string) *errors.AppError {
+	var fname *string = nil
+	if filename != "" {
+		fname = &filename
+	}
+
+	err := this.DBConn.Exec("UPDATE users SET avatar = $1 WHERE id = $2", fname, userId)
+	if err != nil {
+		log.Println("[UserRepo] Error on set avatar:", err)
+		return err
+	}
+	return nil
+}
+
 func (this UserRepository) GetAll() ([]domain.User, *errors.AppError) {
 	objType := reflect.TypeOf(domain.User{})
 
-	res, err := this.DBConn.QueryMultiple(objType, "SELECT id, email, password, COALESCE(google_id, '') AS google_id FROM users")
+	res, err := this.DBConn.QueryMultiple(objType, "SELECT * FROM users")
 	if err != nil {
 		log.Println("[UserRepo] Error on get all users:", err)
 		return []domain.User{}, err
@@ -43,7 +57,7 @@ func (this UserRepository) GetAll() ([]domain.User, *errors.AppError) {
 
 func (this UserRepository) GetByUsername(username string) (*domain.User, *errors.AppError) {
 	objType := reflect.TypeOf(domain.User{})
-	res, err := this.DBConn.QueryOne(objType, "SELECT id, email, password, COALESCE(google_id, '') AS google_id FROM users WHERE id = $1", username)
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM users WHERE id = $1", username)
 	if err != nil {
 		log.Println("[UserRepo] Error on get user by username:", err)
 		return nil, err
@@ -61,7 +75,7 @@ func (this UserRepository) GetByUsername(username string) (*domain.User, *errors
 
 func (this UserRepository) GetByEmail(email string) (*domain.User, *errors.AppError) {
 	objType := reflect.TypeOf(domain.User{})
-	res, err := this.DBConn.QueryOne(objType, "SELECT id, email, password, COALESCE(google_id, '') AS google_id FROM users WHERE email = $1", email)
+	res, err := this.DBConn.QueryOne(objType, "SELECT * FROM users WHERE email = $1", email)
 	if err != nil {
 		log.Println("[UserRepo] Error on get user by email:", err)
 		return nil, err

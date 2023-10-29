@@ -7,6 +7,7 @@ import (
 
 type CommunityRepository interface {
 	Create(community *domain.Community) *errors.AppError
+	SetBackground(communityId string, filename string) *errors.AppError
 	GetAll() ([]domain.Community, *errors.AppError)
 	GetById(id string) (*domain.Community, *errors.AppError)
 	GetByNoteId(noteId string) ([]domain.Community, *errors.AppError)

@@ -4,7 +4,9 @@ import (
 	"anote/internal/errors"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,16 +30,24 @@ type Request struct {
 	IP          string
 	Cookies     []*http.Cookie
 	User        UserIdentity
+	FileHeaders map[string][]*multipart.FileHeader
+	Files       []string
+	Raw         *gin.Context
 }
 
-func NewRequest(Method string,
+func NewRequest(
+	Method string,
 	Headers map[string][]string,
 	Body string,
 	QueryParams map[string][]string,
 	PathParams map[string][]string,
 	Path string,
 	IP string,
-	Cookies []*http.Cookie) Request {
+	Cookies []*http.Cookie,
+	FileHeaders map[string][]*multipart.FileHeader,
+	Files []string,
+	ctx *gin.Context,
+) Request {
 	return Request{
 		Method:      Method,
 		Headers:     Headers,
@@ -47,6 +57,9 @@ func NewRequest(Method string,
 		Path:        Path,
 		IP:          IP,
 		Cookies:     Cookies,
+		FileHeaders: FileHeaders,
+		Files:       Files,
+		Raw:         ctx,
 	}
 }
 
@@ -123,6 +136,7 @@ func NewGinAdapter(
 	middlewares ...Middleware,
 ) func(*gin.Context) {
 	return func(ctx *gin.Context) {
+		raw := ctx.Copy()
 		// create request object
 		method := ctx.Request.Method
 		header := ctx.Request.Header
@@ -151,6 +165,9 @@ func NewGinAdapter(
 			path,
 			clientIp,
 			cookies,
+			nil,
+			nil,
+			raw,
 		)
 
 		// execute middlewares
@@ -168,5 +185,20 @@ func NewGinAdapter(
 
 		// parse response and return
 		ctx.JSON(int(response.StatusCode), response)
+
+		if len(request.Files) > 0 {
+			for _, file := range request.Files {
+				// delete from temp folder
+				path := "internal/tmp/" + file
+				if _, err := os.Stat(path); err == nil {
+					log.Println("[httpAdapter] Tmp file", file, "exists, deleting it...")
+					err := os.Remove(path)
+					if err != nil {
+						log.Println("[httpAdapter] Error on delete file", err)
+					}
+					log.Println("[httpAdapter] Tmp file", file, "successfully deleted")
+				}
+			}
+		}
 	}
 }

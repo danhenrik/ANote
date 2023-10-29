@@ -21,6 +21,29 @@ func CreateUserController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[UserController] Error on create user:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
+	// move tmp file if it exists to assets folder
+	if len(request.Files) != 0 {
+		if err := container.UserService.SaveAvatar(user.Id, request.Files[0]); err != nil {
+			log.Println("[UserController] Error on save avatar:", err)
+			return httpAdapter.NewErrorResponse(201, "Saved user but failed to save avatar")
+		}
+	}
+	return httpAdapter.NewNoContentRespone()
+}
+
+func DeleteUserAvatarController(request httpAdapter.Request) httpAdapter.Response {
+	if err := container.UserService.DeleteAvatar(request.User.ID); err != nil {
+		log.Println("[UserController] Error on delete avatar:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+	return httpAdapter.NewNoContentRespone()
+}
+
+func UpdateUserAvatarController(request httpAdapter.Request) httpAdapter.Response {
+	if err := container.UserService.SaveAvatar(request.User.ID, request.Files[0]); err != nil {
+		log.Println("[UserController] Error on save avatar:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
 	return httpAdapter.NewNoContentRespone()
 }
 

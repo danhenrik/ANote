@@ -2,6 +2,7 @@ package main
 
 import (
 	httpAdapter "anote/cmd/interfaces"
+	"anote/internal/constants"
 	"anote/internal/container"
 	"anote/internal/middlewares"
 	"anote/internal/routes"
@@ -13,11 +14,40 @@ func init() {
 	container.Config()
 }
 
+// func main() {
+// 	r := gin.Default()
+// 	r.MaxMultipartMemory = constants.MAX_MULTIPART_SIZE
+// 	r.POST("/test", func(ctx *gin.Context) {
+// 		file, _ := ctx.FormFile("file")
+// 		log.Println(file.Filename)
+
+// 		ctx.SaveUploadedFile(file, "./internal/tmp/"+file.Filename)
+// 		ctx.String(201, fmt.Sprintf("'%s' uploaded!", file.Filename))
+// 	})
+// 	r.Run()
+// }
+
 func main() {
 	r := gin.Default()
+	r.MaxMultipartMemory = constants.MAX_MULTIPART_SIZE
+
+	r.GET("/static/*filepath", func(c *gin.Context) {
+		c.File("./internal/assets/" + c.Param("filepath"))
+	})
 
 	// users endpoints
-	r.POST("/users", httpAdapter.NewGinAdapter(routes.CreateUserController))
+	r.POST("/users", httpAdapter.NewGinAdapter(
+		routes.CreateUserController,
+		middlewares.ParseMultipart,
+		middlewares.SaveFile("avatar", []string{"png", "jpg", "jpeg"}),
+	))
+	r.DELETE("/users/avatar", httpAdapter.NewGinAdapter(routes.DeleteUserAvatarController, middlewares.AuthenticateUser))
+	r.PATCH("/users/avatar", httpAdapter.NewGinAdapter(
+		routes.UpdateUserAvatarController,
+		middlewares.AuthenticateUser,
+		middlewares.ParseMultipart,
+		middlewares.SaveFile("avatar", []string{"png", "jpg", "jpeg"}),
+	))
 	r.GET("/users", httpAdapter.NewGinAdapter(routes.GetAllUsersController))
 	r.GET("/users/username/:username", httpAdapter.NewGinAdapter(routes.GetUserByUsernameController))
 	r.GET("/users/email/:email", httpAdapter.NewGinAdapter(routes.GetUserByEmailController))
@@ -46,7 +76,19 @@ func main() {
 	r.DELETE("/tags/:id", httpAdapter.NewGinAdapter(routes.DeleteTagController, middlewares.AuthenticateUser))
 
 	// communities endpoints
-	r.POST("/communities", httpAdapter.NewGinAdapter(routes.CreateCommunityController, middlewares.AuthenticateUser))
+	r.POST("/communities", httpAdapter.NewGinAdapter(
+		routes.CreateCommunityController,
+		middlewares.AuthenticateUser,
+		middlewares.ParseMultipart,
+		middlewares.SaveFile("background", []string{"png", "jpg", "jpeg"}),
+	))
+	r.DELETE("/communities/background/:id", httpAdapter.NewGinAdapter(routes.DeleteCommunityBackgroundController, middlewares.AuthenticateUser))
+	r.PATCH("/communities/background/:id", httpAdapter.NewGinAdapter(
+		routes.UpdateCommunityBackgroundController,
+		middlewares.AuthenticateUser,
+		middlewares.ParseMultipart,
+		middlewares.SaveFile("background", []string{"png", "jpg", "jpeg"}),
+	))
 	r.POST("/communities/join/:id", httpAdapter.NewGinAdapter(routes.JoinCommunityController, middlewares.AuthenticateUser))
 	r.POST("/communities/leave/:id", httpAdapter.NewGinAdapter(routes.LeaveCommunityController, middlewares.AuthenticateUser))
 	r.GET("/communities", httpAdapter.NewGinAdapter(routes.GetAllCommunitiesController))

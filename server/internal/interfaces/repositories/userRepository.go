@@ -7,6 +7,7 @@ import (
 
 type UserRepository interface {
 	Create(user *domain.User) *errors.AppError
+	SetAvatar(username, filename string) *errors.AppError
 	GetAll() ([]domain.User, *errors.AppError)
 	GetUserWithPassword(key string) (*domain.User, *errors.AppError)
 	GetByUsername(username string) (*domain.User, *errors.AppError)

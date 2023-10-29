@@ -1,6 +1,8 @@
 package viewmodels
 
-import "anote/internal/domain"
+import (
+	"anote/internal/domain"
+)
 
 type CreateUserVM struct {
 	Username string `json:"username"`
@@ -27,6 +29,7 @@ type ChangePasswordVM struct {
 type UserVM struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	Avatar   string `json:"avatar"`
 }
 
 func (this *CreateUserVM) ToDomainUser() domain.User {
@@ -41,6 +44,7 @@ func UserVMFromDomainUser(userD domain.User) UserVM {
 	var user UserVM
 	user.Username = userD.Id
 	user.Email = userD.Email
+	user.Avatar = *userD.Avatar
 	return user
 }
 

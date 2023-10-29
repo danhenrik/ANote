@@ -1,7 +1,7 @@
 package viewmodels
 
 type CreateCommunityVM struct {
-	Name string `json:"name"`
+	Name string `form:"name"`
 }
 
 type CommunityVM struct {
