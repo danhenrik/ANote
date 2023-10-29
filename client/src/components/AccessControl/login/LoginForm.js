@@ -49,7 +49,6 @@ const LoginForm = () => {
         login: values.login,
         password: values.password,
       };
-      alert(user);
       auth.login(user, "EMAIL");
       modal.closeModal();
       navigate("/");

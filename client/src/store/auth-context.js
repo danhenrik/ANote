@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("user", JSON.stringify(userData));
       dispatch({ type: SET_USER, payload: userData });
+      return true;
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -56,9 +57,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData, authMethod) => {
     if (authMethod === "GOOGLE") {
-      loginWithGoogle(userData);
+      return loginWithGoogle(userData);
     } else if (authMethod === "EMAIL") {
-      loginWithEmail(userData.login, userData.password);
+      return loginWithEmail(userData.login, userData.password);
     }
   };
 

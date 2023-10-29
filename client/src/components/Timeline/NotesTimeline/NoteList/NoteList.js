@@ -60,7 +60,7 @@ const noteShape = PropTypes.shape({
 
 NoteList.propTypes = {
   notes: PropTypes.arrayOf(noteShape).isRequired,
-  communityId: PropTypes.number,
+  communityId: PropTypes.any,
   setNotesHandler: PropTypes.func.isRequired,
 };
 

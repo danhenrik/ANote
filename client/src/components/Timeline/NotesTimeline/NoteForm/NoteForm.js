@@ -156,7 +156,7 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
 
 NoteForm.propTypes = {
   notes: PropTypes.array.isRequired,
-  communityId: PropTypes.number,
+  communityId: PropTypes.any,
   setNotesHandler: PropTypes.func.isRequired,
 };
 

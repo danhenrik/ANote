@@ -45,6 +45,7 @@ const ExpandedCard = ({ note, randomColorElement }) => {
   };
 
   useEffect(() => {
+    console.log("here");
     updateNoteComments();
   }, []);
 
@@ -116,9 +117,6 @@ const ExpandedCard = ({ note, randomColorElement }) => {
             value={formik.values.comment}
             onChange={formik.handleChange}
             placeholder='Digite um comentário'
-            onBlur={formik.handleBlur}
-            error={formik.touched.comment && Boolean(formik.errors.comment)}
-            helperText={formik.touched.comment && formik.errors.comment}
             minRows={2}
           />
           <CreateButton

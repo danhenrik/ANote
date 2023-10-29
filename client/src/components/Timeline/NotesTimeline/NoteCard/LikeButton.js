@@ -37,7 +37,7 @@ const LikeButton = (note) => {
     const initLikes = async () => {
       try {
         const response = await axios.get(
-          "/likes/" + note.note.AuthorId + "/" + note.note.Id
+          "/likes/" + note.note.Author + "/" + note.note.Id
         );
 
         const numberLikes = await axios.get("/likes/count/" + note.note.Id);

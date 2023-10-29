@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import {
   InputLabel,
   TextField,
@@ -9,6 +9,7 @@ import { Container, Paper, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
+import { useAuth } from "../../../store/auth-context";
 
 const validationSchema = yup.object({
   email: yup
@@ -30,6 +31,7 @@ const validationSchema = yup.object({
 
 const CompleteSignupForm = () => {
   const [search] = useSearchParams();
+  const auth = useAuth();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -51,7 +53,16 @@ const CompleteSignupForm = () => {
 
         console.log("Registration successful:", response.data);
 
-        navigate("/login");
+        if (response) {
+          const userLogin = {
+            login: userData.email,
+            password: userData.password,
+          };
+          const didLogin = await auth.login(userLogin, "EMAIL");
+          if (didLogin) {
+            navigate("/");
+          }
+        }
       } catch (error) {
         console.error("Registration failed:", error);
       }

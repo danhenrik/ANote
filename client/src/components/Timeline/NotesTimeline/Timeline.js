@@ -14,7 +14,7 @@ const Timeline = () => {
   const fetchAndSetNotes = async () => {
     let fetchedNotes = [];
     if (userAuth.isAuthenticated) {
-      if (searchParams.get("world") && searchParams.get("world") === true) {
+      if (searchParams.get("world") && searchParams.get("world") == "true") {
         fetchedNotes = await notesApi.fetchNotesFeed();
       } else {
         if (params.id) {
@@ -38,7 +38,7 @@ const Timeline = () => {
 
   useEffect(() => {
     fetchAndSetNotes();
-  }, [userAuth.isAuthenticated]);
+  }, [userAuth.isAuthenticated, searchParams.get("world")]);
 
   return (
     <NoteList

@@ -15,10 +15,12 @@ import {
 import axios from "axios";
 import { Card, Container } from "@mui/material";
 import { useAuth } from "../../../../../store/auth-context";
+import formatDate from "../../../../../util/formatDate";
 
 const CommentCard = ({ comment }) => {
   const userAuth = useAuth();
   const [renderComment, setRenderComment] = useState(true);
+  const formatedDate = formatDate(comment.CreatedAt);
 
   const deleteComment = () => {
     try {
@@ -67,7 +69,9 @@ const CommentCard = ({ comment }) => {
             <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
               <Typography color='textSecondary'>{comment.Content}</Typography>
             </Container>
-            <Typography color='textSecondary'>{comment.CreatedAt}</Typography>
+            <Typography sx={{ textAlign: "right" }} color='textSecondary'>
+              {formatedDate.day} às {formatedDate.hour}
+            </Typography>
           </CardContent>
         </Card>
       )}
