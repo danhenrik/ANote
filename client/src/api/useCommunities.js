@@ -1,16 +1,34 @@
 import useApi from "./useApi";
 
-const mapApiCommunitiesData = (data) => {
-  return data.map((item) => ({
-    Id: item.id,
-    Name: item.name,
-  }));
+const mapApiCommunitiesData = async (data, api) => {
+  const communitiesWithImages = await Promise.all(
+    data.map(async (item) => {
+      try {
+        const imageResponse = await api.get(`/static/${item.background}`);
+        const imageUrl = `/static/${item.background}`;
+        return {
+          Id: item.id,
+          Name: item.name,
+          Background: imageUrl,
+        };
+      } catch (error) {
+        console.error("Error fetching image:", error);
+        return {
+          Id: item.id,
+          Name: item.name,
+          Background: null,
+        };
+      }
+    })
+  );
+
+  return communitiesWithImages;
 };
 
 const fetchCommunitiesRequest = async (api) => {
   try {
     const response = await api.get("/communities");
-    return mapApiCommunitiesData(response.data.data);
+    return mapApiCommunitiesData(response.data.data, api);
   } catch (error) {
     console.error("Error fetching communities:", error);
     throw error;
@@ -20,7 +38,7 @@ const fetchCommunitiesRequest = async (api) => {
 const fetchCommunitiesByUserRequest = async (api) => {
   try {
     const response = await api.get("/communities/my");
-    return mapApiCommunitiesData(response.data.data);
+    return mapApiCommunitiesData(response.data.data, api);
   } catch (error) {
     console.error("Error fetching communities:", error);
     throw error;

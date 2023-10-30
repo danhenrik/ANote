@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Divider, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -28,7 +28,6 @@ const SignupForm = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       modal.closeModal();
-      alert(JSON.stringify(values, null, 2));
       navigate({
         pathname: "signup",
         search: createSearchParams({

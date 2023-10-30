@@ -1,15 +1,16 @@
-import React from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   InputLabel,
   TextField,
   Button,
 } from "../../../common/FormStyling.styled";
-import { Container, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Container, Paper, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { useAuth } from "../../../store/auth-context";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const validationSchema = yup.object({
   email: yup
@@ -30,6 +31,8 @@ const validationSchema = yup.object({
 });
 
 const CompleteSignupForm = () => {
+  const [selectedFile, setSelectedFile] = useState("");
+  const [avatarPreview, setAvatarPreview] = useState("/avatars/default.png");
   const [search] = useSearchParams();
   const auth = useAuth();
   const navigate = useNavigate();
@@ -39,24 +42,28 @@ const CompleteSignupForm = () => {
       username: "",
       password: "",
       confirmPassword: "",
+      image: null,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const userData = {
-          email: values.email,
-          username: values.username,
-          password: values.password,
-        };
-
-        const response = await axios.post("/users", userData);
+        const userData = new FormData();
+        userData.append("email", values.email);
+        userData.append("username", values.username);
+        userData.append("password", values.password);
+        userData.append("avatar", values.avatar);
+        const response = await axios.post("/users", userData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         console.log("Registration successful:", response.data);
 
         if (response) {
           const userLogin = {
-            login: userData.email,
-            password: userData.password,
+            login: values.email,
+            password: values.password,
           };
           const didLogin = await auth.login(userLogin, "EMAIL");
           if (didLogin) {
@@ -148,6 +155,41 @@ const CompleteSignupForm = () => {
                 formik.touched.confirmPassword && formik.errors.confirmPassword
               }
             />
+            <Box
+              display='flex'
+              textAlign='center'
+              justifyContent='center'
+              flexDirection='column'
+            >
+              <Avatar size='md' src={avatarPreview} />
+
+              <Button
+                variant='contained'
+                component='label'
+                startIcon={<CloudUploadIcon />}
+              >
+                Escolha uma imagem
+                <input
+                  name='image'
+                  accept='image/*'
+                  id='contained-button-file'
+                  type='file'
+                  hidden
+                  onChange={(e) => {
+                    const selectedFile = e.target.files[0];
+                    setSelectedFile(selectedFile);
+                    const fileReader = new FileReader();
+                    fileReader.onload = () => {
+                      if (fileReader.readyState === 2) {
+                        formik.setFieldValue("image", fileReader.result);
+                        setAvatarPreview(fileReader.result);
+                      }
+                    };
+                    fileReader.readAsDataURL(e.target.files[0]);
+                  }}
+                />
+              </Button>
+            </Box>
             <Button variant='contained' fullWidth type='submit'>
               Cadastrar-se
             </Button>
