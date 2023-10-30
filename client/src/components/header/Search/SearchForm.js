@@ -15,6 +15,7 @@ import InputAutocomplete from "../../../common/InputAutoComplete";
 import Tags from "../../Timeline/Tags/TagsList";
 import useTags from "../../../api/useTags";
 import listHandler from "./SearchListHandler";
+import { createSearchParams, useNavigate } from "react-router-dom";
 
 const dynamicValidation = (tagList) => (value) => {
   if (
@@ -73,6 +74,7 @@ const SearchForm = ({ closeModal }) => {
   const [tagList, setTagList] = useState([]);
   const [tags, setTags] = useState([]);
   const tagsApi = useTags();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -93,10 +95,21 @@ const SearchForm = ({ closeModal }) => {
     },
     validationSchema: validationSchema(tagList),
     onSubmit: (values) => {
-      const search = {
-        ...values,
-        tags: tagList,
-      };
+      const queryParams = [];
+      for (const key in values) {
+        if (key !== "tags") {
+          if (values[key] != "")
+            queryParams.push(`${key}=${encodeURIComponent(values[key])}`);
+        }
+      }
+
+      for (const tag of tagList) {
+        queryParams.push(`tags=${encodeURIComponent(tag)}`);
+      }
+
+      const searchParams = queryParams.join("&");
+
+      navigate(`/timeline?search=true&${searchParams}`);
     },
     validateOnChange: false,
     validateOnBlur: false,

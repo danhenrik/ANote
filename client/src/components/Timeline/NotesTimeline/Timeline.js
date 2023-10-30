@@ -29,7 +29,7 @@ const Timeline = () => {
     let fetchedNotes = [];
     if (searchParams.get("search") && searchParams.get("search") == "true") {
       const queryParams = extractQueryParams(searchParams);
-      fetchedNotes = await notesApi.fetchNotesFilter(queryParams);
+      fetchedNotes = await notesApi.fetchNotesFilter(1, queryParams);
     } else {
       if (userAuth.isAuthenticated) {
         if (searchParams.get("world") && searchParams.get("world") == "true") {
@@ -48,8 +48,8 @@ const Timeline = () => {
           fetchedNotes = await notesApi.fetchNotes(1);
         }
       }
-      setNotes(fetchedNotes);
     }
+    setNotes(fetchedNotes);
   };
 
   const setNotesHandler = (notes) => {

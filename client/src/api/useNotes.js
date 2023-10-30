@@ -30,7 +30,7 @@ const fetchNotesFeedRequest = async (api, page) => {
   try {
     const response = await api.get("/notes/feed", {
       params: {
-        page: 1,
+        page: page,
         size: PAGE_SIZE,
       },
     });
@@ -51,7 +51,7 @@ const fetchNotesRequest = async (api, page) => {
   try {
     const response = await api.get("/notes", {
       params: {
-        page: 1,
+        page: page,
         size: PAGE_SIZE,
       },
     });
@@ -92,9 +92,9 @@ const fetchNotesFilterRequest = async (api, page, filters) => {
   try {
     const response = await api.get("/notes", {
       params: {
-        page: 1,
+        page: page,
         size: PAGE_SIZE,
-        ...filters, // Include filter parameters
+        ...filters,
       },
     });
     if (response.data.data) {
