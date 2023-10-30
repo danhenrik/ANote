@@ -2,12 +2,6 @@ import useApi from "./useApi";
 
 const PAGE_SIZE = 8;
 
-const handlePagination = (data, page, pageSize) => {
-  const startIndex = (page - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  return data.slice(startIndex, endIndex);
-};
-
 const mapApiNotesData = (data) => {
   return data.map((item) => ({
     Id: item.id,
@@ -35,11 +29,7 @@ const fetchNotesFeedRequest = async (api, page) => {
       },
     });
     if (response.data.data) {
-      return handlePagination(
-        mapApiNotesData(response.data.data),
-        page,
-        PAGE_SIZE
-      );
+      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
     } else {
       return [];
     }
@@ -58,11 +48,7 @@ const fetchNotesRequest = async (api, page) => {
       },
     });
     if (response.data.data) {
-      return handlePagination(
-        mapApiNotesData(response.data.data),
-        page,
-        PAGE_SIZE
-      );
+      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
     } else {
       return [];
     }
@@ -82,11 +68,7 @@ const fetchNotesByCommunityRequest = async (api, page, id) => {
       },
     });
     if (response.data.data) {
-      return handlePagination(
-        mapApiNotesData(response.data.data),
-        page,
-        PAGE_SIZE
-      );
+      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -104,11 +86,7 @@ const fetchNotesFilterRequest = async (api, page, filters) => {
       },
     });
     if (response.data.data) {
-      return handlePagination(
-        mapApiNotesData(response.data.data),
-        page,
-        PAGE_SIZE
-      );
+      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
