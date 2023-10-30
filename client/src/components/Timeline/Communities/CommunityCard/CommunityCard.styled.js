@@ -32,4 +32,40 @@ const CommunityCardContainer = styled(Card)({
   },
 });
 
-export { Title, StyledLink, ContentContainer, CommunityCardContainer };
+const FollowButton = styled(Link)({
+  marginTop: "7px",
+  backgroundColor: "#9370DB",
+  color: "white",
+  marginRight: "10px",
+  padding: "12px 32px",
+  borderRadius: "9999px",
+  textDecoration: "none",
+  display: "inline-block",
+  marginLeft: "auto",
+  "&:hover": {
+    backgroundColor: "purple", // Change to purple on hover
+  },
+});
+
+const FollowButtonFollowing = styled(Link)({
+  marginTop: "7px",
+  backgroundColor: "purple",
+  color: "white",
+  marginRight: "10px",
+  padding: "12px 32px",
+  borderRadius: "9999px",
+  textDecoration: "none",
+  display: "inline-block",
+  marginLeft: "auto",
+  "&:hover": {
+    backgroundColor: "#9370DB", // Change to purple on hover
+  },
+});
+export {
+  Title,
+  StyledLink,
+  ContentContainer,
+  CommunityCardContainer,
+  FollowButton,
+  FollowButtonFollowing,
+};

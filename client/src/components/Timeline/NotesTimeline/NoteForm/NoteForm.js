@@ -59,24 +59,21 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
       } else {
         communities = [];
       }
-      const note = {
-        title: values.title,
-        description: values.description,
-        tags: tagList,
-        communities: communities,
-      };
       const postTags = async (tags) => {
+        let tagIds = [];
         try {
           const tagPromises = tags.map(async (tag) => {
             const tagPost = {
               name: tag,
             };
-            return tagsApi.createTag(tagPost);
+            const tagResponse = await tagsApi.createTag(tagPost); // Await the promise
+            console.log(tagResponse.data.id);
+            tagIds.push(tagResponse.data.id);
           });
 
-          const postedTags = await Promise.all(tagPromises);
-          console.log("Successfully posted tags:", postedTags);
-          return postedTags;
+          await Promise.all(tagPromises); // Wait for all promises to complete
+          console.log("Successfully posted tags:", tagIds);
+          return tagIds;
         } catch (error) {
           console.error("Error posting tags:", error);
           throw error;
@@ -84,8 +81,14 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
       };
 
       const postNotes = async () => {
-        const postedTags = await postTags(note.tags);
+        const postedTags = await postTags(tagList);
         if (postedTags) {
+          const note = {
+            title: values.title,
+            description: values.description,
+            tags: postedTags,
+            communities: communities,
+          };
           alert(JSON.stringify(note));
           const fetchedNotes = await notesApi.createNote(note);
           if (fetchedNotes) {

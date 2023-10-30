@@ -80,6 +80,7 @@ const CommunityList = ({ communities, setCommunitiesHandler }) => {
 const communityShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Name: PropTypes.string.isRequired,
+  Background: PropTypes.any.isRequired,
 });
 
 CommunityList.propTypes = {

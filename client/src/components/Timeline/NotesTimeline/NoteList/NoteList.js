@@ -8,16 +8,18 @@ import LoginForm from "../../../AccessControl/Login/LoginForm";
 import TimelineList from "../../TimelineList";
 import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const NoteList = ({ notes, communityId, setNotesHandler }) => {
   const modal = useModal();
   const auth = useAuth();
   const communitiesApi = useCommunities();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState();
 
   useEffect(() => {
     if (auth.isAuthenticated) {
       const userFollowedCommunities = async () => {
+        setIsFollowing(false);
         const communities = await communitiesApi.fetchCommunitiesByUser();
         if (communities) {
           if (communities.some((community) => community.Id === communityId)) {
@@ -27,7 +29,7 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
       };
       userFollowedCommunities();
     }
-  }, []);
+  }, [useParams().id]);
 
   const followCommunity = async () => {
     const response = communitiesApi.followCommunity(communityId);
@@ -37,23 +39,28 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
   };
 
   const handleAddNoteModal = () => {
-    auth.isAuthenticated || isFollowing
-      ? modal.openModal(
-          auth.isAuthenticated ? (
-            <NoteForm
-              notes={notes}
-              communityId={communityId}
-              closeModal={modal.closeModal}
-              setNotesHandler={setNotesHandler}
-            ></NoteForm>
-          ) : (
-            <LoginForm closeModal={modal.closeModal}></LoginForm>
-          )
-        )
-      : followCommunity(communityId);
+    if (auth.isAuthenticated) {
+      if (isFollowing) {
+        modal.openModal(
+          <NoteForm
+            notes={notes}
+            communityId={communityId}
+            closeModal={modal.closeModal}
+            setNotesHandler={setNotesHandler}
+          ></NoteForm>
+        );
+      } else {
+        followCommunity(communityId);
+      }
+    } else {
+      modal.openModal(<LoginForm closeModal={modal.closeModal}></LoginForm>);
+    }
   };
   //trocar botao para um de seguir e um de adicionar, deve aparecer adicionar para usuario deslogado
-  const buttonText = !isFollowing ? "Seguir Comunidade" : "Adicionar Nota";
+  const buttonText =
+    useParams().id && auth.isAuthenticated && isFollowing === false
+      ? "Seguir Comunidade"
+      : "Adicionar Nota";
 
   return (
     <TimelineList

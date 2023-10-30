@@ -101,7 +101,7 @@ const SearchForm = ({ closeModal }) => {
       alert(JSON.stringify(search, null, 2));
     },
     validateOnChange: false,
-    validateOnBlur: true,
+    validateOnBlur: false,
   });
 
   const { addToList, removeFromList } = listHandler(setTagList);
