@@ -96,7 +96,7 @@ pg_conn.SQLCmd("""CREATE TABLE notes (
                );""")
 
 pg_conn.SQLCmd("""CREATE TABLE likes (
-                id uuid PRIMARY KEY, 
+                id uuid NOT NULL, 
                 user_id varchar(30), 
                 note_id uuid, 
                 created_at timestamp NOT NULL DEFAULT NOW(),
@@ -107,10 +107,6 @@ pg_conn.SQLCmd("""CREATE TABLE likes (
                  FOREIGN KEY(note_id) 
                   REFERENCES notes(id) ON DELETE CASCADE
               );""")
-
-pg_conn.SQLCmd("""ALTER TABLE likes
-                  DROP COLUMN id;
-              """)
 
 pg_conn.SQLCmd("""ALTER TABLE likes
                   ADD PRIMARY KEY (user_id, note_id);
@@ -152,10 +148,6 @@ pg_conn.SQLCmd("""CREATE TABLE communities (
                 name varchar(50) NOT NULL,
                 background varchar(255)
                 );""")
-
-pg_conn.SQLCmd("""ALTER TABLE communities
-                ADD COLUMN background varchar(255);
-               """)
 
 pg_conn.SQLCmd("""CREATE TABLE community_members (
                 id uuid PRIMARY KEY,
