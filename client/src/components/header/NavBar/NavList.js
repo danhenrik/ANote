@@ -44,10 +44,8 @@ const NavList = ({ handleLoginModal, handleSignupModal, handleDrawer }) => {
         <Avatar
           sx={{ bgcolor: "orange", width: "100px", height: "100px" }}
           alt='Remy Sharp'
-          src='/logo.svg'
-        >
-          B
-        </Avatar>
+          src={auth.avatar}
+        ></Avatar>
       </div>
       <Divider sx={{ backgroundColor: "white" }} />
       <List>

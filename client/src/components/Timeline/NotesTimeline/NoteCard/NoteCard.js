@@ -51,12 +51,8 @@ const NoteCard = ({ note }) => {
   const [numberComments, setNumberComments] = useState(0);
   useEffect(() => {
     const initComments = async () => {
-      try {
-        const comments = await axios.get("/comments/count/" + note.Id);
-        setNumberComments(comments.data.data);
-      } catch (error) {
-        console.log("Comment number retrieving failed: ", error);
-      }
+      const comments = note.CommentCount;
+      setNumberComments(comments);
     };
 
     initComments();
@@ -128,6 +124,8 @@ const noteShape = PropTypes.shape({
   UpdatedDate: PropTypes.string.isRequired,
   Author: PropTypes.string.isRequired,
   Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  CommentCount: PropTypes.number.isRequired,
+  LikeCount: PropTypes.number.isRequired,
 });
 
 NoteCard.propTypes = {

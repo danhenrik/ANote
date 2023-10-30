@@ -18,6 +18,9 @@ const mapApiNotesData = (data) => {
     Author: item.author_id,
     Tags: item.tags.map((tag) => tag.name),
     Communities: item.communities.map((community) => community.name),
+    LikeCount: item.like_count,
+    CommentCount: item.comment_count,
+    Likes: item.likes,
   }));
 };
 
