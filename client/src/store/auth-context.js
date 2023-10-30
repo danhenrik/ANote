@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response) {
         const avatarRequest = response.data.data.User.Avatar;
-        await axios.get(`/static/${avatarRequest}`);
+        if (avatarRequest) await axios.get(`/static/${avatarRequest}`);
 
         const userData = {
           username: response.data.data.User.Id,

@@ -91,13 +91,20 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
               transition: "color 0.3s, transform 0.3s",
             }}
           >
-            <DeleteIcon id='delete-button' />
+            <DeleteIcon id='delete-button' style={{ marginRight: "2px" }} />
           </IconButton>
         )}
-        <Title variant='h7' component='div'>
+        <Title
+          variant='h7'
+          component='div'
+          style={{ textAlign: "center", textTransform: "uppercase" }}
+        >
           {note.Title}
         </Title>
-        <AvatarBackground randomColor={randomColorElement}>
+        <AvatarBackground
+          randomColor={randomColorElement}
+          style={{ marginTop: "10px" }}
+        >
           <AvatarContainer>
             <CustomAvatar variant='square'>N</CustomAvatar>
           </AvatarContainer>
@@ -105,7 +112,7 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
             <AvatarAuthor>{note.Author}</AvatarAuthor>
           </AvatarUsernames>
         </AvatarBackground>
-        <ContentContainer>
+        <ContentContainer style={{ marginTop: "10px" }}>
           <Typography color='textSecondary'>{note.Content}</Typography>
         </ContentContainer>
         <ContentContainer sx={{ marginTop: "10px" }}>

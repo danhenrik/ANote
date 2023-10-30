@@ -69,7 +69,15 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
 
   return (
     <div style={{ width: "100%" }}>
-      <Title variant='h7' component='div' textAlign='center'>
+      <Title
+        variant='h7'
+        component='div'
+        style={{
+          textAlign: "center",
+          textTransform: "uppercase",
+          marginBottom: "5px",
+        }}
+      >
         {note.Title}
       </Title>
       <AvatarBackground randomColor={randomColorElement}>
@@ -127,22 +135,32 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
           </CreateButton>
         </form>
       )}
-      <CommentContainer sx={{ marginTop: "15px" }}>
-        {comments ? (
-          comments.map((comment) => (
-            <Box key={comment.Id} sx={{ marginBottom: "15px" }}>
-              <CommentCard
-                numberCommentsHandler={numberCommentsHandler}
-                comment={comment}
-              />
-            </Box>
-          ))
-        ) : (
+      {comments ? (
+        comments.map((comment) => (
+          <Box
+            key={comment.Id}
+            sx={{ marginBottom: "15px", marginTop: "15px" }}
+          >
+            <CommentCard
+              numberCommentsHandler={numberCommentsHandler}
+              comment={comment}
+            />
+          </Box>
+        ))
+      ) : (
+        <CommentContainer
+          sx={{
+            marginTop: "15px",
+            paddingTop: "15px",
+            paddingBottom: "15px",
+            textAlign: "center",
+          }}
+        >
           <Typography variant='h7' color='textPrimary'>
             Nenhum comentário nessa nota
           </Typography>
-        )}
-      </CommentContainer>
+        </CommentContainer>
+      )}
     </div>
   );
 };

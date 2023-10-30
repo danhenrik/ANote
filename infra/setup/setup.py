@@ -78,6 +78,11 @@ pg_conn.SQLCmd("""CREATE TABLE users (
                 avatar varchar(255)
                );""")
 
+pg_conn.SQLCmd("""ALTER TABLE users
+                ADD COLUMN created_at date NOT NULL DEFAULT NOW(),
+                ADD COLUMN avatar varchar(255);
+               """)
+
 pg_conn.SQLCmd("""CREATE TABLE notes (
                 id uuid PRIMARY KEY, 
                 title varchar NOT NULL, 
@@ -147,6 +152,10 @@ pg_conn.SQLCmd("""CREATE TABLE communities (
                 name varchar(50) NOT NULL,
                 background varchar(255)
                 );""")
+
+pg_conn.SQLCmd("""ALTER TABLE communities
+                ADD COLUMN background varchar(255);
+               """)
 
 pg_conn.SQLCmd("""CREATE TABLE community_members (
                 id uuid PRIMARY KEY,

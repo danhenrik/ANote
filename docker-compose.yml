@@ -66,6 +66,8 @@ services:
     build:
       dockerfile: dockerfile
       context: ./infra/setup
+    volumes:
+      - ./infra/setup/setup.py:/setup/setup.py
     depends_on:
       - elasticsearch
       - database

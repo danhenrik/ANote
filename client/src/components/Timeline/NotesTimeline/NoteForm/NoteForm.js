@@ -85,7 +85,7 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
         if (postedTags) {
           const note = {
             title: values.title,
-            description: values.description,
+            content: values.description,
             tags: postedTags,
             communities: communities,
           };
