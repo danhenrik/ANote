@@ -25,6 +25,7 @@ import { useAuth } from "../../../store/auth-context";
 import { useModal } from "../../../store/modal-context";
 import LoginForm from "../../AccessControl/Login/LoginForm";
 import SignupForm from "../../AccessControl/Signup/SignupForm";
+import { Avatar } from "@mui/material";
 
 const NavBar = ({ open, setOpen }) => {
   const drawerWidth = 240;
@@ -83,13 +84,24 @@ const NavBar = ({ open, setOpen }) => {
               <Groups2RoundedIcon />
             </StyledIconButton>
           </Link>
-          {!auth.isAuthenticated && (
+          {!auth.isAuthenticated ? (
             <ButtonStack direction='row' spacing={3}>
               <NavButtons
                 handleLoginModal={handleLoginModal}
                 handleSignupModal={handleSignupModal}
               />
             </ButtonStack>
+          ) : (
+            <Avatar
+              sx={{
+                width: "50px",
+                height: "50px",
+                marginLeft: "auto",
+                marginRight: "80px",
+              }}
+              alt='Avatar'
+              src={avatarPreview}
+            ></Avatar>
           )}
         </Toolbar>
       </AppBar>

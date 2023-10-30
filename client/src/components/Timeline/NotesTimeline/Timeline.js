@@ -11,26 +11,45 @@ const Timeline = () => {
   const params = useParams();
   const [searchParams] = useSearchParams();
 
+  function extractQueryParams(searchParams) {
+    const queryParams = {};
+
+    // Iterate through all query parameters
+    searchParams.forEach((value, key) => {
+      // Check if the key is not "search" or "world"
+      if (key !== "search" && key !== "world") {
+        queryParams[key] = value;
+      }
+    });
+
+    return queryParams;
+  }
+
   const fetchAndSetNotes = async () => {
     let fetchedNotes = [];
-    if (userAuth.isAuthenticated) {
-      if (searchParams.get("world") && searchParams.get("world") == "true") {
-        fetchedNotes = await notesApi.fetchNotesFeed();
+    if (searchParams.get("search") && searchParams.get("search") == "true") {
+      const queryParams = extractQueryParams(searchParams);
+      fetchedNotes = await notesApi.fetchNotesFilter(queryParams);
+    } else {
+      if (userAuth.isAuthenticated) {
+        if (searchParams.get("world") && searchParams.get("world") == "true") {
+          fetchedNotes = await notesApi.fetchNotes(1);
+        } else {
+          if (params.id) {
+            fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+          } else {
+            fetchedNotes = await notesApi.fetchNotesFeed(1);
+          }
+        }
       } else {
         if (params.id) {
           fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
         } else {
-          fetchedNotes = await notesApi.fetchNotesByAuthor(userAuth.username);
+          fetchedNotes = await notesApi.fetchNotes(1);
         }
       }
-    } else {
-      if (params.id) {
-        fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
-      } else {
-        fetchedNotes = await notesApi.fetchNotes();
-      }
+      setNotes(fetchedNotes);
     }
-    setNotes(fetchedNotes);
   };
 
   const setNotesHandler = (notes) => {
@@ -39,7 +58,7 @@ const Timeline = () => {
 
   useEffect(() => {
     fetchAndSetNotes();
-  }, [userAuth.isAuthenticated, searchParams.get("world"), params.id]);
+  }, [userAuth.isAuthenticated, searchParams, params.id]);
 
   return (
     <NoteList

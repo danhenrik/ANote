@@ -25,7 +25,6 @@ const VerificationCode = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
       navigate("/passwordrecovery/completerecovery");
     },
   });

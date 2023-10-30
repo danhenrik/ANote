@@ -97,8 +97,6 @@ const SearchForm = ({ closeModal }) => {
         ...values,
         tags: tagList,
       };
-
-      alert(JSON.stringify(search, null, 2));
     },
     validateOnChange: false,
     validateOnBlur: false,

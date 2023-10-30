@@ -11,7 +11,7 @@ import NavButtons from "./NavButtons";
 import PropTypes from "prop-types";
 import { ButtonBox, ListLink } from "./NavList.styled";
 import { useAuth } from "../../../store/auth-context";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const NavList = ({
   handleLoginModal,
@@ -20,10 +20,12 @@ const NavList = ({
   avatarPreview,
 }) => {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     handleDrawer();
     auth.logout();
+    navigate("/");
   };
   let listOptions = [
     { text: "Minhas Notas", route: { path: "/timeline" } },
@@ -74,13 +76,15 @@ const NavList = ({
             </ListItem>
           </ListLink>
         ))}
-        <ButtonBox textAlign='center'>
-          <NavButtons
-            sx={{ padding: "2px", display: "flex" }}
-            handleLoginModal={handleLoginModal}
-            handleSignupModal={handleSignupModal}
-          />
-        </ButtonBox>
+        {!auth.isAuthenticated && (
+          <ButtonBox textAlign='center'>
+            <NavButtons
+              sx={{ padding: "2px", display: "flex" }}
+              handleLoginModal={handleLoginModal}
+              handleSignupModal={handleSignupModal}
+            />
+          </ButtonBox>
+        )}
       </List>
     </>
   );

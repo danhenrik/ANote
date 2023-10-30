@@ -13,14 +13,16 @@ const mapApiNotesData = (data) => {
     Id: item.id,
     Title: item.title,
     Content: item.content,
-    PublishedDate: item.created_at,
-    UpdatedDate: item.updated_at,
-    Author: item.author_id,
-    Tags: item.tags.map((tag) => tag.name),
-    Communities: item.communities.map((community) => community.name),
-    LikeCount: item.like_count,
+    PublishedDate: item.created_at ? item.created_at : item.published_date,
+    UpdatedDate: item.updated_at ? item.update_at : item.updated_date,
+    Author: item.author_id ? item.author_id : item.author,
+    Tags: item.tags ? item.tags.map((tag) => tag.name) : [],
+    Communities: item.communities
+      ? item.communities.map((community) => community.name)
+      : [],
+    LikeCount: item.likes_count ? item.likes_count : item.like_count,
     CommentCount: item.comment_count,
-    Likes: item.likes,
+    Likes: item.likes ? item.likes : [],
   }));
 };
 
@@ -29,11 +31,16 @@ const fetchNotesFeedRequest = async (api, page) => {
     const response = await api.get("/notes/feed", {
       params: {
         page: 1,
-        size: 1,
-        sort_by: "title",
+        size: PAGE_SIZE,
       },
     });
-    return mapApiNotesData(handlePagination(response.data, page, PAGE_SIZE));
+    if (response.data.data) {
+      return handlePagination(
+        mapApiNotesData(response.data.data),
+        page,
+        PAGE_SIZE
+      );
+    }
   } catch (error) {
     console.error("Error fetching notes:", error);
     throw error;
@@ -45,11 +52,16 @@ const fetchNotesRequest = async (api, page) => {
     const response = await api.get("/notes", {
       params: {
         page: 1,
-        size: 1,
-        sort_by: "title",
+        size: PAGE_SIZE,
       },
     });
-    return mapApiNotesData(handlePagination(response.data, page, PAGE_SIZE));
+    if (response.data.data) {
+      return handlePagination(
+        mapApiNotesData(response.data.data),
+        page,
+        PAGE_SIZE
+      );
+    }
   } catch (error) {
     console.error("Error fetching notes:", error);
     throw error;
@@ -70,6 +82,28 @@ const fetchNotesByCommunityRequest = async (api, id) => {
   try {
     const response = await api.get(`/notes/community/${id}`);
     return mapApiNotesData(response.data.data);
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    throw error;
+  }
+};
+
+const fetchNotesFilterRequest = async (api, page, filters) => {
+  try {
+    const response = await api.get("/notes", {
+      params: {
+        page: 1,
+        size: PAGE_SIZE,
+        ...filters, // Include filter parameters
+      },
+    });
+    if (response.data.data) {
+      return handlePagination(
+        mapApiNotesData(response.data.data),
+        page,
+        PAGE_SIZE
+      );
+    }
   } catch (error) {
     console.error("Error fetching notes:", error);
     throw error;
@@ -104,6 +138,10 @@ const useNotes = () => {
     return fetchNotesByCommunityRequest(api, id);
   };
 
+  const fetchNotesFilter = (page, filters) => {
+    return fetchNotesFilterRequest(api, page, filters);
+  };
+
   const createNote = (note) => {
     return createNoteRequest(api, note);
   };
@@ -112,6 +150,7 @@ const useNotes = () => {
     fetchNotesFeed,
     fetchNotes,
     createNote,
+    fetchNotesFilter,
     fetchNotesByAuthor,
     fetchNotesByCommunity,
   };

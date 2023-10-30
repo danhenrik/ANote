@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { ButtonBase, Grid } from "@mui/material";
+import { Button, ButtonBase, Grid } from "@mui/material";
 import NoteCard from "../NoteCard/NoteCard";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
@@ -9,12 +9,14 @@ import TimelineList from "../../TimelineList";
 import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import EmptyNotes from "../EmptyNotes";
 
 const NoteList = ({ notes, communityId, setNotesHandler }) => {
   const modal = useModal();
   const auth = useAuth();
   const communitiesApi = useCommunities();
   const [isFollowing, setIsFollowing] = useState();
+  const { id } = useParams();
 
   useEffect(() => {
     if (auth.isAuthenticated) {
@@ -40,7 +42,7 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
 
   const handleAddNoteModal = () => {
     if (auth.isAuthenticated) {
-      if (isFollowing) {
+      if (isFollowing || !id) {
         modal.openModal(
           <NoteForm
             notes={notes}
@@ -67,13 +69,19 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
       handleAddModal={handleAddNoteModal}
       addButtonText={buttonText}
     >
-      {notes.map((note) => (
-        <Grid item key={note.Id}>
-          <ButtonBase>
-            <NoteCard note={note} />
-          </ButtonBase>
-        </Grid>
-      ))}
+      {notes && notes.length ? (
+        notes.map((note) => (
+          <Grid item key={note.Id}>
+            <ButtonBase>
+              <NoteCard note={note} />
+            </ButtonBase>
+          </Grid>
+        ))
+      ) : (
+        <EmptyNotes clickHandler={handleAddNoteModal}>
+          Nenhuma Nota Aqui. Adicione Uma
+        </EmptyNotes>
+      )}
     </TimelineList>
   );
 };
@@ -85,7 +93,7 @@ const noteShape = PropTypes.shape({
   LikeCount: PropTypes.number.isRequired,
   //Likes: PropTypes.arrayOf(PropTypes.string).isRequired,
   PublishedDate: PropTypes.string.isRequired,
-  UpdatedDate: PropTypes.string.isRequired,
+  UpdatedDate: PropTypes.string,
   Author: PropTypes.string.isRequired,
   Tags: PropTypes.arrayOf(PropTypes.string),
   Communities: PropTypes.arrayOf(PropTypes.string),
@@ -94,7 +102,7 @@ const noteShape = PropTypes.shape({
 });
 
 NoteList.propTypes = {
-  notes: PropTypes.arrayOf(noteShape).isRequired,
+  notes: PropTypes.arrayOf(noteShape),
   communityId: PropTypes.any,
   setNotesHandler: PropTypes.func.isRequired,
 };

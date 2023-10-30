@@ -151,14 +151,14 @@ const noteShape = PropTypes.shape({
   Id: PropTypes.string.isRequired,
   Title: PropTypes.string.isRequired,
   Content: PropTypes.string.isRequired,
-  LikesCount: PropTypes.number.isRequired,
+  LikesCount: PropTypes.number,
   Likes: PropTypes.arrayOf(PropTypes.string).isRequired,
   PublishedDate: PropTypes.string.isRequired,
   UpdatedDate: PropTypes.string.isRequired,
   Author: PropTypes.string.isRequired,
   Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   CommentCount: PropTypes.number.isRequired,
-  Commenters: PropTypes.arrayOf(PropTypes.string).isRequired,
+  Commenters: PropTypes.arrayOf(PropTypes.string),
 });
 
 ExpandedCard.propTypes = {
