@@ -11,9 +11,8 @@ export function useAuth() {
 export const AuthProvider = ({ children }) => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const initialState = {
-    user: {
-      username: storedUser ? storedUser.username : null,
-    },
+    username: storedUser ? storedUser.username : null,
+    avatar: storedUser ? storedUser.avatar : null,
     isAuthenticated: Boolean(storedUser),
     isLoading: false,
     token: storedUser ? storedUser.token : null,
@@ -42,14 +41,20 @@ export const AuthProvider = ({ children }) => {
 
       console.log("Login successful:", response.data);
 
-      const userData = {
-        username: response.data.data.User.Id,
-        token: response.data.data.Jwt,
-      };
+      if (response) {
+        const avatarRequest = response.data.data.User.Avatar;
+        await axios.get(`/static/${avatarRequest}`);
 
-      localStorage.setItem("user", JSON.stringify(userData));
-      dispatch({ type: SET_USER, payload: userData });
-      return true;
+        const userData = {
+          username: response.data.data.User.Id,
+          token: response.data.data.Jwt,
+          avatar: `/static/${avatarRequest}`,
+        };
+
+        localStorage.setItem("user", JSON.stringify(userData));
+        dispatch({ type: SET_USER, payload: userData });
+        return true;
+      }
     } catch (error) {
       console.error("Login failed:", error);
     }

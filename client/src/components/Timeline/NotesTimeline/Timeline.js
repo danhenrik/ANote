@@ -20,9 +20,7 @@ const Timeline = () => {
         if (params.id) {
           fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
         } else {
-          fetchedNotes = await notesApi.fetchNotesByAuthor(
-            userAuth.user.username
-          );
+          fetchedNotes = await notesApi.fetchNotesByAuthor(userAuth.username);
         }
       }
     } else {
