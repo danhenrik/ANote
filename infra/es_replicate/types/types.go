@@ -21,9 +21,10 @@ type Update struct {
 }
 
 type Community struct {
-	RId  string `json:"r_id"`
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	RId        string  `json:"r_id"`
+	Id         string  `json:"id"`
+	Name       string  `json:"name"`
+	Background *string `json:"background,omitempty"`
 }
 
 type Tag struct {

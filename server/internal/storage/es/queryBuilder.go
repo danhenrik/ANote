@@ -110,6 +110,14 @@ func (qb *QueryBuilder) Query() ([]any, *errors.AppError) {
 	log.Println("[Query] Query:", qb.query.String())
 	res, err := qb.client.Search(qb.index, qb.query.String())
 
+	// reset query and sort
+	qb.sort.Reset()
+	qb.sort.WriteString(`"sort":[`)
+	qb.query.Reset()
+	qb.query.WriteString(`{"query":{"bool":{"should": [{"bool":{"must":[`)
+	qb.queryCount = 0
+	qb.sortCount = 0
+
 	if err != nil {
 		log.Printf("[Query] Error getting response: %s", err)
 		return nil, errors.NewAppError(500, err.Error())

@@ -6,6 +6,7 @@ import (
 	"anote/internal/interfaces"
 	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type NoteQueryBuilder struct {
@@ -97,8 +98,9 @@ func (qb *NoteQueryBuilder) Query() ([]domain.FilteredNote, *errors.AppError) {
 	}
 	notes := []domain.FilteredNote{}
 	for _, n := range noteArr {
+		log.Println(n)
 		note := domain.FilteredNote{}
-		err := json.Unmarshal(n.([]byte), &note)
+		err := json.Unmarshal(n.(json.RawMessage), &note)
 		if err != nil {
 			return nil, errors.NewAppError(500, "Could not parse query result")
 		}
