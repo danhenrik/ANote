@@ -20,7 +20,47 @@ const mapApiNotesData = (data) => {
   }));
 };
 
-const fetchNotesFeedRequest = async (api, page) => {
+const mapApiNotesDataFeed = (data, auth) => {
+  return data
+    .filter((item) => item.author === auth.username || item.communities)
+    .map((item) => ({
+      Id: item.id,
+      Title: item.title,
+      Content: item.content,
+      PublishedDate: item.created_at ? item.created_at : item.published_date,
+      UpdatedDate: item.updated_at ? item.updated_at : item.updated_date,
+      Author: item.author_id ? item.author_id : item.author,
+      Tags: item.tags ? item.tags.map((tag) => tag.name) : [],
+      Communities: item.communities
+        ? item.communities.map((community) => community.name)
+        : [],
+      LikeCount: item.likes_count,
+      CommentCount: item.comment_count,
+      Likes: item.likes ? item.likes : [],
+    }));
+};
+
+const mapApiNotesDataInit = (data) => {
+  return data
+    .filter((item) => item.communities)
+    .map((item) => ({
+      Id: item.id,
+      Title: item.title,
+      Content: item.content,
+      PublishedDate: item.created_at ? item.created_at : item.published_date,
+      UpdatedDate: item.updated_at ? item.updated_at : item.updated_date,
+      Author: item.author_id ? item.author_id : item.author,
+      Tags: item.tags ? item.tags.map((tag) => tag.name) : [],
+      Communities: item.communities
+        ? item.communities.map((community) => community.name)
+        : [],
+      LikeCount: item.likes_count,
+      CommentCount: item.comment_count,
+      Likes: item.likes ? item.likes : [],
+    }));
+};
+
+const fetchNotesFeedRequest = async (api, page, auth) => {
   try {
     const response = await api.get("/notes/feed", {
       params: {
@@ -29,7 +69,7 @@ const fetchNotesFeedRequest = async (api, page) => {
       },
     });
     if (response.data.data) {
-      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
+      return mapApiNotesDataFeed(response.data.data, auth);
     } else {
       return [];
     }
@@ -48,7 +88,7 @@ const fetchNotesRequest = async (api, page) => {
       },
     });
     if (response.data.data) {
-      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
+      return mapApiNotesDataInit(response.data.data, page, PAGE_SIZE);
     } else {
       return [];
     }
@@ -68,7 +108,7 @@ const fetchNotesByCommunityRequest = async (api, page, id) => {
       },
     });
     if (response.data.data) {
-      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
+      return mapApiNotesData(response.data.data);
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -117,8 +157,8 @@ const deleteNoteRequest = async (api, noteId) => {
 const useNotes = () => {
   const api = useApi();
 
-  const fetchNotesFeed = (page) => {
-    return fetchNotesFeedRequest(api, page);
+  const fetchNotesFeed = (page, auth) => {
+    return fetchNotesFeedRequest(api, page, auth);
   };
   const fetchNotes = (page) => {
     return fetchNotesRequest(api, page);

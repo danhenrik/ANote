@@ -37,7 +37,7 @@ const CommunityCard = ({ community, isFollowing, communityFollowHandler }) => {
   const navigationHandler = (event) => {
     if (event.target.closest("a")) return;
     if (event.target.closest("#community-follow")) return;
-    navigate(`/communities/${community.Name}`);
+    navigate(`/communities/${community.Name}?communityId=${community.Id}`);
   };
   const navigate = useNavigate();
   return (

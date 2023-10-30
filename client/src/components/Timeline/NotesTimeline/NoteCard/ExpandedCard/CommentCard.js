@@ -44,7 +44,7 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
                 style={{ height: "40px", width: "40px" }}
                 variant='square'
               >
-                N
+                {comment.Author}
               </CustomAvatar>
             </AvatarContainer>
             <AvatarUsernames>

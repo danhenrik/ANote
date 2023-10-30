@@ -110,6 +110,7 @@ const SearchForm = ({ closeModal }) => {
       const searchParams = queryParams.join("&");
 
       navigate(`/timeline?search=true&${searchParams}`);
+      closeModal();
     },
     validateOnChange: false,
     validateOnBlur: false,

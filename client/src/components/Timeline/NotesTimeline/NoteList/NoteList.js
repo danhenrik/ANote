@@ -8,7 +8,7 @@ import LoginForm from "../../../AccessControl/Login/LoginForm";
 import TimelineList from "../../TimelineList";
 import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import EmptyNotes from "../EmptyNotes";
 
 const NoteList = ({
@@ -22,6 +22,7 @@ const NoteList = ({
   const communitiesApi = useCommunities();
   const [isFollowing, setIsFollowing] = useState();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (auth.isAuthenticated) {
@@ -39,7 +40,9 @@ const NoteList = ({
   }, [useParams().id]);
 
   const followCommunity = async () => {
-    const response = communitiesApi.followCommunity(communityId);
+    const response = communitiesApi.followCommunity(
+      searchParams.get("communityId")
+    );
     if (response) {
       setIsFollowing(true);
     }
@@ -57,7 +60,7 @@ const NoteList = ({
           ></NoteForm>
         );
       } else {
-        followCommunity(communityId);
+        followCommunity(searchParams.get("communityId"));
       }
     } else {
       modal.openModal(<LoginForm closeModal={modal.closeModal}></LoginForm>);

@@ -106,6 +106,7 @@ services:
 
   es_replicate:
     container_name: es_replicate
+    restart: always
     build:
       dockerfile: dockerfile
       context: ./infra/es_replicate

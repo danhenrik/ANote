@@ -91,7 +91,12 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
           };
           const fetchedNotes = await notesApi.createNote(note);
           if (fetchedNotes) {
-            notes.push(fetchedNotes);
+            if (notes) {
+              notes.push(fetchedNotes);
+            } else {
+              notes = [];
+              notes.push(fetchedNotes);
+            }
             setNotesHandler(notes);
           }
         }

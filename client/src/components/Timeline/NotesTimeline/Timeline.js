@@ -8,7 +8,7 @@ import { Box, Button } from "@mui/material";
 const Timeline = () => {
   const notesApi = useNotes();
   const [notes, setNotes] = useState([]);
-  const [page, setPage] = useState(1); // Initialize the page state with 1
+  const [page, setPage] = useState(1);
   const userAuth = useAuth();
   const params = useParams();
   const [searchParams] = useSearchParams();
@@ -28,19 +28,20 @@ const Timeline = () => {
     let fetchedNotes = [];
     if (searchParams.get("search") && searchParams.get("search") == "true") {
       const queryParams = extractQueryParams(searchParams);
-      fetchedNotes = await notesApi.fetchNotesFilter(page, queryParams); // Use the 'page' state here
+      fetchedNotes = await notesApi.fetchNotesFilter(page, queryParams);
+      setNotes(fetchedNotes);
     } else {
       if (userAuth.isAuthenticated) {
         if (searchParams.get("world") && searchParams.get("world") == "true") {
-          fetchedNotes = await notesApi.fetchNotes(page); // Use the 'page' state here
+          fetchedNotes = await notesApi.fetchNotes(page);
         } else {
           if (params.id) {
             fetchedNotes = await notesApi.fetchNotesByCommunity(
               page,
               params.id
-            ); // Use the 'page' state here
+            );
           } else {
-            fetchedNotes = await notesApi.fetchNotesFeed(page); // Use the 'page' state here
+            fetchedNotes = await notesApi.fetchNotesFeed(page, userAuth);
           }
         }
       } else {
@@ -75,7 +76,7 @@ const Timeline = () => {
   return (
     <div>
       <NoteList
-        communityId={params.id}
+        communityId={searchParams.get("communityId")}
         setNotesHandler={setNotesHandler}
         deleteNotesHandler={deleteNotesHandler}
         notes={notes}

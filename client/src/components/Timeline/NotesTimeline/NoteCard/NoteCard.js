@@ -106,7 +106,7 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
           style={{ marginTop: "10px" }}
         >
           <AvatarContainer>
-            <CustomAvatar variant='square'>N</CustomAvatar>
+            <CustomAvatar variant='square'>{note.Author}</CustomAvatar>
           </AvatarContainer>
           <AvatarUsernames>
             <AvatarAuthor>{note.Author}</AvatarAuthor>
@@ -145,6 +145,18 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
         ) : (
           <></>
         )}
+        {note.Communities && note.Communities.length > 0 && (
+          <>
+            <Typography color='black'>
+              Comunidade: {note.Communities}
+            </Typography>
+          </>
+        )}
+        {note.Communities && note.Communities.length == 0 && (
+          <>
+            <Typography color='textSecondary'>Sem Comunidade</Typography>
+          </>
+        )}
         <Typography color='textSecondary'>
           {formatedDate.day} às {formatedDate.hour}
         </Typography>
@@ -163,6 +175,7 @@ const noteShape = PropTypes.shape({
   Tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   CommentCount: PropTypes.number.isRequired,
   LikeCount: PropTypes.number.isRequired,
+  Communities: PropTypes.any,
 });
 
 NoteCard.propTypes = {

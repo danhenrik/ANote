@@ -28,7 +28,7 @@ const Tags = ({ tags, hasLink = true, hasDelete, deletionHandler }) => {
             )}
           </TagBlock>
         ) : (
-          <TagLink key={index} to={`/timeline?search=true&tag=${tag}`}>
+          <TagLink key={index} to={`/timeline?search=true&tags=${tag}`}>
             {tag}
           </TagLink>
         )
