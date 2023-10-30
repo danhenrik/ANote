@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
@@ -8,9 +7,7 @@ import {
   AvatarBackground,
   AvatarContainer,
   AvatarUsernames,
-  ContentContainer,
   CustomAvatar,
-  StyledLink,
 } from "../NoteCard.styled";
 import axios from "axios";
 import { Card, Container } from "@mui/material";

@@ -3,7 +3,6 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import { Container, IconButton, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
 const ModalComponent = ({ handleClose, open, content, style }) => {
   return (
     <Modal

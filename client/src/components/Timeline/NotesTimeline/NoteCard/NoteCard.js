@@ -1,6 +1,7 @@
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   AvatarAuthor,
   AvatarBackground,
@@ -22,12 +23,16 @@ import LikeButton from "./LikeButton";
 import formatDate from "../../../../util/formatDate";
 import { useAuth } from "../../../../store/auth-context";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import useNotes from "../../../../api/useNotes";
 
-const NoteCard = ({ note }) => {
+const NoteCard = ({ note, deleteNoteHandler }) => {
   var randomColor = require("randomcolor");
   const modal = useModal();
   const userAuth = useAuth();
   const isFollowing = useState(false);
+  const notesApi = useNotes();
 
   const [randomColorElement] = useState(
     randomColor({ luminosity: "light", format: "rgb" })
@@ -37,6 +42,7 @@ const NoteCard = ({ note }) => {
   const handleExpandedNote = (event) => {
     if (event.target.closest("a")) return;
     if (event.target.closest("#like-button")) return;
+    if (event.target.closest("#delete-button")) return;
     modal.openModal(
       <ExpandedCard
         note={note}
@@ -58,12 +64,36 @@ const NoteCard = ({ note }) => {
     initComments();
   }, []);
 
+  const deleteNote = async () => {
+    const id = note.Id;
+    const response = await notesApi.deleteNote(note.Id);
+    if (response) {
+      deleteNoteHandler(id);
+    }
+  };
+
   return (
     <NotesCardContainer
       onClick={handleExpandedNote}
       sx={{ minWidth: "300px", maxWidth: "300px" }}
     >
       <CardContent>
+        {note.Author === userAuth.username && (
+          <IconButton
+            onClick={deleteNote}
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              cursor: "pointer",
+              color: "red",
+              display: "block",
+              transition: "color 0.3s, transform 0.3s",
+            }}
+          >
+            <DeleteIcon id='delete-button' />
+          </IconButton>
+        )}
         <Title variant='h7' component='div'>
           {note.Title}
         </Title>
@@ -130,6 +160,7 @@ const noteShape = PropTypes.shape({
 
 NoteCard.propTypes = {
   note: noteShape.isRequired,
+  deleteNoteHandler: PropTypes.func.isRequired,
 };
 
 export default NoteCard;

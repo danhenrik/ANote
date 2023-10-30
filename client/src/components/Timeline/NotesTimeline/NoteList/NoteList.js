@@ -11,7 +11,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import EmptyNotes from "../EmptyNotes";
 
-const NoteList = ({ notes, communityId, setNotesHandler }) => {
+const NoteList = ({
+  notes,
+  communityId,
+  setNotesHandler,
+  deleteNotesHandler,
+}) => {
   const modal = useModal();
   const auth = useAuth();
   const communitiesApi = useCommunities();
@@ -73,7 +78,7 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
         notes.map((note) => (
           <Grid item key={note.Id}>
             <ButtonBase>
-              <NoteCard note={note} />
+              <NoteCard deleteNoteHandler={deleteNotesHandler} note={note} />
             </ButtonBase>
           </Grid>
         ))
@@ -105,6 +110,7 @@ NoteList.propTypes = {
   notes: PropTypes.arrayOf(noteShape),
   communityId: PropTypes.any,
   setNotesHandler: PropTypes.func.isRequired,
+  deleteNotesHandler: PropTypes.func.isRequired,
 };
 
 export default NoteList;

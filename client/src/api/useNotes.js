@@ -126,6 +126,16 @@ const createNoteRequest = async (api, note) => {
   }
 };
 
+const deleteNoteRequest = async (api, noteId) => {
+  try {
+    const response = await api.delete(`/notes/${noteId}`);
+    return response;
+  } catch (error) {
+    console.error(`Error deleting note with ID ${noteId}:`, error);
+    throw error;
+  }
+};
+
 const useNotes = () => {
   const api = useApi();
 
@@ -148,12 +158,17 @@ const useNotes = () => {
     return createNoteRequest(api, note);
   };
 
+  const deleteNote = (noteId) => {
+    return deleteNoteRequest(api, noteId);
+  };
+
   return {
     fetchNotesFeed,
     fetchNotes,
     createNote,
     fetchNotesFilter,
     fetchNotesByCommunity,
+    deleteNote,
   };
 };
 

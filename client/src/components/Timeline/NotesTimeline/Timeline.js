@@ -39,7 +39,6 @@ const Timeline = () => {
           }
         }
       } else {
-        alert("here");
         if (params.id) {
           fetchedNotes = await notesApi.fetchNotesByCommunity(1, params.id);
         } else {
@@ -55,6 +54,12 @@ const Timeline = () => {
     fetchAndSetNotes(notes);
   };
 
+  const deleteNotesHandler = (id) => {
+    const updatedNotes = notes.filter((note) => note.Id !== id);
+
+    setNotes(updatedNotes);
+  };
+
   useEffect(() => {
     fetchAndSetNotes();
   }, [userAuth.isAuthenticated, searchParams, params.id]);
@@ -63,6 +68,7 @@ const Timeline = () => {
     <NoteList
       communityId={params.id}
       setNotesHandler={setNotesHandler}
+      deleteNotesHandler={deleteNotesHandler}
       notes={notes}
     ></NoteList>
   );

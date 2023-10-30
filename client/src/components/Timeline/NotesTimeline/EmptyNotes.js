@@ -18,18 +18,18 @@ const EmptyNotes = ({ children, clickHandler }) => {
           sx={{ width: "100%", height: "100%", textAlign: "center" }}
         >
           <Paper
-            elevation={3} // Adjust the elevation for the shadow effect
+            elevation={3}
             sx={{
               padding: "30px",
               borderRadius: "10px",
               borderColor: "lightgray",
               borderWidth: "4px",
               borderStyle: "solid",
-              backgroundColor: "#f5f5f5", // Lighter gray background
+              backgroundColor: "#f5f5f5",
               color: "black",
               transition: "background-color 0.3s",
               "&:hover": {
-                backgroundColor: "lightgray", // Lighter gray background on hover
+                backgroundColor: "lightgray",
               },
             }}
           >
