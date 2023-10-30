@@ -7,7 +7,6 @@ import {
   Title,
 } from "./CommunityCard.styled"; // Adjust the import for your community card styles
 import { useNavigate } from "react-router-dom";
-import { Link } from "@mui/material";
 import useCommunities from "../../../../api/useCommunities";
 import { useState } from "react";
 import { useAuth } from "../../../../store/auth-context";

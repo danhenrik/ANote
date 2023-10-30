@@ -11,8 +11,14 @@ import NavButtons from "./NavButtons";
 import PropTypes from "prop-types";
 import { ButtonBox, ListLink } from "./NavList.styled";
 import { useAuth } from "../../../store/auth-context";
+import { useState } from "react";
 
-const NavList = ({ handleLoginModal, handleSignupModal, handleDrawer }) => {
+const NavList = ({
+  handleLoginModal,
+  handleSignupModal,
+  handleDrawer,
+  avatarPreview,
+}) => {
   const auth = useAuth();
 
   const handleLogout = () => {
@@ -44,7 +50,7 @@ const NavList = ({ handleLoginModal, handleSignupModal, handleDrawer }) => {
         <Avatar
           sx={{ bgcolor: "orange", width: "100px", height: "100px" }}
           alt='Remy Sharp'
-          src={auth.avatar}
+          src={avatarPreview}
         ></Avatar>
       </div>
       <Divider sx={{ backgroundColor: "white" }} />
@@ -83,6 +89,7 @@ NavList.propTypes = {
   handleLoginModal: PropTypes.func.isRequired,
   handleSignupModal: PropTypes.func.isRequired,
   handleDrawer: PropTypes.func.isRequired,
+  avatarPreview: PropTypes.any,
 };
 
 export default NavList;

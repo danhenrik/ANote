@@ -16,7 +16,7 @@ import {
 } from "./NavBar.styled";
 import NavList from "./NavList";
 import { PropTypes } from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchModalComponent from "../Search/SearchModalComponent";
 import { Link } from "react-router-dom";
 import NavButtons from "./NavButtons";
@@ -31,6 +31,7 @@ const NavBar = ({ open, setOpen }) => {
   const theme = useTheme();
   const auth = useAuth();
   const [openSearch, setOpenSearch] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState(auth.avatar);
   const modal = useModal();
 
   const handleLoginModal = () => {
@@ -48,6 +49,10 @@ const NavBar = ({ open, setOpen }) => {
   const handleOpenSearch = () => setOpenSearch(true);
 
   const handleCloseSearch = () => setOpenSearch(false);
+
+  useEffect(() => {
+    setAvatarPreview(auth.avatar);
+  }, [auth.avatar]);
 
   return (
     <>
@@ -116,6 +121,7 @@ const NavBar = ({ open, setOpen }) => {
             handleLoginModal={handleLoginModal}
             handleSignupModal={handleSignupModal}
             handleDrawer={handleDrawer}
+            avatarPreview={avatarPreview}
           />
         </Drawer>
       )}

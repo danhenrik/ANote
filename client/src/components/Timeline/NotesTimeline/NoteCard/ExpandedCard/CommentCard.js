@@ -53,7 +53,7 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
             <AvatarUsernames>
               <AvatarAuthor>{comment.Author}</AvatarAuthor>
             </AvatarUsernames>
-            {comment.Author === userAuth.user.username && (
+            {comment.Author === userAuth.username && (
               <DeleteIcon
                 onClick={deleteComment}
                 style={{

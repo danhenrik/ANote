@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, Box, Typography, styled } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import {
@@ -9,23 +9,9 @@ import {
 } from "../../../../common/FormStyling.styled";
 import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
-import useCommunities from "../../../../api/useCommunities";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { authReducer } from "../../../../store/authReducer";
 import axios from "axios";
 import { useAuth } from "../../../../store/auth-context";
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
 
 const validationSchema = yup.object({
   name: yup.string("Insira o nome").required("Nome é obrigatório"),
@@ -33,9 +19,8 @@ const validationSchema = yup.object({
 });
 
 const CommunityForm = ({ communities, setCommunitiesHandler }) => {
-  const [selectedFile, setSelectedFile] = useState("");
+  const [selectedFile, setSelectedFile] = useState();
   const auth = useAuth();
-  const communitiesApi = useCommunities();
   const [avatarPreview, setAvatarPreview] = useState("/avatars/default.png");
   const modal = useModal();
   const formik = useFormik({
@@ -95,7 +80,20 @@ const CommunityForm = ({ communities, setCommunitiesHandler }) => {
           justifyContent='center'
           flexDirection='column'
         >
-          <Avatar size='md' src={avatarPreview} />
+          {selectedFile && (
+            <div style={{ marginTop: "10px" }}>
+              <img
+                style={{
+                  margin: "auto",
+                  display: "block",
+                  width: "250px",
+                  height: "250px",
+                }}
+                size='md'
+                src={avatarPreview}
+              />
+            </div>
+          )}
 
           <Button
             variant='contained'

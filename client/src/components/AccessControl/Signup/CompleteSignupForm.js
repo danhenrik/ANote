@@ -161,7 +161,20 @@ const CompleteSignupForm = () => {
               justifyContent='center'
               flexDirection='column'
             >
-              <Avatar size='md' src={avatarPreview} />
+              {selectedFile && (
+                <div style={{ marginTop: "10px" }}>
+                  <Avatar
+                    style={{
+                      margin: "auto",
+                      display: "block",
+                      width: "150px",
+                      height: "150px",
+                    }}
+                    size='md'
+                    src={avatarPreview}
+                  />
+                </div>
+              )}
 
               <Button
                 variant='contained'

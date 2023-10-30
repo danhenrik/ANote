@@ -53,7 +53,7 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const commentData = {
-          user_id: userAuth.user.username,
+          user_id: userAuth.username,
           note_id: note.Id,
           content: values.comment,
         };
