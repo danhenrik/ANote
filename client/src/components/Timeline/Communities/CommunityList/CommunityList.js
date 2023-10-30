@@ -8,6 +8,7 @@ import LoginForm from "../../../AccessControl/Login/LoginForm";
 import CommunityCard from "../CommunityCard/CommunityCard";
 import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";
+import EmptyNotes from "../../NotesTimeline/EmptyNotes";
 
 const CommunityList = ({ communities, setCommunitiesHandler }) => {
   const [userCommunities, setUserCommunities] = useState([]);
@@ -62,17 +63,23 @@ const CommunityList = ({ communities, setCommunitiesHandler }) => {
       handleAddModal={handleAddCommunityModal}
       addButtonText={buttonText}
     >
-      {communities.map((community) => (
-        <Grid item key={community.Id}>
-          <ButtonBase>
-            <CommunityCard
-              isFollowing={checkFollowStatus(community.Id)}
-              community={community}
-              communityFollowHandler={communityFollowHandler}
-            ></CommunityCard>
-          </ButtonBase>
-        </Grid>
-      ))}
+      {communities && communities.length ? (
+        communities.map((community) => (
+          <Grid item key={community.Id}>
+            <ButtonBase>
+              <CommunityCard
+                isFollowing={checkFollowStatus(community.Id)}
+                community={community}
+                communityFollowHandler={communityFollowHandler}
+              ></CommunityCard>
+            </ButtonBase>
+          </Grid>
+        ))
+      ) : (
+        <EmptyNotes clickHandler={handleAddCommunityModal}>
+          Nenhuma Comunidade Aqui, Mas Você Pode Criar ou Seguir uma
+        </EmptyNotes>
+      )}
     </TimelineList>
   );
 };

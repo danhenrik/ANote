@@ -79,7 +79,7 @@ const NoteList = ({ notes, communityId, setNotesHandler }) => {
         ))
       ) : (
         <EmptyNotes clickHandler={handleAddNoteModal}>
-          Nenhuma Nota Aqui. Adicione Uma
+          Nenhuma Nota Aqui, Mas Você Pode Adicionar Uma!
         </EmptyNotes>
       )}
     </TimelineList>

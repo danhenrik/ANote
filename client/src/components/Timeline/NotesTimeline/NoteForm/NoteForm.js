@@ -80,7 +80,7 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
         }
       };
 
-      const postNotes = async () => {
+      const postNotes = async (notes) => {
         const postedTags = await postTags(tagList);
         if (postedTags) {
           const note = {
@@ -89,7 +89,6 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
             tags: postedTags,
             communities: communities,
           };
-          alert(JSON.stringify(note));
           const fetchedNotes = await notesApi.createNote(note);
           if (fetchedNotes) {
             notes.push(fetchedNotes);
@@ -97,7 +96,7 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
           }
         }
       };
-      postNotes();
+      postNotes(notes);
       modal.closeModal();
     },
   });

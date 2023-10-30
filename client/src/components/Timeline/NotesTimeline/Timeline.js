@@ -13,10 +13,7 @@ const Timeline = () => {
 
   function extractQueryParams(searchParams) {
     const queryParams = {};
-
-    // Iterate through all query parameters
     searchParams.forEach((value, key) => {
-      // Check if the key is not "search" or "world"
       if (key !== "search" && key !== "world") {
         queryParams[key] = value;
       }
@@ -36,19 +33,21 @@ const Timeline = () => {
           fetchedNotes = await notesApi.fetchNotes(1);
         } else {
           if (params.id) {
-            fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+            fetchedNotes = await notesApi.fetchNotesByCommunity(1, params.id);
           } else {
             fetchedNotes = await notesApi.fetchNotesFeed(1);
           }
         }
       } else {
+        alert("here");
         if (params.id) {
-          fetchedNotes = await notesApi.fetchNotesByCommunity(params.id);
+          fetchedNotes = await notesApi.fetchNotesByCommunity(1, params.id);
         } else {
           fetchedNotes = await notesApi.fetchNotes(1);
         }
       }
     }
+
     setNotes(fetchedNotes);
   };
 

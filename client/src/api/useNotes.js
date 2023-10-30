@@ -20,7 +20,7 @@ const mapApiNotesData = (data) => {
     Communities: item.communities
       ? item.communities.map((community) => community.name)
       : [],
-    LikeCount: item.likes_count ? item.likes_count : item.like_count,
+    LikeCount: item.likes_count,
     CommentCount: item.comment_count,
     Likes: item.likes ? item.likes : [],
   }));
@@ -40,6 +40,8 @@ const fetchNotesFeedRequest = async (api, page) => {
         page,
         PAGE_SIZE
       );
+    } else {
+      return [];
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -61,6 +63,8 @@ const fetchNotesRequest = async (api, page) => {
         page,
         PAGE_SIZE
       );
+    } else {
+      return [];
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -68,20 +72,22 @@ const fetchNotesRequest = async (api, page) => {
   }
 };
 
-const fetchNotesByAuthorRequest = async (api, id) => {
+const fetchNotesByCommunityRequest = async (api, page, id) => {
   try {
-    const response = await api.get(`/notes/author/${id}`);
-    return mapApiNotesData(response.data.data);
-  } catch (error) {
-    console.error("Error fetching notes:", error);
-    throw error;
-  }
-};
-
-const fetchNotesByCommunityRequest = async (api, id) => {
-  try {
-    const response = await api.get(`/notes/community/${id}`);
-    return mapApiNotesData(response.data.data);
+    const response = await api.get("/notes", {
+      params: {
+        page: page,
+        size: PAGE_SIZE,
+        communities: id,
+      },
+    });
+    if (response.data.data) {
+      return handlePagination(
+        mapApiNotesData(response.data.data),
+        page,
+        PAGE_SIZE
+      );
+    }
   } catch (error) {
     console.error("Error fetching notes:", error);
     throw error;
@@ -130,12 +136,8 @@ const useNotes = () => {
     return fetchNotesRequest(api, page);
   };
 
-  const fetchNotesByAuthor = (id) => {
-    return fetchNotesByAuthorRequest(api, id);
-  };
-
-  const fetchNotesByCommunity = (id) => {
-    return fetchNotesByCommunityRequest(api, id);
+  const fetchNotesByCommunity = (page, id) => {
+    return fetchNotesByCommunityRequest(api, page, id);
   };
 
   const fetchNotesFilter = (page, filters) => {
@@ -151,7 +153,6 @@ const useNotes = () => {
     fetchNotes,
     createNote,
     fetchNotesFilter,
-    fetchNotesByAuthor,
     fetchNotesByCommunity,
   };
 };
