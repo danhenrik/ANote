@@ -85,18 +85,16 @@ As portas são [Elasticsearch](https://github.com/danhenrik/ANote/blob/main/serv
 <a href="https://www.figma.com/file/Xcmx6LAl2FMChm8Mb5psoX/ANote?type=design&node-id=0%3A1&mode=design&t=iqdVrLYjdwgdlkHh-1">Protótipo</a>
 
 ## 1st Sprint Backlog
-1. Como usuário, quero me cadastrar no sistema
+1. Como usuário, quero me cadastrar no sistema - IMPLEMENTADO
 
-Tarefas e Responsáveis:
   - Instalar tecnologias (React, PostgreSQL, Docker) [Daniel];
   - Criar tabelas relacionadas ao usuário no banco e configurá-las no sistema [Samuel];
   - Criar e testar rota que implementa a tela de cadastro do usuário [Samuel];
   - Implementar no backend a lógica de cadastrar usuário [Daniel];
   - Criar tela de cadastrar usuário [Julio];
 
-2. Como usuário, quero me logar usando minha conta Google ou Facebook
+2. Como usuário, quero me logar usando minha conta Google ou Facebook - NÂO IMPLEMENTADO
 
-Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
   - Criar e testar rota que implementa a tela de logar usuário cadastrado [Samuel];
   - Criar e testar rota que implementa a tela de logar usuário pelo Google ou Facebook [Samuel];
@@ -105,29 +103,26 @@ Tarefas e Responsáveis:
   - Criar tela de logar usuário cadastrado [Julio];
   - Criar tela de logar usuário pelo Google ou Facebook [Julio];
 
-3. Como usuário cadastrado, quero recuperar minha senha
+3. Como usuário cadastrado, quero recuperar minha senha - IMPLEMENTADO PARCIALMENTE (apenas no backend)
 
-Tarefas e Responsáveis:
   - Criar e testar rota que recupera a senha do usuário [Samuel];
   - Implementar no backend a lógica de recuperar senha do usuário [Daniel];
   - Criar tela de recuperar senha do usuário [Julio];
 
-4. Como usuário logado, quero criar, editar ou excluir anotações
+4. Como usuário logado, quero criar, editar ou excluir anotações - IMPLEMENTADO
 
-Tarefas e Responsáveis:
   - Criar tabelas relacionadas às anotações no banco e configurá-las no sistema [Samuel];
   - Criar e testar rotas que cria, edita e exclui anotações [Samuel];
   - Implementar no backend a lógica de cadastrar, editar e excluir usuário [Daniel];
   - Criar tela inicial de criar, editar ou excluir anotações [Julio];
 
-5. Como usuário, quero filtrar as anotações baseado em data de publicação, autor, conteúdo, título, menção e comunidade
+5. Como usuário, quero filtrar as anotações baseado em data de publicação, autor, conteúdo, título, menção e comunidade - IMPLEMENTADO
 
-Tarefas e Responsáveis:
   - Criar e testar rota que filtra anotações [Samuel];
   - Implementar no backend a lógica de filtrar anotações [Daniel];
   - Criar tela de filtrar anotações [Julio];
 
-6. Como usuário logado, quero criar, edtiar ou excluir comunidades
+6. Como usuário logado, quero criar, edtiar ou excluir comunidades - IMPLEMENTADO
 
 Tarefas e Responsáveis:
   - Criar tabelas relacionadas às comunidades no banco e configurá-las no sistema [Samuel];
@@ -135,7 +130,7 @@ Tarefas e Responsáveis:
   - Implementar no backend a lógica de criar, editar e excluir comunidades [Daniel];
   - Criar tela de cadastrar, editar e excluir comunidades [Julio];
 
-7. Como usuário logado, quero compartilhar uma anotação pública
+7. Como usuário logado, quero compartilhar uma anotação pública - IMPLEMENTADO PARCIALMENTE (apenas para comunidades)
 
 Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
@@ -143,7 +138,7 @@ Tarefas e Responsáveis:
   - Implementar no backend a lógica de compartilhar anotações [Daniel];
   - Criar tela de compartilhar anotações [Julio];
 
-8. Como usuário logado, quero curtir/comentar anotações
+8. Como usuário logado, quero curtir/comentar anotações - IMPLEMENTADO
 
 Tarefas e Responsáveis:
   - Criar tabelas da história no banco e configurá-las no sistema [Samuel];
