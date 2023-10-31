@@ -21,7 +21,7 @@ func CreateCommentController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[CommentController] Error on create comment:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func DeleteCommentController(request httpAdapter.Request) httpAdapter.Response {
@@ -35,7 +35,7 @@ func DeleteCommentController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[CommentController] Error on delete comment:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func GetNoteCommentsController(request httpAdapter.Request) httpAdapter.Response {

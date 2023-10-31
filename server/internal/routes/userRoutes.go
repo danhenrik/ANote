@@ -28,7 +28,7 @@ func CreateUserController(request httpAdapter.Request) httpAdapter.Response {
 			return httpAdapter.NewErrorResponse(201, "Saved user but failed to save avatar")
 		}
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func DeleteUserAvatarController(request httpAdapter.Request) httpAdapter.Response {
@@ -36,7 +36,7 @@ func DeleteUserAvatarController(request httpAdapter.Request) httpAdapter.Respons
 		log.Println("[UserController] Error on delete avatar:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func UpdateUserAvatarController(request httpAdapter.Request) httpAdapter.Response {
@@ -44,7 +44,7 @@ func UpdateUserAvatarController(request httpAdapter.Request) httpAdapter.Respons
 		log.Println("[UserController] Error on save avatar:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func GetAllUsersController(request httpAdapter.Request) httpAdapter.Response {
@@ -106,7 +106,7 @@ func UpdateUserEmailController(request httpAdapter.Request) httpAdapter.Response
 		log.Println("[UserController] Error on update email:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func UpdateUserPasswordController(request httpAdapter.Request) httpAdapter.Response {
@@ -124,7 +124,7 @@ func UpdateUserPasswordController(request httpAdapter.Request) httpAdapter.Respo
 		log.Println("[UserController] Error on update password:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func DeleteUserController(request httpAdapter.Request) httpAdapter.Response {
@@ -133,5 +133,26 @@ func DeleteUserController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[UserController] Error on delete user:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
+}
+
+func GetUserAvatarController(request httpAdapter.Request) httpAdapter.Response {
+	username, ok := request.GetSingleParam("username")
+	if !ok || username == "" {
+		return httpAdapter.NewErrorResponse(400, "Invalid username")
+	}
+
+	user, err := container.UserService.GetByUsername(username)
+	if err != nil {
+		log.Println("[UserController] Error on get avatar:", err)
+		return httpAdapter.NewErrorResponse(err.Status, err.Message)
+	}
+
+	if user.Avatar == nil || *user.Avatar == "" {
+		return httpAdapter.NewErrorResponse(404, "Avatar not found")
+	}
+
+	var filename string = *user.Avatar
+	request.Raw.File("./internal/assets/" + filename)
+	return httpAdapter.NewNoContentResponse()
 }

@@ -57,7 +57,7 @@ func DeleteCommunityBackgroundController(request httpAdapter.Request) httpAdapte
 		log.Println("[CommunityController] Error on delete community background:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func UpdateCommunityBackgroundController(request httpAdapter.Request) httpAdapter.Response {
@@ -76,7 +76,7 @@ func UpdateCommunityBackgroundController(request httpAdapter.Request) httpAdapte
 		log.Println("[CommunityController] Error on save community background:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func GetAllCommunitiesController(request httpAdapter.Request) httpAdapter.Response {
@@ -109,7 +109,7 @@ func DeleteCommunityController(request httpAdapter.Request) httpAdapter.Response
 		log.Println("[CommunityController] Error on delete tag:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func JoinCommunityController(request httpAdapter.Request) httpAdapter.Response {
@@ -136,7 +136,7 @@ func JoinCommunityController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[CommunityController] Error on join community: user not found")
 		return httpAdapter.NewErrorResponse(500, "Could not join community")
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func LeaveCommunityController(request httpAdapter.Request) httpAdapter.Response {
@@ -168,5 +168,5 @@ func LeaveCommunityController(request httpAdapter.Request) httpAdapter.Response 
 		log.Println("[CommunityController] Error on leave community: user not found")
 		return httpAdapter.NewErrorResponse(400, "Already left community")
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }

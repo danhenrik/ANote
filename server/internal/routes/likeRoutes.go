@@ -21,7 +21,7 @@ func CreateLikeController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[LikeController] Error on create like:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func DeleteLikeController(request httpAdapter.Request) httpAdapter.Response {
@@ -36,7 +36,7 @@ func DeleteLikeController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[LikeController] Error on delete like:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func GetLikeController(request httpAdapter.Request) httpAdapter.Response {

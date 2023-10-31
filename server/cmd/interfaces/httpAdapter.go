@@ -115,7 +115,7 @@ func NewSuccessResponse(statusCode uint, data any) Response {
 	}
 }
 
-func NewNoContentRespone() Response {
+func NewNoContentResponse() Response {
 	return Response{
 		StatusCode: http.StatusNoContent,
 		Data:       nil,
@@ -136,7 +136,6 @@ func NewGinAdapter(
 	middlewares ...Middleware,
 ) func(*gin.Context) {
 	return func(ctx *gin.Context) {
-		raw := ctx.Copy()
 		// create request object
 		method := ctx.Request.Method
 		header := ctx.Request.Header
@@ -167,7 +166,7 @@ func NewGinAdapter(
 			cookies,
 			nil,
 			nil,
-			raw,
+			ctx,
 		)
 
 		// execute middlewares

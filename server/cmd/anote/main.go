@@ -36,6 +36,7 @@ func main() {
 		middlewares.SaveFile("avatar", []string{"png", "jpg", "jpeg"}),
 	))
 	r.GET("/users", httpAdapter.NewGinAdapter(routes.GetAllUsersController))
+	r.GET("/users/:username/avatar", httpAdapter.NewGinAdapter(routes.GetUserAvatarController))
 	r.GET("/users/username/:username", httpAdapter.NewGinAdapter(routes.GetUserByUsernameController))
 	r.GET("/users/email/:email", httpAdapter.NewGinAdapter(routes.GetUserByEmailController))
 	r.PATCH("/users/email", httpAdapter.NewGinAdapter(routes.UpdateUserEmailController, middlewares.AuthenticateUser))
