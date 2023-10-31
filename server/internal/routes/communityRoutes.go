@@ -146,7 +146,7 @@ func LeaveCommunityController(request httpAdapter.Request) httpAdapter.Response 
 		return httpAdapter.NewErrorResponse(400, "id not found")
 	}
 
-	userCommunities, err := container.CommunityService.GetByUserId(id)
+	userCommunities, err := container.CommunityService.GetByUserId(request.User.ID)
 	if err != nil {
 		log.Println("[CommunityController] Error on leave community: user not found")
 		return httpAdapter.NewErrorResponse(500, "Could not leave community")

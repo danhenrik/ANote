@@ -35,7 +35,7 @@ const NavList = ({
     },
     { text: "Minhas Comunidades", route: { path: "/communities" } },
     {
-      text: "Comunidades Populares",
+      text: "Comunidades",
       route: { path: "/communities", queryParams: "world=true" },
     },
     { text: "Amigos", route: { path: "/friends" } },

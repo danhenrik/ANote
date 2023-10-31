@@ -70,7 +70,7 @@ const fetchNotesRequest = async (api, page, auth) => {
       params: {
         page: page,
         size: PAGE_SIZE,
-        sort_by: "published_date",
+        sort_by: "likes",
       },
     });
     if (response.data.data) {
