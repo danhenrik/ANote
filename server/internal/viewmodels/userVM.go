@@ -44,7 +44,11 @@ func UserVMFromDomainUser(userD domain.User) UserVM {
 	var user UserVM
 	user.Username = userD.Id
 	user.Email = userD.Email
-	user.Avatar = *userD.Avatar
+	if userD.Avatar != nil {
+		user.Avatar = *userD.Avatar
+	} else {
+		user.Avatar = ""
+	}
 	return user
 }
 

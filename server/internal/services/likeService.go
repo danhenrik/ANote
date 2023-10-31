@@ -16,12 +16,12 @@ func NewLikeService(likeRepository IRepo.LikeRepository) LikeService {
 }
 
 func (this LikeService) Create(like *domain.Like) *errors.AppError {
-	like, err := this.likeRepository.GetByIdUserAndIdNote(like.UserId, like.NoteId)
+	likeDB, err := this.likeRepository.GetByIdUserAndIdNote(like.UserId, like.NoteId)
 	if err != nil {
 		log.Println("[LikeService] Error on get like:", err)
 		return err
 	}
-	if like != nil {
+	if likeDB != nil {
 		log.Println("[LikeService] Like already exists")
 		return errors.NewAppError(400, "Like already exists")
 	}
@@ -31,7 +31,6 @@ func (this LikeService) Create(like *domain.Like) *errors.AppError {
 		log.Println("[LikeService] Error on create like:", err)
 		return err
 	}
-
 	return nil
 }
 
