@@ -44,5 +44,5 @@ func DeleteTagController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[NoteTagController] Error on delete tag:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }

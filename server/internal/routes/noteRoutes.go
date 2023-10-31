@@ -40,7 +40,7 @@ func UpdateNoteController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[NoteController] Error on update note:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func SearchNoteController(request httpAdapter.Request) httpAdapter.Response {
@@ -214,7 +214,7 @@ func DeleteNoteController(request httpAdapter.Request) httpAdapter.Response {
 		log.Println("[NoteController] Error on delete note:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
 
 func GetAllNoteController(request httpAdapter.Request) httpAdapter.Response {

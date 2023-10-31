@@ -12,17 +12,25 @@ type LikeService struct {
 }
 
 func NewLikeService(likeRepository IRepo.LikeRepository) LikeService {
-	return LikeService{ likeRepository: likeRepository }
+	return LikeService{likeRepository: likeRepository}
 }
 
 func (this LikeService) Create(like *domain.Like) *errors.AppError {
-	err := this.likeRepository.Create(like)
+	likeDB, err := this.likeRepository.GetByIdUserAndIdNote(like.UserId, like.NoteId)
+	if err != nil {
+		log.Println("[LikeService] Error on get like:", err)
+		return err
+	}
+	if likeDB != nil {
+		log.Println("[LikeService] Like already exists")
+		return errors.NewAppError(400, "Like already exists")
+	}
 
+	err = this.likeRepository.Create(like)
 	if err != nil {
 		log.Println("[LikeService] Error on create like:", err)
 		return err
 	}
-
 	return nil
 }
 

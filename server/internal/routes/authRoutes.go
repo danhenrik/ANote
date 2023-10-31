@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"anote/internal/domain"
 	httpAdapter "anote/cmd/interfaces"
 	"anote/internal/container"
+	"anote/internal/domain"
 	"anote/internal/viewmodels"
 	"encoding/json"
 	"log"
@@ -23,7 +23,7 @@ func LoginController(request httpAdapter.Request) httpAdapter.Response {
 	}
 
 	type response struct {
-		Jwt string
+		Jwt  string
 		User *domain.User
 	}
 
@@ -56,5 +56,5 @@ func ChangeUserPasswordController(request httpAdapter.Request) httpAdapter.Respo
 		log.Println("[UserController] Error on change password:", err)
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
-	return httpAdapter.NewNoContentRespone()
+	return httpAdapter.NewNoContentResponse()
 }
