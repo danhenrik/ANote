@@ -3,6 +3,7 @@ package repositories
 import (
 	"anote/internal/domain"
 	"anote/internal/errors"
+	"anote/internal/helpers"
 	"anote/internal/interfaces"
 	"log"
 	"reflect"
@@ -20,7 +21,8 @@ func NewLikeRepository(
 
 func (this LikeRepository) Create(like *domain.Like) *errors.AppError {
 	err := this.DBConn.Exec(
-		"INSERT INTO likes (user_id, note_id) VALUES ($1, $2)",
+		"INSERT INTO likes (id, user_id, note_id) VALUES ($1, $2, $3)",
+		helpers.NewUUID(),
 		like.UserId,
 		like.NoteId,
 	)

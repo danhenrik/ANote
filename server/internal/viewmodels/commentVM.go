@@ -18,7 +18,7 @@ func (this *CreateCommentVM) ToDomainComment() domain.Comment {
 
 type CommentVM struct {
 	UserId    string `json:"user_id"`
-	NoteId    string `json:"note_id"`
-	Content   string `json:"content"`
-	CreatedAt string `json:"created_at"`
+	NoteId    string `json:"note_id,omitempty"`
+	Content   string `json:"content,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
 }

@@ -119,7 +119,19 @@ func JoinCommunityController(request httpAdapter.Request) httpAdapter.Response {
 		return httpAdapter.NewErrorResponse(400, "id not found")
 	}
 
-	err := container.CommunityService.Join(id, request.User.ID)
+	userCommunities, err := container.CommunityService.GetByUserId(id)
+	if err != nil {
+		log.Println("[CommunityController] Error on join community: user not found")
+		return httpAdapter.NewErrorResponse(500, "Could not join community")
+	}
+	for _, community := range userCommunities {
+		if community.Id == id {
+			log.Println("[CommunityController] Error on join community: user already joined")
+			return httpAdapter.NewErrorResponse(400, "Already joined community")
+		}
+	}
+
+	err = container.CommunityService.Join(id, request.User.ID)
 	if err != nil {
 		log.Println("[CommunityController] Error on join community: user not found")
 		return httpAdapter.NewErrorResponse(500, "Could not join community")
@@ -134,10 +146,27 @@ func LeaveCommunityController(request httpAdapter.Request) httpAdapter.Response 
 		return httpAdapter.NewErrorResponse(400, "id not found")
 	}
 
-	err := container.CommunityService.Leave(id, request.User.ID)
+	userCommunities, err := container.CommunityService.GetByUserId(id)
 	if err != nil {
 		log.Println("[CommunityController] Error on leave community: user not found")
 		return httpAdapter.NewErrorResponse(500, "Could not leave community")
+	}
+	communityFound := false
+	for _, community := range userCommunities {
+		if community.Id == id {
+			err = container.CommunityService.Leave(id, request.User.ID)
+			if err != nil {
+				log.Println("[CommunityController] Error on leave community: user not found")
+				return httpAdapter.NewErrorResponse(500, "Could not leave community")
+			}
+			communityFound = true
+			break
+		}
+	}
+
+	if !communityFound {
+		log.Println("[CommunityController] Error on leave community: user not found")
+		return httpAdapter.NewErrorResponse(400, "Already left community")
 	}
 	return httpAdapter.NewNoContentRespone()
 }
