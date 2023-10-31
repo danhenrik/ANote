@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         return true;
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      alert("Falha no Login, dados incorretos");
     }
   };
 

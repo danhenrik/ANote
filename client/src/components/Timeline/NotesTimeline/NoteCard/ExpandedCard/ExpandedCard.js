@@ -10,10 +10,9 @@ import {
   CustomAvatar,
   Title,
 } from "../NoteCard.styled";
-import Tags from "../../../Tags/TagsList";
 import { CreateButton } from "../../../TimelineList.styled";
 import CommentCard from "./CommentCard";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";

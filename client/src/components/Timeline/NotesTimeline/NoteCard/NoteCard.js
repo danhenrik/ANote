@@ -21,8 +21,6 @@ import ExpandedCard from "./ExpandedCard/ExpandedCard";
 import LikeButton from "./LikeButton";
 import formatDate from "../../../../util/formatDate";
 import { useAuth } from "../../../../store/auth-context";
-import axios from "axios";
-import { useParams } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import useNotes from "../../../../api/useNotes";
 import useApi from "../../../../api/useApi";
@@ -31,7 +29,6 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
   var randomColor = require("randomcolor");
   const modal = useModal();
   const userAuth = useAuth();
-  const isFollowing = useState(false);
   const notesApi = useNotes();
   const api = useApi();
   const [avatar, setAvatar] = useState("");

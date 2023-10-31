@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Button, ButtonBase, Grid, Typography } from "@mui/material";
+import { ButtonBase, Grid, Typography } from "@mui/material";
 import NoteCard from "../NoteCard/NoteCard";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
