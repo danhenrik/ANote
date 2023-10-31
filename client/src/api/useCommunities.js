@@ -4,7 +4,7 @@ const mapApiCommunitiesData = async (data, api) => {
   const communitiesWithImages = await Promise.all(
     data.map(async (item) => {
       try {
-        const imageResponse = await api.get(`/static/${item.background}`);
+        await api.get(`/static/${item.background}`);
         const imageUrl = `/static/${item.background}`;
         return {
           Id: item.id,

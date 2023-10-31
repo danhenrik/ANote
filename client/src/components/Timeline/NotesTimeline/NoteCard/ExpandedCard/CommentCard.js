@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
@@ -13,11 +13,14 @@ import axios from "axios";
 import { Card, Container } from "@mui/material";
 import { useAuth } from "../../../../../store/auth-context";
 import formatDate from "../../../../../util/formatDate";
+import useApi from "../../../../../api/useApi";
 
 const CommentCard = ({ comment, numberCommentsHandler }) => {
   const userAuth = useAuth();
   const [renderComment, setRenderComment] = useState(true);
   const formatedDate = formatDate(comment.CreatedAt);
+  const api = useApi();
+  const [avatar, setAvatar] = useState("");
 
   const deleteComment = () => {
     try {
@@ -29,6 +32,18 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
     }
   };
 
+  const getAvatar = async (comment) => {
+    const response = await api.get("/users/username/" + comment.Author);
+    await api.get(`/static/${response.data.data.avatar}`);
+    if (response) {
+      setAvatar("/static/" + response.data.data.avatar);
+    }
+  };
+
+  useEffect(() => {
+    getAvatar(comment);
+  }, []);
+
   return (
     <>
       {renderComment && (
@@ -38,10 +53,11 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
             backgroundColor: "lightgray",
           }}
         >
-          <AvatarBackground sx={{ height: "40px" }}>
-            <AvatarContainer style={{ height: "40px" }}>
+          <AvatarBackground>
+            <AvatarContainer>
               <CustomAvatar
-                style={{ height: "40px", width: "40px" }}
+                src={avatar}
+                style={{ height: "50px", width: "50px" }}
                 variant='square'
               >
                 {comment.Author}

@@ -15,14 +15,14 @@ const LikeButton = ({ note }) => {
     try {
       if (isClicked) {
         const deletedLike = await axios.delete(
-          "/likes/" + note.Author + "/" + note.Id
+          "/likes/" + auth.username + "/" + note.Id
         );
         if (deletedLike) {
           setLikes(likes - 1);
         }
       } else {
         const likeData = {
-          user_id: note.Author,
+          user_id: auth.username,
           note_id: note.Id,
         };
         const postedLike = axios.post("/likes", likeData);

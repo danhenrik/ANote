@@ -25,6 +25,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import useNotes from "../../../../api/useNotes";
+import useApi from "../../../../api/useApi";
 
 const NoteCard = ({ note, deleteNoteHandler }) => {
   var randomColor = require("randomcolor");
@@ -32,6 +33,8 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
   const userAuth = useAuth();
   const isFollowing = useState(false);
   const notesApi = useNotes();
+  const api = useApi();
+  const [avatar, setAvatar] = useState("");
 
   const [randomColorElement] = useState(
     randomColor({ luminosity: "light", format: "rgb" })
@@ -48,9 +51,18 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
         numberComments={numberComments}
         numberCommentsHandler={setNumberComments}
         randomColorElement={randomColorElement}
+        avatar={avatar}
       ></ExpandedCard>
     );
     modal.setModalStyling(ModalStyling);
+  };
+
+  const getAvatar = async (note) => {
+    const response = await api.get("/users/username/" + note.Author);
+    await api.get(`/static/${response.data.data.avatar}`);
+    if (response) {
+      setAvatar("/static/" + response.data.data.avatar);
+    }
   };
 
   const [numberComments, setNumberComments] = useState(0);
@@ -59,7 +71,7 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
       const comments = note.CommentCount;
       setNumberComments(comments);
     };
-
+    getAvatar(note);
     initComments();
   }, []);
 
@@ -105,7 +117,7 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
           style={{ marginTop: "10px" }}
         >
           <AvatarContainer>
-            <CustomAvatar variant='square'>{note.Author}</CustomAvatar>
+            <CustomAvatar variant='square' src={avatar}></CustomAvatar>
           </AvatarContainer>
           <AvatarUsernames>
             <AvatarAuthor>{note.Author}</AvatarAuthor>

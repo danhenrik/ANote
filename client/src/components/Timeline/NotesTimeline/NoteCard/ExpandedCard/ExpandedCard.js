@@ -26,7 +26,12 @@ const validationSchema = yup.object({
   comment: yup.string("Insira um comentário").required("Insira um comentário"),
 });
 
-const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
+const ExpandedCard = ({
+  note,
+  randomColorElement,
+  avatar,
+  numberCommentsHandler,
+}) => {
   let [comments, setComments] = useState([]);
   const userAuth = useAuth();
   const formatedDate = formatDate(note.PublishedDate);
@@ -82,7 +87,7 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
       </Title>
       <AvatarBackground randomColor={randomColorElement}>
         <AvatarContainer>
-          <CustomAvatar variant='square'>N</CustomAvatar>
+          <CustomAvatar variant='square' src={avatar}></CustomAvatar>
         </AvatarContainer>
         <AvatarUsernames>
           <AvatarAuthor>{note.Author}</AvatarAuthor>
@@ -177,6 +182,7 @@ ExpandedCard.propTypes = {
   randomColorElement: PropTypes.string.isRequired,
   numberComments: PropTypes.number,
   numberCommentsHandler: PropTypes.func,
+  avatar: PropTypes.any,
 };
 
 export default ExpandedCard;
