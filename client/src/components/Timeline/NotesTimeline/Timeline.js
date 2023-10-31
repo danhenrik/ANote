@@ -12,6 +12,7 @@ const Timeline = () => {
   const userAuth = useAuth();
   const params = useParams();
   const [searchParams] = useSearchParams();
+  const [displayText, setDisplayText] = useState("Feed de Notas");
 
   function extractQueryParams(searchParams) {
     const queryParams = {};
@@ -30,25 +31,31 @@ const Timeline = () => {
       const queryParams = extractQueryParams(searchParams);
       fetchedNotes = await notesApi.fetchNotesFilter(page, queryParams);
       setNotes(fetchedNotes);
+      setDisplayText("Notas Populares");
     } else {
       if (userAuth.isAuthenticated) {
         if (searchParams.get("world") && searchParams.get("world") == "true") {
-          fetchedNotes = await notesApi.fetchNotes(page);
+          setDisplayText("Notas Populares");
+          fetchedNotes = await notesApi.fetchNotes(page, userAuth);
         } else {
           if (params.id) {
+            setDisplayText("Notas da Comunidade: " + params.id);
             fetchedNotes = await notesApi.fetchNotesByCommunity(
               page,
               params.id
             );
           } else {
+            setDisplayText("Feed de Notas");
             fetchedNotes = await notesApi.fetchNotesFeed(page, userAuth);
           }
         }
       } else {
         if (params.id) {
-          fetchedNotes = await notesApi.fetchNotesByCommunity(page, params.id); // Use the 'page' state here
+          setDisplayText("Notas da Comunidade: " + params.id);
+          fetchedNotes = await notesApi.fetchNotesByCommunity(page, params.id);
         } else {
-          fetchedNotes = await notesApi.fetchNotes(page); // Use the 'page' state here
+          setDisplayText("Notas Populares");
+          fetchedNotes = await notesApi.fetchNotes(page, userAuth);
         }
       }
 
@@ -66,7 +73,7 @@ const Timeline = () => {
   };
 
   const handlePageChange = (newPage) => {
-    setPage(newPage); // Update the 'page' state
+    setPage(newPage);
   };
 
   useEffect(() => {
@@ -80,12 +87,20 @@ const Timeline = () => {
         setNotesHandler={setNotesHandler}
         deleteNotesHandler={deleteNotesHandler}
         notes={notes}
+        displayText={displayText}
       ></NoteList>
       <Box
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        mt='auto' // This pushes the Box component to the bottom
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "white",
+          padding: "10px",
+        }}
       >
         <Button
           onClick={() => handlePageChange(page - 1)}
@@ -95,7 +110,7 @@ const Timeline = () => {
         </Button>
         <span className='page-number'>{page}</span>
         <Button
-          disabled={notes && notes.length < 8}
+          disabled={notes === undefined || notes.length < 8}
           onClick={() => handlePageChange(page + 1)}
         >
           Seguinte

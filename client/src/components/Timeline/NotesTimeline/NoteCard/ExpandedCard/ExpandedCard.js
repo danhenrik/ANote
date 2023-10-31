@@ -135,32 +135,25 @@ const ExpandedCard = ({ note, randomColorElement, numberCommentsHandler }) => {
           </CreateButton>
         </form>
       )}
-      {comments ? (
-        comments.map((comment) => (
-          <Box
-            key={comment.Id}
-            sx={{ marginBottom: "15px", marginTop: "15px" }}
-          >
-            <CommentCard
-              numberCommentsHandler={numberCommentsHandler}
-              comment={comment}
-            />
-          </Box>
-        ))
-      ) : (
-        <CommentContainer
-          sx={{
-            marginTop: "15px",
-            paddingTop: "15px",
-            paddingBottom: "15px",
-            textAlign: "center",
-          }}
-        >
+      <CommentContainer>
+        {comments && comments.length > 0 ? (
+          comments.map((comment) => (
+            <Box
+              key={comment.Id}
+              sx={{ marginBottom: "15px", marginTop: "15px" }}
+            >
+              <CommentCard
+                numberCommentsHandler={numberCommentsHandler}
+                comment={comment}
+              />
+            </Box>
+          ))
+        ) : (
           <Typography variant='h7' color='textPrimary'>
             Nenhum comentário nessa nota
           </Typography>
-        </CommentContainer>
-      )}
+        )}
+      </CommentContainer>
     </div>
   );
 };

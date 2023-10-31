@@ -12,7 +12,6 @@ import {
   CustomAvatar,
   ModalStyling,
   NotesCardContainer,
-  StyledLink,
   Title,
 } from "./NoteCard.styled";
 import Tags from "../../Tags/TagsList";

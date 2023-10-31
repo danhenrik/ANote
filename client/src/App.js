@@ -15,11 +15,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 function App() {
   const [open, setOpen] = useState(false);
-
   return (
     <Router>
       <AuthProvider>
-        ,
         <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
           <ThemeProvider theme={defaultTheme}>
             <ModalProvider>

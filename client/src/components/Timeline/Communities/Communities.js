@@ -9,16 +9,20 @@ const Communities = () => {
   const userAuth = useAuth();
   const communitiesApi = useCommunities();
   const [searchParams] = useSearchParams();
+  const [displayText, setDisplayText] = useState("Comunidades Públicas");
 
   const fetchAndSetCommunities = async () => {
     let fetchedCommunities = [];
     if (userAuth.isAuthenticated) {
       if (!searchParams.get("world") || searchParams.get("world") === false) {
+        setDisplayText("Minhas Comunidades");
         fetchedCommunities = await communitiesApi.fetchCommunitiesByUser();
       } else {
+        setDisplayText("Comunidades Públicas");
         fetchedCommunities = await communitiesApi.fetchCommunities();
       }
     } else {
+      setDisplayText("Comunidades Públicas");
       fetchedCommunities = await communitiesApi.fetchCommunities();
     }
 
@@ -35,6 +39,7 @@ const Communities = () => {
 
   return (
     <CommunityList
+      displayText={displayText}
       communities={communities}
       setCommunitiesHandler={setCommunitiesHandler}
     ></CommunityList>

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { ButtonBase, Grid } from "@mui/material";
+import { ButtonBase, Grid, Typography } from "@mui/material";
 import CommunityForm from "../CommunityForm/CommunityForm";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
@@ -10,7 +10,7 @@ import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";
 import EmptyNotes from "../../NotesTimeline/EmptyNotes";
 
-const CommunityList = ({ communities, setCommunitiesHandler }) => {
+const CommunityList = ({ communities, setCommunitiesHandler, displayText }) => {
   const [userCommunities, setUserCommunities] = useState([]);
   const modal = useModal();
   const auth = useAuth();
@@ -59,28 +59,47 @@ const CommunityList = ({ communities, setCommunitiesHandler }) => {
   const buttonText = "Adicionar Comunidade";
 
   return (
-    <TimelineList
-      handleAddModal={handleAddCommunityModal}
-      addButtonText={buttonText}
-    >
-      {communities && communities.length ? (
-        communities.map((community) => (
-          <Grid item key={community.Id}>
-            <ButtonBase>
-              <CommunityCard
-                isFollowing={checkFollowStatus(community.Id)}
-                community={community}
-                communityFollowHandler={communityFollowHandler}
-              ></CommunityCard>
-            </ButtonBase>
-          </Grid>
-        ))
-      ) : (
-        <EmptyNotes clickHandler={handleAddCommunityModal}>
-          Nenhuma Comunidade Aqui, Mas Você Pode Criar ou Seguir uma
-        </EmptyNotes>
-      )}
-    </TimelineList>
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            textDecoration: "underline",
+          }}
+        >
+          {displayText}
+        </Typography>
+      </div>
+      <TimelineList
+        handleAddModal={handleAddCommunityModal}
+        addButtonText={buttonText}
+      >
+        {communities && communities.length ? (
+          communities.map((community) => (
+            <Grid item key={community.Id}>
+              <ButtonBase>
+                <CommunityCard
+                  isFollowing={checkFollowStatus(community.Id)}
+                  community={community}
+                  communityFollowHandler={communityFollowHandler}
+                ></CommunityCard>
+              </ButtonBase>
+            </Grid>
+          ))
+        ) : (
+          <EmptyNotes clickHandler={handleAddCommunityModal}>
+            Nenhuma Comunidade Aqui, Mas Você Pode Criar ou Seguir uma
+          </EmptyNotes>
+        )}
+      </TimelineList>
+    </>
   );
 };
 
@@ -93,6 +112,7 @@ const communityShape = PropTypes.shape({
 CommunityList.propTypes = {
   communities: PropTypes.arrayOf(communityShape).isRequired,
   setCommunitiesHandler: PropTypes.func.isRequired,
+  displayText: PropTypes.string.isRequired,
 };
 
 export default CommunityList;

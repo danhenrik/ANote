@@ -12,6 +12,7 @@ import { useModal } from "../../../../store/modal-context";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 import { useAuth } from "../../../../store/auth-context";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = yup.object({
   name: yup.string("Insira o nome").required("Nome é obrigatório"),
@@ -19,6 +20,7 @@ const validationSchema = yup.object({
 });
 
 const CommunityForm = ({ communities, setCommunitiesHandler }) => {
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState();
   const auth = useAuth();
   const [avatarPreview, setAvatarPreview] = useState("/avatars/default.png");
@@ -44,9 +46,12 @@ const CommunityForm = ({ communities, setCommunitiesHandler }) => {
             },
           }
         );
+
         if (createdCommunity) {
+          const id = createdCommunity.data.data.id;
           communities.push(communityData);
           setCommunitiesHandler(communities);
+          navigate("/communities/" + values.name + "?communityId=" + id);
         }
       };
 

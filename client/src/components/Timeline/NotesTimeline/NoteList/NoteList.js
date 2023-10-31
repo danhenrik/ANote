@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Button, ButtonBase, Grid } from "@mui/material";
+import { Button, ButtonBase, Grid, Typography } from "@mui/material";
 import NoteCard from "../NoteCard/NoteCard";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
@@ -16,6 +16,7 @@ const NoteList = ({
   communityId,
   setNotesHandler,
   deleteNotesHandler,
+  displayText,
 }) => {
   const modal = useModal();
   const auth = useAuth();
@@ -73,24 +74,43 @@ const NoteList = ({
       : "Adicionar Nota";
 
   return (
-    <TimelineList
-      handleAddModal={handleAddNoteModal}
-      addButtonText={buttonText}
-    >
-      {notes && notes.length ? (
-        notes.map((note) => (
-          <Grid item key={note.Id}>
-            <ButtonBase>
-              <NoteCard deleteNoteHandler={deleteNotesHandler} note={note} />
-            </ButtonBase>
-          </Grid>
-        ))
-      ) : (
-        <EmptyNotes clickHandler={handleAddNoteModal}>
-          Nenhuma Nota Aqui, Mas Você Pode Adicionar Uma!
-        </EmptyNotes>
-      )}
-    </TimelineList>
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            textDecoration: "underline",
+          }}
+        >
+          {displayText}
+        </Typography>
+      </div>
+      <TimelineList
+        handleAddModal={handleAddNoteModal}
+        addButtonText={buttonText}
+      >
+        {notes && notes.length ? (
+          notes.map((note) => (
+            <Grid item key={note.Id}>
+              <ButtonBase>
+                <NoteCard deleteNoteHandler={deleteNotesHandler} note={note} />
+              </ButtonBase>
+            </Grid>
+          ))
+        ) : (
+          <EmptyNotes clickHandler={handleAddNoteModal}>
+            Nenhuma Nota Aqui, Mas Você Pode Adicionar Uma!
+          </EmptyNotes>
+        )}
+      </TimelineList>
+    </>
   );
 };
 
@@ -114,6 +134,7 @@ NoteList.propTypes = {
   communityId: PropTypes.any,
   setNotesHandler: PropTypes.func.isRequired,
   deleteNotesHandler: PropTypes.func.isRequired,
+  displayText: PropTypes.string.isRequired,
 };
 
 export default NoteList;

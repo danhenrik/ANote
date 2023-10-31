@@ -20,9 +20,8 @@ const mapApiNotesData = (data) => {
   }));
 };
 
-const mapApiNotesDataFeed = (data, auth) => {
+const mapApiNotesDataFilter = (data, auth) => {
   return data
-    .filter((item) => item.author === auth.username || item.communities)
     .map((item) => ({
       Id: item.id,
       Title: item.title,
@@ -37,27 +36,12 @@ const mapApiNotesDataFeed = (data, auth) => {
       LikeCount: item.likes_count,
       CommentCount: item.comment_count,
       Likes: item.likes ? item.likes : [],
-    }));
-};
-
-const mapApiNotesDataInit = (data) => {
-  return data
-    .filter((item) => item.communities)
-    .map((item) => ({
-      Id: item.id,
-      Title: item.title,
-      Content: item.content,
-      PublishedDate: item.created_at ? item.created_at : item.published_date,
-      UpdatedDate: item.updated_at ? item.updated_at : item.updated_date,
-      Author: item.author_id ? item.author_id : item.author,
-      Tags: item.tags ? item.tags.map((tag) => tag.name) : [],
-      Communities: item.communities
-        ? item.communities.map((community) => community.name)
-        : [],
-      LikeCount: item.likes_count,
-      CommentCount: item.comment_count,
-      Likes: item.likes ? item.likes : [],
-    }));
+    }))
+    .filter(
+      (item) =>
+        item.Author === auth.username ||
+        (item.Communities && item.Communities.length > 0)
+    );
 };
 
 const fetchNotesFeedRequest = async (api, page, auth) => {
@@ -66,10 +50,11 @@ const fetchNotesFeedRequest = async (api, page, auth) => {
       params: {
         page: page,
         size: PAGE_SIZE,
+        sort_by: "published_date",
       },
     });
     if (response.data.data) {
-      return mapApiNotesDataFeed(response.data.data, auth);
+      return mapApiNotesDataFilter(response.data.data, auth);
     } else {
       return [];
     }
@@ -79,16 +64,17 @@ const fetchNotesFeedRequest = async (api, page, auth) => {
   }
 };
 
-const fetchNotesRequest = async (api, page) => {
+const fetchNotesRequest = async (api, page, auth) => {
   try {
     const response = await api.get("/notes", {
       params: {
         page: page,
         size: PAGE_SIZE,
+        sort_by: "likes",
       },
     });
     if (response.data.data) {
-      return mapApiNotesDataInit(response.data.data, page, PAGE_SIZE);
+      return mapApiNotesDataFilter(response.data.data, page, PAGE_SIZE, auth);
     } else {
       return [];
     }
@@ -126,7 +112,7 @@ const fetchNotesFilterRequest = async (api, page, filters) => {
       },
     });
     if (response.data.data) {
-      return mapApiNotesData(response.data.data, page, PAGE_SIZE);
+      return mapApiNotesDataFilter(response.data.data, page, PAGE_SIZE);
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -160,8 +146,8 @@ const useNotes = () => {
   const fetchNotesFeed = (page, auth) => {
     return fetchNotesFeedRequest(api, page, auth);
   };
-  const fetchNotes = (page) => {
-    return fetchNotesRequest(api, page);
+  const fetchNotes = (page, auth) => {
+    return fetchNotesRequest(api, page, auth);
   };
 
   const fetchNotesByCommunity = (page, id) => {

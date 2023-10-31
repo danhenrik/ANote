@@ -56,11 +56,12 @@ const ContentContainer = styled("div")({
   },
 });
 
-const CommentContainer = styled(Card)({
-  maxHeight: "230px", // Adjust the maximum height as needed
+const CommentContainer = styled("div")({
+  maxHeight: "200px",
   overflowY: "auto",
-  marginTop: "20px",
-  marginBottom: "20px",
+  marginTop: "10px",
+  marginBottom: "10px",
+  padding: "3px",
 
   "&::-webkit-scrollbar": {
     width: "6px", // Width of the entire scrollbar
