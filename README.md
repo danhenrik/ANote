@@ -122,7 +122,7 @@ As portas são [Elasticsearch](https://github.com/danhenrik/ANote/blob/main/serv
   - Implementar no backend a lógica de filtrar anotações [Daniel];
   - Criar tela de filtrar anotações [Julio];
 
-6. Como usuário logado, quero criar, edtiar ou excluir comunidades - IMPLEMENTADO PARCIALMENTE (É possível criar a comunidade e dar follow/unfollow, mas não faria muito sentido para o sistema acabar com a comunidade. O update de foto da comunidade está implementado apenas no backend)
+6. Como usuário logado, quero criar, edtiar ou excluir comunidades - IMPLEMENTADO PARCIALMENTE (É possível criar a comunidade e dar follow/unfollow, mas não faria muito sentido para o sistema acabar com a comunidade. O edit de foto da comunidade está implementado apenas no backend)
 
 Tarefas e Responsáveis:
   - Criar tabelas relacionadas às comunidades no banco e configurá-las no sistema [Samuel];
