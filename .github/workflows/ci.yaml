@@ -22,28 +22,28 @@ jobs:
         run: |
           docker-compose build
 
-    go-tests:
-      runs-on: ubuntu-latest
+  go-tests:
+    runs-on: ubuntu-latest
 
-      needs: deploy
+    needs: deploy
 
-      steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v2
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-        - name: Set up Go
-          uses: actions/setup-go@v2
-          with:
-            go-version: 1.17
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
 
-        - name: Install Dependencies
-          run: |
-            cd server
-            go mod download
-            go mod verify
+      - name: Install Dependencies
+        run: |
+          cd server
+          go mod download
+          go mod verify
 
-        - name: Run Go Tests
-          run: go test -v ./...
+      - name: Run Go Tests
+        run: go test -v ./...
 
   cypress-test:
     runs-on: ubuntu-latest
@@ -61,3 +61,4 @@ jobs:
           browser: chrome
           record: true
           wait-on: "http://localhost:3000"
+          wait-on-timeout: 300
