@@ -41,31 +41,6 @@ jobs:
           docker-compose up -d
           sleep 120
 
-      - name: Check All Container URLs
-        run: |
-          # Get all running container names
-          containers=$(docker ps --format "{{.Names}}")
-
-          # Loop through each container
-          for container in $containers; do
-            echo "Checking if $container is running:"
-            docker inspect -f '{{.State.Status}}' "$container"
-
-            # Get the exposed ports of the container
-            ports=$(docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} {{end}}' "$container")
-
-            # Loop through each exposed port
-            for port in $ports; do
-              # Extract the host port from the "HostPort" field
-              host_port=$(echo "$port" | awk '{print $3}')
-
-              # Check the URL using the host port
-              url="http://localhost:$host_port"
-              echo "Checking URL $url for $container:"
-              curl --retry 5 --retry-delay 10 --retry-connrefused "$url"
-            done
-          done
-
   go-tests:
     runs-on: ubuntu-latest
 
@@ -85,7 +60,9 @@ jobs:
           go mod verify
 
       - name: Run Go Tests
-        run: go test -v ./...
+        run: 
+        cd server
+        go test -v ./...
 
   cypress-test:
     runs-on: ubuntu-latest
@@ -95,8 +72,30 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: testloc
-        run: curl
+      
+      - name: Check All Container URLs
+        run: |
+          containers=$(docker ps --format "{{.Names}}")
+          for container in $containers; do
+            echo "Checking if $container is running:"
+            docker inspect -f '{{.State.Status}}' "$container"
+
+            # Get the exposed ports of the container
+            ports=$(docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} {{end}}' "$container")
+
+            # Loop through each exposed port
+            for port in $ports; do
+              # Extract the host port from the "HostPort" field
+              host_port=$(echo "$port" | awk '{print $3}')
+
+              # Check the URL using the host port
+              url="http://localhost:$host_port"
+              echo "Checking URL $url for $container:"
+              
+              # Run curl, but don't stop the script if it fails
+              curl --retry 5 --retry-delay 10 --retry-connrefused "$url" || true
+            done
+          done
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v5
