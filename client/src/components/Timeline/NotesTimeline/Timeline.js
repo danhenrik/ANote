@@ -29,11 +29,15 @@ const Timeline = () => {
     let fetchedNotes = [];
     if (searchParams.get("search") && searchParams.get("search") == "true") {
       const queryParams = extractQueryParams(searchParams);
-      fetchedNotes = await notesApi.fetchNotesFilter(
-        page,
-        queryParams,
-        userAuth
-      );
+      try {
+        fetchedNotes = await notesApi.fetchNotesFilter(
+          page,
+          queryParams,
+          userAuth
+        );
+      } catch (error) {
+        console.log("error");
+      }
       setNotes(fetchedNotes);
       setDisplayText("Notas Populares");
     } else {

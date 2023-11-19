@@ -13,17 +13,21 @@ const Communities = () => {
 
   const fetchAndSetCommunities = async () => {
     let fetchedCommunities = [];
-    if (userAuth.isAuthenticated) {
-      if (!searchParams.get("world") || searchParams.get("world") === false) {
-        setDisplayText("Minhas Comunidades");
-        fetchedCommunities = await communitiesApi.fetchCommunitiesByUser();
+    try {
+      if (userAuth.isAuthenticated) {
+        if (!searchParams.get("world") || searchParams.get("world") === false) {
+          setDisplayText("Minhas Comunidades");
+          fetchedCommunities = await communitiesApi.fetchCommunitiesByUser();
+        } else {
+          setDisplayText("Comunidades Públicas");
+          fetchedCommunities = await communitiesApi.fetchCommunities();
+        }
       } else {
         setDisplayText("Comunidades Públicas");
         fetchedCommunities = await communitiesApi.fetchCommunities();
       }
-    } else {
-      setDisplayText("Comunidades Públicas");
-      fetchedCommunities = await communitiesApi.fetchCommunities();
+    } catch (error) {
+      console.log("error");
     }
 
     setCommunities(fetchedCommunities);

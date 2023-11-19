@@ -55,10 +55,14 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
   };
 
   const getAvatar = async (note) => {
-    const response = await api.get("/users/username/" + note.Author);
-    await api.get(`/static/${response.data.data.avatar}`);
-    if (response) {
-      setAvatar("/static/" + response.data.data.avatar);
+    try {
+      const response = await api.get("/users/username/" + note.Author);
+      await api.get(`/static/${response.data.data.avatar}`);
+      if (response) {
+        setAvatar("/static/" + response.data.data.avatar);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -74,9 +78,13 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
 
   const deleteNote = async () => {
     const id = note.Id;
-    const response = await notesApi.deleteNote(note.Id);
-    if (response) {
-      deleteNoteHandler(id);
+    try {
+      const response = await notesApi.deleteNote(note.Id);
+      if (response) {
+        deleteNoteHandler(id);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 

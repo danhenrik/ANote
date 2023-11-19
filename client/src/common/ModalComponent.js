@@ -22,7 +22,11 @@ const ModalComponent = ({ handleClose, open, content, style }) => {
             alignItems: "center",
           }}
         >
-          <IconButton onClick={handleClose} sx={{ alignSelf: "flex-end" }}>
+          <IconButton
+            aria-labelledby='Fechar'
+            onClick={handleClose}
+            sx={{ alignSelf: "flex-end" }}
+          >
             <CloseIcon />
           </IconButton>
           {content}

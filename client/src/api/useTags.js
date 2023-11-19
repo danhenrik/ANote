@@ -16,7 +16,6 @@ const useTags = () => {
       return mapApiTagsData(response.data.data);
     } catch (error) {
       console.error("Error fetching tags:", error);
-      throw error;
     }
   };
 
@@ -26,7 +25,6 @@ const useTags = () => {
       return response.data;
     } catch (error) {
       console.error("Error fetching tags:", error);
-      throw error;
     }
   };
 

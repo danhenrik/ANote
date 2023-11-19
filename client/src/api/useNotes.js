@@ -60,7 +60,6 @@ const fetchNotesFeedRequest = async (api, page, auth) => {
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
-    throw error;
   }
 };
 
@@ -80,7 +79,6 @@ const fetchNotesRequest = async (api, page, auth) => {
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
-    throw error;
   }
 };
 
@@ -98,7 +96,6 @@ const fetchNotesByCommunityRequest = async (api, page, id) => {
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
-    throw error;
   }
 };
 
@@ -116,7 +113,6 @@ const fetchNotesFilterRequest = async (api, page, filters, auth) => {
     }
   } catch (error) {
     console.error("Error fetching notes:", error);
-    throw error;
   }
 };
 
@@ -126,7 +122,6 @@ const createNoteRequest = async (api, note) => {
     return response;
   } catch (error) {
     console.error("Error creating note:", error);
-    throw error;
   }
 };
 
@@ -136,7 +131,6 @@ const deleteNoteRequest = async (api, noteId) => {
     return response;
   } catch (error) {
     console.error(`Error deleting note with ID ${noteId}:`, error);
-    throw error;
   }
 };
 

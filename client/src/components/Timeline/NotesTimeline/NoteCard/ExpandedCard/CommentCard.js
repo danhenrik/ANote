@@ -33,10 +33,14 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
   };
 
   const getAvatar = async (comment) => {
-    const response = await api.get("/users/username/" + comment.Author);
-    await api.get(`/static/${response.data.data.avatar}`);
-    if (response) {
-      setAvatar("/static/" + response.data.data.avatar);
+    try {
+      const response = await api.get("/users/username/" + comment.Author);
+      await api.get(`/static/${response.data.data.avatar}`);
+      if (response) {
+        setAvatar("/static/" + response.data.data.avatar);
+      }
+    } catch (error) {
+      console.log("error");
     }
   };
 

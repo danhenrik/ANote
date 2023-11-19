@@ -78,9 +78,13 @@ const SearchForm = ({ closeModal }) => {
 
   useEffect(() => {
     const fetchTags = async () => {
-      let fetchedTags = await tagsApi.fetchTags();
-      fetchedTags = fetchedTags.map((item) => item.Tags);
-      setTags(fetchedTags);
+      try {
+        let fetchedTags = await tagsApi.fetchTags();
+        fetchedTags = fetchedTags.map((item) => item.Tags);
+        setTags(fetchedTags);
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchTags();
   }, []);

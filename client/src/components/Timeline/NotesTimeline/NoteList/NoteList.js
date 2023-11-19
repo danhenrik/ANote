@@ -29,11 +29,15 @@ const NoteList = ({
     if (auth.isAuthenticated) {
       const userFollowedCommunities = async () => {
         setIsFollowing(false);
-        const communities = await communitiesApi.fetchCommunitiesByUser();
-        if (communities) {
-          if (communities.some((community) => community.Id === communityId)) {
-            setIsFollowing(true);
+        try {
+          const communities = await communitiesApi.fetchCommunitiesByUser();
+          if (communities) {
+            if (communities.some((community) => community.Id === communityId)) {
+              setIsFollowing(true);
+            }
           }
+        } catch (error) {
+          console.log("error");
         }
       };
       userFollowedCommunities();

@@ -31,7 +31,6 @@ const fetchCommunitiesRequest = async (api) => {
     return mapApiCommunitiesData(response.data.data, api);
   } catch (error) {
     console.error("Error fetching communities:", error);
-    throw error;
   }
 };
 
@@ -41,7 +40,6 @@ const fetchCommunitiesByUserRequest = async (api) => {
     return mapApiCommunitiesData(response.data.data, api);
   } catch (error) {
     console.error("Error fetching communities:", error);
-    throw error;
   }
 };
 
@@ -51,7 +49,6 @@ const createCommunityRequest = async (api, community) => {
     return response.data;
   } catch (error) {
     console.error("Error creating community:", error);
-    throw error;
   }
 };
 
@@ -61,7 +58,6 @@ const followCommunityRequest = async (api, community) => {
     return response.data;
   } catch (error) {
     console.error("Error creating community:", error);
-    throw error;
   }
 };
 
@@ -71,7 +67,6 @@ const unfollowCommunityRequest = async (api, community) => {
     return response.data;
   } catch (error) {
     console.error("Error creating community:", error);
-    throw error;
   }
 };
 

@@ -35,9 +35,13 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
 
   useEffect(() => {
     const fetchTags = async () => {
-      let fetchedTags = await tagsApi.fetchTags();
-      fetchedTags = fetchedTags.map((item) => item.Tags);
-      setTags(fetchedTags);
+      try {
+        let fetchedTags = await tagsApi.fetchTags();
+        fetchedTags = fetchedTags.map((item) => item.Tags);
+        setTags(fetchedTags);
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchTags();
   }, []);
@@ -76,29 +80,32 @@ const NoteForm = ({ notes, communityId, setNotesHandler }) => {
           return tagIds;
         } catch (error) {
           console.error("Error posting tags:", error);
-          throw error;
         }
       };
 
       const postNotes = async (notes) => {
-        const postedTags = await postTags(tagList);
-        if (postedTags) {
-          const note = {
-            title: values.title,
-            content: values.description,
-            tags: postedTags,
-            communities: communities,
-          };
-          const fetchedNotes = await notesApi.createNote(note);
-          if (fetchedNotes) {
-            if (notes) {
-              notes.push(fetchedNotes);
-            } else {
-              notes = [];
-              notes.push(fetchedNotes);
+        try {
+          const postedTags = await postTags(tagList);
+          if (postedTags) {
+            const note = {
+              title: values.title,
+              content: values.description,
+              tags: postedTags,
+              communities: communities,
+            };
+            const fetchedNotes = await notesApi.createNote(note);
+            if (fetchedNotes) {
+              if (notes) {
+                notes.push(fetchedNotes);
+              } else {
+                notes = [];
+                notes.push(fetchedNotes);
+              }
+              setNotesHandler(notes);
             }
-            setNotesHandler(notes);
           }
+        } catch (error) {
+          console.log(error);
         }
       };
       postNotes(notes);
