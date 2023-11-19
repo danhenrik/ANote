@@ -22,6 +22,24 @@ jobs:
         run: |
           docker-compose build
 
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Deploy Docker Containers
+        run: |
+          docker-compose up -d
+
   go-tests:
     runs-on: ubuntu-latest
 
