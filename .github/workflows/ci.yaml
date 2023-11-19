@@ -39,29 +39,9 @@ jobs:
       - name: Deploy Docker Containers
         run: |
           docker-compose up -d
+        run: sleep 120
 
-  go-tests:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.21
-
-      - name: Install Dependencies
-        run: |
-          cd server
-          go mod download
-          go mod verify
-
-      - name: Run Go Tests
-        run: go test -v ./...
-  
-  - name: Check All Container URLs
+      - name: Check All Container URLs
         run: |
           # Get all running container names
           containers=$(docker ps --format "{{.Names}}")
@@ -86,6 +66,27 @@ jobs:
             done
           done
 
+  go-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Install Dependencies
+        run: |
+          cd server
+          go mod download
+          go mod verify
+
+      - name: Run Go Tests
+        run: go test -v ./...
+
   cypress-test:
     runs-on: ubuntu-latest
 
@@ -95,7 +96,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: testloc
-        run:  curl 
+        run: curl
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v5
