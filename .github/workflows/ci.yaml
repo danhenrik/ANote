@@ -27,29 +27,19 @@ jobs:
       - name: Run Tests
         run: go test -v ./...
 
-  frontend:
-    runs-on: ubuntu-latest
+    cypress-test:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out repository code
+          uses: actions/checkout@v3
+        - run: npm ci
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Client
-        run: npm run build
-
-      - name: Start Client
-        run: npm start
-
-      - name: Wait for server to start
-        run: sleep 60s
-
-      - name: Run Cypress tests
-        run: npx cypress run
+        - name: run cypress tests in chrome
+          uses: cypress-io/github-action@v5
+          timeout-minutes: 10
+          with:
+            browser: chrome
+            record: true
+            build: npm run build
+            start: npm start
+            wait-on: "http://localhost:3000"
