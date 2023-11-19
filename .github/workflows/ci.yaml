@@ -42,6 +42,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Build Client
+        run: npm build
+
+      - name: Start Client
+        run: npm start
+
       - name: Wait for server to start
         run: sleep 60s
 
