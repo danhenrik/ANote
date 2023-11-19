@@ -33,14 +33,21 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: npm ci
 
-      - name: run cypress tests in chrome
+      - name: Install Dependencies for Frontend
+        run: npm ci
+        working-directory: client
+
+      - name: Build Frontend
+        run: npm run build
+        working-directory: client
+
+      - name: Run Cypress Tests in Chrome
         uses: cypress-io/github-action@v5
         timeout-minutes: 10
         with:
           browser: chrome
           record: true
-          build: npm run build
           start: npm start
           wait-on: "http://localhost:3000"
+          working-directory: client
