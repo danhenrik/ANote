@@ -60,9 +60,9 @@ jobs:
           go mod verify
 
       - name: Run Go Tests
-        run: 
-        cd server
-        go test -v ./...
+        run: |
+          cd server
+          go test -v ./...
 
   cypress-test:
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      
+
       - name: Check All Container URLs
         run: |
           containers=$(docker ps --format "{{.Names}}")
