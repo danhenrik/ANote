@@ -27,19 +27,20 @@ jobs:
       - name: Run Tests
         run: go test -v ./...
 
-    cypress-test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Check out repository code
-          uses: actions/checkout@v3
-        - run: npm ci
+  cypress-test:
+    runs-on: ubuntu-latest
 
-        - name: run cypress tests in chrome
-          uses: cypress-io/github-action@v5
-          timeout-minutes: 10
-          with:
-            browser: chrome
-            record: true
-            build: npm run build
-            start: npm start
-            wait-on: "http://localhost:3000"
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: npm ci
+
+      - name: run cypress tests in chrome
+        uses: cypress-io/github-action@v5
+        timeout-minutes: 10
+        with:
+          browser: chrome
+          record: true
+          build: npm run build
+          start: npm start
+          wait-on: "http://localhost:3000"
