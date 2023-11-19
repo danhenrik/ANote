@@ -22,25 +22,30 @@ jobs:
         run: |
           docker-compose build
 
-  deploy:
-    runs-on: ubuntu-latest
+    go-tests:
+      runs-on: ubuntu-latest
 
-    needs: build
+      needs: deploy
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
 
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+        - name: Set up Go
+          uses: actions/setup-go@v2
+          with:
+            go-version: 1.17
 
-      - name: Deploy Docker Containers
-        run: |
-          docker-compose up -d
+        - name: Install Dependencies
+          run: |
+            cd server
+            go mod download
+            go mod verify
 
-  test:
+        - name: Run Go Tests
+          run: go test -v ./...
+
+  cypress-test:
     runs-on: ubuntu-latest
 
     needs: deploy
