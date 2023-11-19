@@ -50,7 +50,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.23
+          go-version: 1.21
 
       - name: Install Dependencies
         run: |
@@ -60,6 +60,31 @@ jobs:
 
       - name: Run Go Tests
         run: go test -v ./...
+  
+  - name: Check All Container URLs
+        run: |
+          # Get all running container names
+          containers=$(docker ps --format "{{.Names}}")
+
+          # Loop through each container
+          for container in $containers; do
+            echo "Checking if $container is running:"
+            docker inspect -f '{{.State.Status}}' "$container"
+
+            # Get the exposed ports of the container
+            ports=$(docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} {{end}}' "$container")
+
+            # Loop through each exposed port
+            for port in $ports; do
+              # Extract the host port from the "HostPort" field
+              host_port=$(echo "$port" | awk '{print $3}')
+
+              # Check the URL using the host port
+              url="http://localhost:$host_port"
+              echo "Checking URL $url for $container:"
+              curl --retry 5 --retry-delay 10 --retry-connrefused "$url"
+            done
+          done
 
   cypress-test:
     runs-on: ubuntu-latest
@@ -69,6 +94,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: testloc
+        run:  curl 
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v5
@@ -76,5 +103,5 @@ jobs:
         with:
           browser: chrome
           record: true
-          wait-on: "http://localhost:3000"
+          wait-on: "http://localhost:3000/"
           wait-on-timeout: 300
