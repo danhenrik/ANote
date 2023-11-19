@@ -39,7 +39,7 @@ jobs:
       - name: Deploy Docker Containers
         run: |
           docker-compose up -d
-        run: sleep 120
+          sleep 120
 
       - name: Check All Container URLs
         run: |
