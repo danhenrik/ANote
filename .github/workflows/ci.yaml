@@ -42,5 +42,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Cypress Tests
-        run: npx cypress run
+    - name: Wait for server to start
+      run: sleep 60s
+
+    - name: Run Cypress tests
+      run: npx cypress run
