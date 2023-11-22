@@ -37,7 +37,7 @@ const ExpandedCard = ({
 
   const updateNoteComments = async () => {
     try {
-      const noteComments = await axios.get("/comments/" + note.Id);
+      const noteComments = await axios.get("/api/comments/" + note.Id);
       setComments(noteComments.data.data);
       numberCommentsHandler(noteComments.data.data.length);
     } catch (error) {
@@ -63,7 +63,7 @@ const ExpandedCard = ({
         };
 
         resetForm({ values: "" });
-        await axios.post("/comments", commentData);
+        await axios.post("/api/comments", commentData);
         updateNoteComments();
       } catch (error) {
         console.error("Comment failed: ", error);

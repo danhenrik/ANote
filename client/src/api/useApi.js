@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuth } from "../store/auth-context";
 
 const api = axios.create({
-  baseURL: "/",
+  baseURL: "/api/",
   headers: {
     "Content-Type": "application/json",
     timeout: 1000,

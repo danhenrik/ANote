@@ -1,9 +1,11 @@
 {
   "validUser": {
-    "login": "userteste@email.com",
+    "email": "userteste@email.com",
+    "login": "teste@teste.com",
     "password": "userteste@senha"
   },
   "invalidUser": {
+    "email": "invalid",
     "login": "invalid",
     "password": "invalidpassword"
   }

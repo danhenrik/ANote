@@ -24,7 +24,7 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
 
   const deleteComment = () => {
     try {
-      axios.delete("/comments/" + comment.Id);
+      axios.delete("/api/comments/" + comment.Id);
       numberCommentsHandler((prev) => prev - 1);
       setRenderComment(false);
     } catch (error) {
@@ -34,10 +34,10 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
 
   const getAvatar = async (comment) => {
     try {
-      const response = await api.get("/users/username/" + comment.Author);
-      await api.get(`/static/${response.data.data.avatar}`);
+      const response = await api.get("/api/users/username/" + comment.Author);
+      await api.get(`static/${response.data.data.avatar}`);
       if (response) {
-        setAvatar("/static/" + response.data.data.avatar);
+        setAvatar("static/" + response.data.data.avatar);
       }
     } catch (error) {
       console.log("error");

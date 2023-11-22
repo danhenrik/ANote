@@ -97,6 +97,7 @@ services:
       - JWT_SECRET=secret
     ports:
       - "8080:8080"
+    restart: always
     depends_on:
       - elasticsearch
       - database

@@ -37,18 +37,18 @@ export const AuthProvider = ({ children }) => {
         login: login,
         password: password,
       };
-      const response = await axios.post("/auth/login", userLoginData);
+      const response = await axios.post("/api/auth/login", userLoginData);
 
       console.log("Login successful:", response.data);
 
       if (response) {
         const avatarRequest = response.data.data.User.Avatar;
-        if (avatarRequest) await axios.get(`/static/${avatarRequest}`);
+        if (avatarRequest) await axios.get(`static/${avatarRequest}`);
 
         const userData = {
           username: response.data.data.User.Id,
           token: response.data.data.Jwt,
-          avatar: `/static/${avatarRequest}`,
+          avatar: `static/${avatarRequest}`,
         };
 
         localStorage.setItem("user", JSON.stringify(userData));

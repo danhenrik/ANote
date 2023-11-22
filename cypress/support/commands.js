@@ -23,3 +23,35 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add("uploadFile", (fileName, selector) => {
+  cy.fixture(fileName).then((fileContent) => {
+    cy.get(selector).upload({
+      fileContent,
+      fileName,
+      mimeType: "application/octet-stream",
+    });
+  });
+});
+Cypress.Commands.add("Login", () => {
+  cy.fixture("loginData.json").then((loginData) => {
+    const { validUser } = loginData;
+    cy.contains("Login").click();
+
+    cy.get("#login").type(validUser.login);
+    cy.get("#password").type(validUser.password);
+
+    cy.get('[type="submit"]').click();
+  });
+});
+
+Cypress.Commands.add("AdicionaNota", () => {
+  cy.fixture("notaData.json").then((notaData) => {
+    const { validUser } = loginData;
+    cy.contains("Login").click();
+
+    cy.get("#login").type(validUser.login);
+    cy.get("#password").type(validUser.password);
+
+    cy.get('[type="submit"]').click();
+  });
+});

@@ -37,7 +37,7 @@ const CommunityForm = ({ communities, setCommunitiesHandler }) => {
       communityData.append("background", selectedFile);
       const createCommunity = async () => {
         const createdCommunity = await axios.post(
-          "/communities",
+          "/api/communities",
           communityData,
           {
             headers: {

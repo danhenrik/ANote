@@ -57,9 +57,9 @@ const NoteCard = ({ note, deleteNoteHandler }) => {
   const getAvatar = async (note) => {
     try {
       const response = await api.get("/users/username/" + note.Author);
-      await api.get(`/static/${response.data.data.avatar}`);
+      await api.get(`static/${response.data.data.avatar}`);
       if (response) {
-        setAvatar("/static/" + response.data.data.avatar);
+        setAvatar("static/" + response.data.data.avatar);
       }
     } catch (error) {
       console.log(error);
