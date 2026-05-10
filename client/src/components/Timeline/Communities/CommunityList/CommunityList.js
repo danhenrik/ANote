@@ -4,7 +4,7 @@ import CommunityForm from "../CommunityForm/CommunityForm";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
 import TimelineList from "../../TimelineList";
-import LoginForm from "../../../AccessControl/Login/LoginForm";
+import LoginForm from "../../../AccessControl/login/LoginForm";
 import CommunityCard from "../CommunityCard/CommunityCard";
 import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";

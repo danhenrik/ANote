@@ -23,7 +23,7 @@ import NavButtons from "./NavButtons";
 import AnoteLogo from "../Logo/AnoteLogo";
 import { useAuth } from "../../../store/auth-context";
 import { useModal } from "../../../store/modal-context";
-import LoginForm from "../../AccessControl/Login/LoginForm";
+import LoginForm from "../../AccessControl/login/LoginForm";
 import SignupForm from "../../AccessControl/Signup/SignupForm";
 import { Avatar } from "@mui/material";
 

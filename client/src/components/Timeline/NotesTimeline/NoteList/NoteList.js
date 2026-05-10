@@ -4,7 +4,7 @@ import NoteCard from "../NoteCard/NoteCard";
 import { useModal } from "../../../../store/modal-context";
 import { useAuth } from "../../../../store/auth-context";
 import NoteForm from "../NoteForm/NoteForm";
-import LoginForm from "../../../AccessControl/Login/LoginForm";
+import LoginForm from "../../../AccessControl/login/LoginForm";
 import TimelineList from "../../TimelineList";
 import useCommunities from "../../../../api/useCommunities";
 import { useEffect, useState } from "react";
