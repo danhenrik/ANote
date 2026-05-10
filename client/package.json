@@ -42,6 +42,11 @@
       "react-app/jest"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^axios$": "<rootDir>/__mocks__/axios.js"
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
