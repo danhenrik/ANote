@@ -16,6 +16,7 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	r.Use(middlewares.SecurityHeaders())
 	r.MaxMultipartMemory = constants.MAX_MULTIPART_SIZE
 
 	r.GET("/static/*filepath", func(c *gin.Context) {
@@ -45,6 +46,7 @@ func main() {
 
 	// auth endpoints
 	r.POST("/auth/login", httpAdapter.NewGinAdapter(routes.LoginController))
+	r.POST("/auth/logout", httpAdapter.NewGinAdapter(routes.LogoutController))
 	r.POST("/auth/request-password-reset", httpAdapter.NewGinAdapter(routes.RequestPasswordResetController))
 	r.POST("/auth/change-password", httpAdapter.NewGinAdapter(routes.ChangeUserPasswordController))
 

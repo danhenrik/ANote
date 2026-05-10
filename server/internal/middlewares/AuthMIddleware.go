@@ -8,14 +8,19 @@ import (
 	"strings"
 )
 
+const authCookieName = "auth_token"
+
 func AuthenticateUser(req httpAdapter.Request) (httpAdapter.Request, *errors.AppError) {
-	bearerToken, found := req.GetHeader("Authorization")
-	if !found {
-		log.Println("[AuthMiddleware] Auth Header not found")
-		return req, errors.NewAppError(401, "Couldn't locate a valid Authorization Header")
+	jwtToken := extractTokenFromCookie(req)
+	if jwtToken == "" {
+		headerToken, ok := extractTokenFromHeader(req)
+		if !ok {
+			log.Println("[AuthMiddleware] No auth credentials found in cookie or header")
+			return req, errors.NewAppError(401, "Couldn't locate a valid Authorization Header")
+		}
+		jwtToken = headerToken
 	}
 
-	jwtToken := strings.Split(bearerToken, " ")[1]
 	tokenIsValid, userId := container.JwtProvider.ValidateToken(jwtToken)
 	if !tokenIsValid {
 		log.Println("[AuthMiddleware] Invalid JWT Token")
@@ -34,4 +39,25 @@ func AuthenticateUser(req httpAdapter.Request) (httpAdapter.Request, *errors.App
 	}
 	log.Println("[AuthMiddleware] Successfully authenticated user", user.Id)
 	return req, nil
+}
+
+func extractTokenFromCookie(req httpAdapter.Request) string {
+	for _, c := range req.Cookies {
+		if c.Name == authCookieName {
+			return c.Value
+		}
+	}
+	return ""
+}
+
+func extractTokenFromHeader(req httpAdapter.Request) (string, bool) {
+	bearerToken, found := req.GetHeader("Authorization")
+	if !found {
+		return "", false
+	}
+	parts := strings.SplitN(bearerToken, " ", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "bearer") || strings.TrimSpace(parts[1]) == "" {
+		return "", false
+	}
+	return strings.TrimSpace(parts[1]), true
 }

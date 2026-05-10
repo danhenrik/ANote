@@ -28,6 +28,7 @@ func Config() {
 		DB_ADDR = os.Getenv("DB_ADDR")
 		ES_ADDR = os.Getenv("ES_ADDR")
 		JWT_SECRET = os.Getenv("JWT_SECRET")
+		SECURE_COOKIE = os.Getenv("SECURE_COOKIE") == "true"
 
 		log.Println("Environment variables configured!")
 		configured = true
@@ -42,4 +43,5 @@ var DB_NAME string
 var DB_ADDR string
 var ES_ADDR string
 var JWT_SECRET string
+var SECURE_COOKIE bool
 var MAX_MULTIPART_SIZE int64 = 10 << 20 // 10 MiB

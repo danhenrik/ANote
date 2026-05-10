@@ -2,12 +2,17 @@ package routes
 
 import (
 	httpAdapter "anote/cmd/interfaces"
+	"anote/internal/constants"
 	"anote/internal/container"
 	"anote/internal/domain"
 	"anote/internal/viewmodels"
 	"encoding/json"
 	"log"
+	"net/http"
 )
+
+const authCookieName = "auth_token"
+const authCookieMaxAge = 3600
 
 func LoginController(request httpAdapter.Request) httpAdapter.Response {
 	var loginVM viewmodels.LoginVM
@@ -22,12 +27,41 @@ func LoginController(request httpAdapter.Request) httpAdapter.Response {
 		return httpAdapter.NewErrorResponse(err.Status, err.Message)
 	}
 
+	if request.Raw != nil {
+		request.Raw.SetSameSite(http.SameSiteStrictMode)
+		request.Raw.SetCookie(
+			authCookieName,
+			jwt,
+			authCookieMaxAge,
+			"/",
+			"",
+			constants.SECURE_COOKIE,
+			true,
+		)
+	}
+
 	type response struct {
 		Jwt  string
 		User *domain.User
 	}
 
 	return httpAdapter.NewSuccessResponse(200, response{jwt, user})
+}
+
+func LogoutController(request httpAdapter.Request) httpAdapter.Response {
+	if request.Raw != nil {
+		request.Raw.SetSameSite(http.SameSiteStrictMode)
+		request.Raw.SetCookie(
+			authCookieName,
+			"",
+			-1,
+			"/",
+			"",
+			constants.SECURE_COOKIE,
+			true,
+		)
+	}
+	return httpAdapter.NewNoContentResponse()
 }
 
 func RequestPasswordResetController(request httpAdapter.Request) httpAdapter.Response {
