@@ -53,6 +53,7 @@ const CompleteSignupForm = () => {
         userData.append("password", values.password);
         userData.append("avatar", selectedFile);
         const response = await axios.post("/api/users", userData, {
+          withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
           },

@@ -24,7 +24,7 @@ const CommentCard = ({ comment, numberCommentsHandler }) => {
 
   const deleteComment = () => {
     try {
-      axios.delete("/api/comments/" + comment.Id);
+      axios.delete("/api/comments/" + comment.Id, { withCredentials: true });
       numberCommentsHandler((prev) => prev - 1);
       setRenderComment(false);
     } catch (error) {

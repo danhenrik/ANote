@@ -10,8 +10,7 @@ import {
 import PropTypes from "prop-types";
 import { useModal } from "../../../../store/modal-context";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import axios from "axios";
-import { useAuth } from "../../../../store/auth-context";
+import useApi from "../../../../api/useApi";
 import { useNavigate } from "react-router-dom";
 
 const validationSchema = yup.object({
@@ -22,7 +21,7 @@ const validationSchema = yup.object({
 const CommunityForm = ({ communities, setCommunitiesHandler }) => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState();
-  const auth = useAuth();
+  const api = useApi();
   const [avatarPreview, setAvatarPreview] = useState("/avatars/default.png");
   const modal = useModal();
   const formik = useFormik({
@@ -36,13 +35,12 @@ const CommunityForm = ({ communities, setCommunitiesHandler }) => {
       communityData.append("name", values.name);
       communityData.append("background", selectedFile);
       const createCommunity = async () => {
-        const createdCommunity = await axios.post(
-          "/api/communities",
+        const createdCommunity = await api.post(
+          "/communities",
           communityData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${auth.token}`,
             },
           }
         );

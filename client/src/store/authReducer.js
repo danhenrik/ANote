@@ -10,7 +10,7 @@ const authReducer = (state, action) => {
         email: action.payload.email,
         isAuthenticated: true,
         isLoading: false,
-        token: action.payload.token,
+        token: null,
         avatar: action.payload.avatar,
       };
     case LOGOUT:

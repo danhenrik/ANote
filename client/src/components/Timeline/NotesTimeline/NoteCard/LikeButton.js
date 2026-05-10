@@ -15,7 +15,8 @@ const LikeButton = ({ note }) => {
     try {
       if (isClicked) {
         const deletedLike = await axios.delete(
-          "/api/likes/" + auth.username + "/" + note.Id
+          "/api/likes/" + auth.username + "/" + note.Id,
+          { withCredentials: true }
         );
         if (deletedLike) {
           setLikes(likes - 1);
@@ -25,7 +26,9 @@ const LikeButton = ({ note }) => {
           user_id: auth.username,
           note_id: note.Id,
         };
-        const postedLike = axios.post("/api/likes", likeData);
+        const postedLike = axios.post("/api/likes", likeData, {
+          withCredentials: true,
+        });
         if (postedLike) {
           setLikes(likes + 1);
         }

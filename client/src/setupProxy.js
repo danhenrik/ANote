@@ -4,6 +4,8 @@ module.exports = function (app) {
   app.use(
     createProxyMiddleware("/api/**", {
       target: "http://server:8080/",
+      changeOrigin: true,
+      cookieDomainRewrite: "",
       secure: false,
       https: false,
       pathRewrite: {

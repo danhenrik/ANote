@@ -1,22 +1,18 @@
 import axios from "axios";
-import { useAuth } from "../store/auth-context";
-
-const api = axios.create({
-  baseURL: "/api/",
-  headers: {
-    "Content-Type": "application/json",
-    timeout: 1000,
-  },
-});
+import { useMemo } from "react";
 
 const useApi = () => {
-  const auth = useAuth();
-
-  if (auth.isAuthenticated) {
-    api.defaults.headers.common.Authorization = `Bearer ${auth.token}`;
-  } else {
-    delete api.defaults.headers.common.Authorization;
-  }
+  const api = useMemo(
+    () =>
+      axios.create({
+        baseURL: "/api/",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    []
+  );
 
   return api;
 };

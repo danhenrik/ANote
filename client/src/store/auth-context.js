@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     avatar: storedUser ? storedUser.avatar : null,
     isAuthenticated: Boolean(storedUser),
     isLoading: false,
-    token: storedUser ? storedUser.token : null,
+    token: null,
   };
 
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -37,22 +37,24 @@ export const AuthProvider = ({ children }) => {
         login: login,
         password: password,
       };
-      const response = await axios.post("/api/auth/login", userLoginData);
+      const response = await axios.post("/api/auth/login", userLoginData, {
+        withCredentials: true,
+      });
 
       console.log("Login successful:", response.data);
 
       if (response) {
         const avatarRequest = response.data.data.User.Avatar;
-        if (avatarRequest) await axios.get(`static/${avatarRequest}`);
+        if (avatarRequest)
+          await axios.get(`static/${avatarRequest}`, { withCredentials: true });
 
-        const userData = {
+        const safeUserData = {
           username: response.data.data.User.Id,
-          token: response.data.data.Jwt,
           avatar: `static/${avatarRequest}`,
         };
 
-        localStorage.setItem("user", JSON.stringify(userData));
-        dispatch({ type: SET_USER, payload: userData });
+        localStorage.setItem("user", JSON.stringify(safeUserData));
+        dispatch({ type: SET_USER, payload: safeUserData });
         return true;
       }
     } catch (error) {
@@ -68,7 +70,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/logout", null, { withCredentials: true });
+    } catch (error) {
+      console.warn("Logout request failed, clearing local state anyway", error);
+    }
     localStorage.removeItem("user");
     dispatch({ type: LOGOUT });
   };
