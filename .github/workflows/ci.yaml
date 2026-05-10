@@ -62,6 +62,15 @@ jobs:
           go mod download
           go mod verify
 
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Run govulncheck
+        continue-on-error: true
+        run: |
+          cd server
+          govulncheck ./...
+
       - name: Run Go Tests
         run: |
           cd server

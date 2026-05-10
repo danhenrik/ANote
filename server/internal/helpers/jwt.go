@@ -3,9 +3,10 @@ package helpers
 import (
 	"anote/internal/constants"
 	"anote/internal/domain"
+	"errors"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type JwtHelper struct{}
@@ -15,32 +16,42 @@ func NewJwtProvider() JwtHelper {
 }
 
 func (_ JwtHelper) CreateToken(user *domain.User) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-
-	claims["exp"] = time.Now().Add(time.Hour).Unix()
-	claims["id"] = user.Id
-
+	claims := jwt.MapClaims{
+		"id":  user.Id,
+		"exp": time.Now().Add(time.Hour).Unix(),
+		"iat": time.Now().Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(constants.JWT_SECRET))
 }
 
 func (_ JwtHelper) ValidateToken(token string) (bool, string) {
-	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(constants.JWT_SECRET), nil
-	})
-	if err != nil {
+	parsed, err := jwt.Parse(
+		token,
+		func(t *jwt.Token) (interface{}, error) {
+			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, errors.New("unexpected signing method")
+			}
+			return []byte(constants.JWT_SECRET), nil
+		},
+		jwt.WithValidMethods([]string{"HS256"}),
+	)
+	if err != nil || !parsed.Valid {
 		return false, ""
 	}
 
-	claims, ok := t.Claims.(jwt.MapClaims)
+	claims, ok := parsed.Claims.(jwt.MapClaims)
 	if !ok {
 		return false, ""
 	}
 
-	userId, found := claims["id"]
+	rawId, found := claims["id"]
 	if !found {
 		return false, ""
 	}
-	return true, userId.(string)
+	userId, ok := rawId.(string)
+	if !ok {
+		return false, ""
+	}
+	return true, userId
 }
